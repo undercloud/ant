@@ -2,9 +2,10 @@
 <html>
 <head>
 	<title><?php echo $title;?> <?php echo $body['second'];?></title>
+	<?php echo Ant::script('ebeleh.js');?>
 </head>
 <body>
-	<?= \Ant::init()->get("header")->assign($body['fortop'])->draw(); ?>
+	<?= \Ant::init()->get("header")->assign(array('ovarahalla' => range(1,7)))->draw(); ?>
 
 	Life is <?php echo $body['first'];?>
 

@@ -5,7 +5,7 @@
 		{
 			public static function script($src,$defer = "")
 			{
-				return '<script type="text/javascript" src="' . $path . '"' . ($defer ? " " . $defer : '') . '></script>';
+				return '<script type="text/javascript" src="' . $src . '"' . ($defer ? " " . $defer : '') . '></script>';
 			}
 
 			public static function link($href,$type = "text/css",$rel = "stylesheet",$media = "")

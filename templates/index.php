@@ -2,9 +2,10 @@
 <html>
 <head>
 	<title>{{ $title }} {{ $body.second }}</title>
+	{{ Ant::script('ebeleh.js') }}
 </head>
 <body>
-	{@import(header,$body.fortop)}
+	{@import(header,array('ovarahalla' => range(1,2)))}
 
 	Life is {{ $body.first }}
 

@@ -15,7 +15,7 @@
 				$v = str_replace('{@import(', '', $v);
 				$v = str_replace(')}', '', $v);
 				$v = trim($v);
-
+				//call_user_func_array 
 				$exp = explode(',',$v);
 
 				return '<?= \Ant::init()->get("' . $exp[0] .'")->' . (isset($v[1]) ? 'assign(' . Helper::parseVariable($exp[1]) . ')->' : ''). 'draw(); ?>';
@@ -29,7 +29,9 @@
 				$v = str_replace('}}', '', $v);
 				$v = trim($v);
 
-				$v = Helper::parseVariable($v);
+				$v = preg_replace_callback('/\$[A-z0-9_.]+/', function($l){
+					return Helper::parseVariable($l[0]);
+				},$v);
 				
 				return '<?php echo ' . $v . ';?>';
 			}
@@ -42,7 +44,9 @@
 				$v = str_replace('}}}', '', $v);
 				$v = trim($v);
 
-				$v = Helper::parseVariable($v);
+				$v = preg_replace_callback('/\$[A-z0-9_.]+/', function($l){
+					return Helper::parseVariable($l[0]);
+				},$v);
 
 				return '<?php echo htmlentities(' . $v . ',ENT_QUOTES,"UTF-8");?>';
 			}
