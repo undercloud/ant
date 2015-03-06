@@ -15,10 +15,18 @@
 				$v = str_replace('{@import(', '', $v);
 				$v = str_replace(')}', '', $v);
 				$v = trim($v);
-				//call_user_func_array 
-				$exp = explode(',',$v);
+				
+				$as = false;
+				$pos = strpos($v,',');
 
-				return '<?= \Ant::init()->get("' . $exp[0] .'")->' . (isset($v[1]) ? 'assign(' . Helper::parseVariable($exp[1]) . ')->' : ''). 'draw(); ?>';
+				if(false === $pos){
+					$t = $v;
+				}else{
+					$t = substr($v,0,$pos);
+					$as = substr($v,$pos + 1);
+				}
+
+				return '<?= \Ant::init()->get("' . $t .'")->' . ($as ? 'assign(' . Helper::parseVariable($as) . ')->' : ''). 'draw(); ?>';
 			}
 
 			public static function variable($e)
@@ -29,9 +37,7 @@
 				$v = str_replace('}}', '', $v);
 				$v = trim($v);
 
-				$v = preg_replace_callback('/\$[A-z0-9_.]+/', function($l){
-					return Helper::parseVariable($l[0]);
-				},$v);
+				$v = \Ant\Helper::findVariable($v);
 				
 				return '<?php echo ' . $v . ';?>';
 			}
@@ -44,9 +50,7 @@
 				$v = str_replace('}}}', '', $v);
 				$v = trim($v);
 
-				$v = preg_replace_callback('/\$[A-z0-9_.]+/', function($l){
-					return Helper::parseVariable($l[0]);
-				},$v);
+				$v = \Ant\Helper::findVariable($v);
 
 				return '<?php echo htmlentities(' . $v . ',ENT_QUOTES,"UTF-8");?>';
 			}
@@ -59,9 +63,7 @@
 				$v = str_replace('}', '', $v);
 				$v = trim($v);
 
-				$v = preg_replace_callback('/\$[A-z0-9_.]+/', function($l){
-					return Helper::parseVariable($l[0]);
-				},$v);
+				$v = \Ant\Helper::findVariable($v);
 
 				if(
 					0 === strpos($v, 'if') ||

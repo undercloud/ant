@@ -5,7 +5,7 @@
 	<?php echo Ant::script('ebeleh.js');?>
 </head>
 <body>
-	<?= \Ant::init()->get("header")->assign(array('ovarahalla' => range(1,7)))->draw(); ?>
+	<?= \Ant::init()->get("header")->assign(array('ovarahalla' => range(1,2)))->draw(); ?>
 
 	Life is <?php echo $body['first'];?>
 
