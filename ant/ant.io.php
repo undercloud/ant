@@ -21,10 +21,10 @@
 				return $this;
 			}
 
-			public function get($callback)
+			public function get()
 			{
 				if(!$this->handle)
-					return $this;
+					return '';
 
 				rewind($this->handle);
 
@@ -33,9 +33,7 @@
 					$data .= fgets($this->handle);
 				}
 
-				$callback($data);
-
-				return $this;
+				return $data;
 			}
 
 			public function set($data)

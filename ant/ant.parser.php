@@ -26,7 +26,7 @@
 					$as = substr($v,$pos + 1);
 				}
 
-				return '<?= \Ant::init()->get("' . $t .'")->' . ($as ? 'assign(' . Helper::parseVariable($as) . ')->' : ''). 'draw(); ?>';
+				return '<?php echo \Ant::init()->get("' . $t .'")->' . ($as ? 'assign(' . Helper::parseVariable($as) . ')->' : ''). 'draw(); ?>';
 			}
 
 			public static function variable($e)
@@ -78,6 +78,29 @@
 				}
 
 				return '<?php ' . $v . '?>';
+			}
+
+			public static function forelse($e)
+			{
+				$v = $e[0];
+
+				$m = array();
+				preg_match('/\$[A-z0-9_.]+/',$v,$m);
+
+				var_dump($v,$m[0]);
+				//$foreach = str_replace(search, replace, subject)
+
+				return '<?php if(count(' . \Ant\Helper::parseVariable($m[0]) .  ')) ' . $foreach . ':?>';
+			}
+
+			public static function isempty($e)
+			{
+				return '<?php endforeach; else: ?>';
+			}
+
+			public static function endforelse($e)
+			{
+				return '<?php endif; ?>';
 			}
 		}
 	}

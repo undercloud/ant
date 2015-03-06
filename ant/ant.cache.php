@@ -10,27 +10,24 @@
 			public function __construct($cache_file = false)
 			{
 				$this->cache_file = $cache_file;
-				$closure = $this;
+			}
 
-				if(false == self::$map){
-					IO::init()
-					->in($cache_file)
-					->get(function($c)use($closure){
-						$closure->raw = $c;
-					})
-					->out();
+			public function getMap()
+			{
+				$io = IO::init()->in($this->cache_file);
+				self::$map = json_decode($io->get(),true);
 
-					self::$map = json_decode($this->raw,true);
+				if(false === is_array(self::$map))
+					self::$map = array();
 
-					if(false === is_array(self::$map))
-						self::$map = array();
-
-					unset($this->raw);
-				}
+				$io->out();
 			}
 
 			public function check($path)
 			{
+				if(null === self::$map)
+					$this->getMap();
+
 				$mtime = filemtime($path);
 				if(array_key_exists($path, self::$map))
 					if(self::$map[$path] == $mtime)

@@ -13,8 +13,10 @@
 
 	some@mail.com
 
-	{@if($x == true)}
+	{@if(true == false)}
 		ebelehae
+	{@elseif(false == false)}
+		wassup
 	{@else}
 		ovarahalla
 	{@endif}
@@ -33,5 +35,11 @@
 		$x = md5(time());
 		echo $x;
 	}
+
+	{@forelse ($mas as $m)}
+
+	{@empty}
+	Array is empty
+	{@endforelse}
 </body>
 </html>

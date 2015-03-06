@@ -5,7 +5,7 @@
 	<?php echo Ant::script('ebeleh.js');?>
 </head>
 <body>
-	<?= \Ant::init()->get("header")->assign(array('ovarahalla' => range(1,2)))->draw(); ?>
+	<?php echo \Ant::init()->get("header")->assign(array('ovarahalla' => range(1,2)))->draw(); ?>
 
 	Life is <?php echo $body['first'];?>
 
@@ -13,8 +13,10 @@
 
 	some@mail.com
 
-	<?php if($x == true):?>
+	<?php if(true == false):?>
 		ebelehae
+	<?php elseif(false == false):?>
+		wassup
 	<?php else:?>
 		ovarahalla
 	<?php endif;?>
@@ -31,5 +33,11 @@
 
 	<?php $x = md5(time());
 		echo $x;;?>
+
+	<?php if(count($mas)) :?>
+
+	<?php endforeach; else: ?>
+	Array is empty
+	<?php endif; ?>
 </body>
 </html>
