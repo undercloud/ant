@@ -26,6 +26,11 @@
 					return Helper::parseVariable($l[0]);
 				},$v);
 			}
+
+			public static function findOr($e)
+			{
+				return preg_replace('/^(?=\$)(.+?)(?:\s+or\s+)(.+?)$/s', '(isset($1) and $1) ? $1 : $2', $e);
+			}
 		}
 	}
 ?>

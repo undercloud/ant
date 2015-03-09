@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{{ $title }} {{ $body.second }}</title>
+	<title>{{ $title }} {{ $body.second }} {{ $.server.DOCUMENT_ROOT }}</title>
 	{{ Ant::script('ebeleh.js') }}
 </head>
 <body>
-	{@import(header,array('ovarahalla' => range(1,2)))}
+	<h1>{{ $.get.ebeleh or 'Dinahuile' }}</h1>
+
+	{@import( header,array('ovarahalla' => range(1,2)) ) }
 
 	Life is {{ $body.first }}
 
-	<input type="text" value="{{{ $escaper.nest }}}">
+	<input type="text" value="{{{ $escaper.nest }}}" data-host="{{{ $.server.HTTP_HOST }}}">
 
 	some@mail.com
 
@@ -36,10 +38,10 @@
 		echo $x;
 	}
 
-	{@forelse ($mas as $m)}
-
+	{@forelse($mas as $m)}
+		{{ $m }}
 	{@empty}
-	Array is empty
+		Array is empty
 	{@endforelse}
 </body>
 </html>
