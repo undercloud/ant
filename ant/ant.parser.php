@@ -23,7 +23,7 @@
 				$v = $e[0];
 				
 				$v = trim($v,'{}');
-				$v = str_replace('@import', '', $v);
+				$v = str_replace('@extends', '', $v);
 				$v = trim($v);
 				$v = substr($v,1,-1);
 			}
