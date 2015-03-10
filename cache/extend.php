@@ -15,6 +15,12 @@
 
 	some@mail.com
 
+	 
+<div>THIS CONTENT WAS Appended</div>
+ 
+<div>THIS CONTENT WAS REWRITED</div>
+
+
 	<?php if(true == false):?>
 		ebelehae
 	<?php elseif(false == false):?>
@@ -43,3 +49,12 @@
 	<?php endif; ?>
 </body>
 </html>
+
+<?php section (   main );?> 
+<div>THIS CONTENT WAS REWRITED</div>
+<?php rewrite;?>
+
+
+<?php section(main);?> 
+<div>THIS CONTENT WAS Appended</div>
+<?php append;?>

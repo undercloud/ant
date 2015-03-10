@@ -3,8 +3,12 @@
 	{
 		class Parser 
 		{
+			private static $share_buffer = null;
+
 			public static function parse($s)
 			{
+				self::$share_buffer = $s;
+
 				$s = preg_replace_callback('/{@extends.+?}/', 'Ant\Parser::xtends', $s);
 				$s = preg_replace_callback('/{\*.*\*}/ms', 'Ant\Parser::comment', $s);
 				$s = preg_replace_callback('/{{{.+?}}}/', 'Ant\Parser::escape', $s);
@@ -14,6 +18,8 @@
 				$s = preg_replace_callback('/{@empty}/', 'Ant\Parser::isempty', $s);
 				$s = preg_replace_callback('/{@endforelse}/', 'Ant\Parser::endforelse', $s);
 				$s = preg_replace_callback('/{@.+?}/ms', 'Ant\Parser::control', $s);
+
+				self::$share_buffer = null;
 
 				return $s;
 			}
@@ -26,6 +32,62 @@
 				$v = str_replace('@extends', '', $v);
 				$v = trim($v);
 				$v = substr($v,1,-1);
+
+				$path = \Ant::settings('path') . "/" . str_replace('.', '/', $v) . '.php';
+
+				$io = IO::init()->in($path);
+				$c = $io->get();
+				$io->out();
+
+				$sections = array();
+				preg_match_all('/{@section.*?}.*?{@(rewrite|append|prepend)}/ms',self::$share_buffer,$sections);
+
+				$map = array();
+				if(isset($sections[0])){
+					foreach($sections[0] as $k=>$s){
+						$m = array();
+						preg_match('/{@section.*?}/',$s,$m);
+
+						$name = trim(str_replace('@section','',$m[0]),' {()}');
+
+						$s = preg_replace('/{@section\s*?\(\s*?' . $name . '\s*?\)\s*?}/','',$s);
+						$s = str_replace('{@' . $sections[1][$k] . '}','',$s);
+
+						$map[] = array(
+							$name,
+							$s,
+							$sections[1][$k]
+						);
+					}
+				}
+				
+
+				foreach($map as $key=>$value){
+					$c = preg_replace_callback(
+						'/{@section\s*?\(\s*?' . $value[0] . '\s*?\)\s*?}(.*)?{@end}/ms',
+						function($e)use($value){
+							switch($value[2]){
+								case 'append':
+									return '{@section(' . $value[0] . ')}' . $value[1] . $e[1] . '{@end}';
+								break;
+
+								case 'prepend':
+									return '{@section(' . $value[0] . ')}' . $e[1] . $value[1] . '{@end}';
+								break;
+
+								case 'rewrite':
+									return '{@section(' . $value[0] . ')}' . $value[1] . '{@end}';
+								break;
+							}
+						},
+						$c
+					);
+				}
+
+				$c = preg_replace('/{@section.*?}/','', $c);
+				$c = preg_replace('/{@(rewrite|append|prepend|end)}/','',$c);
+
+				return $c;
 			}
 
 			public static function comment($e)

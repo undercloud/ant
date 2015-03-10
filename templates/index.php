@@ -15,6 +15,10 @@
 
 	some@mail.com
 
+	{@section(main)}
+		Content must be replaced
+	{@end}
+
 	{@if(true == false)}
 		ebelehae
 	{@elseif(false == false)}

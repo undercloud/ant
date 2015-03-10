@@ -1,10 +1,10 @@
 {@extends(index)}
 
-{@section(name)}
-
+{@section (   main ) } 
+<div>THIS CONTENT WAS REWRITED</div>
 {@rewrite}
 
 
-{@section(name)}
-
+{@section(main)} 
+<div>THIS CONTENT WAS Appended</div>
 {@append}
