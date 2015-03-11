@@ -6,5 +6,5 @@
 
 
 {@section(main)} 
-<div>THIS CONTENT WAS Appended</div>
+<div>THIS CONTENT WAS Appended Mazafucked aga</div>
 {@append}

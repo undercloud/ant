@@ -16,9 +16,9 @@
 	some@mail.com
 
 	 
-<div>THIS CONTENT WAS Appended</div>
- 
 <div>THIS CONTENT WAS REWRITED</div>
+ 
+<div>THIS CONTENT WAS Appended Mazafucked</div>
 
 
 	<?php if(true == false):?>
@@ -49,12 +49,3 @@
 	<?php endif; ?>
 </body>
 </html>
-
-<?php section (   main );?> 
-<div>THIS CONTENT WAS REWRITED</div>
-<?php rewrite;?>
-
-
-<?php section(main);?> 
-<div>THIS CONTENT WAS Appended</div>
-<?php append;?>

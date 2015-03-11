@@ -3,13 +3,10 @@
 	{
 		class Parser 
 		{
-			private static $share_buffer = null;
-
 			public static function parse($s)
 			{
-				self::$share_buffer = $s;
-
-				$s = preg_replace_callback('/{@extends.+?}/', 'Ant\Parser::xtends', $s);
+				$s = preg_replace_callback('/{@extends.*/ms', 'Ant\Parser::xtends', $s);
+				$s = preg_replace('/{@section.*?}.*?{@(rewrite|append|prepend)}/ms', '', $s);
 				$s = preg_replace_callback('/{\*.*\*}/ms', 'Ant\Parser::comment', $s);
 				$s = preg_replace_callback('/{{{.+?}}}/', 'Ant\Parser::escape', $s);
 				$s = preg_replace_callback('/{{.+?}}/', 'Ant\Parser::variable', $s);
@@ -19,28 +16,30 @@
 				$s = preg_replace_callback('/{@endforelse}/', 'Ant\Parser::endforelse', $s);
 				$s = preg_replace_callback('/{@.+?}/ms', 'Ant\Parser::control', $s);
 
-				self::$share_buffer = null;
-
 				return $s;
 			}
 
 			public static function xtends($e)
 			{
 				$v = $e[0];
-				
-				$v = trim($v,'{}');
-				$v = str_replace('@extends', '', $v);
-				$v = trim($v);
-				$v = substr($v,1,-1);
 
-				$path = \Ant::settings('path') . "/" . str_replace('.', '/', $v) . '.php';
+				$name = array();
+				preg_match('/{@extends.+?}/',$v,$name);
+
+				$name = $name[0];
+				$name = trim($name,'{}');
+				$name = str_replace('@extends', '', $name);
+				$name = trim($name);
+				$name = substr($name,1,-1);
+
+				$path = \Ant::settings('path') . "/" . str_replace('.', '/', $name) . '.php';
 
 				$io = IO::init()->in($path);
 				$c = $io->get();
 				$io->out();
 
 				$sections = array();
-				preg_match_all('/{@section.*?}.*?{@(rewrite|append|prepend)}/ms',self::$share_buffer,$sections);
+				preg_match_all('/{@section.*?}.*?{@(rewrite|append|prepend)}/ms',$v,$sections);
 
 				$map = array();
 				if(isset($sections[0])){
@@ -67,11 +66,11 @@
 						'/{@section\s*?\(\s*?' . $value[0] . '\s*?\)\s*?}(.*)?{@end}/ms',
 						function($e)use($value){
 							switch($value[2]){
-								case 'append':
+								case 'prepend':
 									return '{@section(' . $value[0] . ')}' . $value[1] . $e[1] . '{@end}';
 								break;
 
-								case 'prepend':
+								case 'append':
 									return '{@section(' . $value[0] . ')}' . $e[1] . $value[1] . '{@end}';
 								break;
 
