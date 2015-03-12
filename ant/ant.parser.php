@@ -21,57 +21,79 @@
 
 			public static function xtends($e)
 			{
-				$v = $e[0];
+				if(false == function_exists('resolve_chain')){
+					function resolve_chain($tmpl){
+						$name = array();
+						preg_match('/{@extends.+?}/',$tmpl,$name);
 
-				$name = array();
-				preg_match('/{@extends.+?}/',$v,$name);
+						if(!$name)
+							return false;
 
-				$name = $name[0];
-				$name = trim($name,'{}');
-				$name = str_replace('@extends', '', $name);
-				$name = trim($name);
-				$name = substr($name,1,-1);
+						$name = $name[0];
+						$name = trim($name,'{}');
+						$name = str_replace('@extends', '', $name);
+						$name = trim($name);
+						$name = substr($name,1,-1);
 
-				$path = \Ant::settings('path') . "/" . str_replace('.', '/', $name) . '.php';
+						$path = \Ant::settings('path') . DIRECTORY_SEPARATOR  . str_replace('.', DIRECTORY_SEPARATOR , $name) . '.php';
 
-				$io = IO::init()->in($path);
-				$c = $io->get();
-				$io->out();
+						$io = IO::init()->in($path);
+						$c = $io->get();
+						$io->out();
 
-				$sections = array();
-				preg_match_all('/{@section.*?}.*?{@(rewrite|append|prepend)}/ms',$v,$sections);
+						return $c;
+					}
+				}
+
+				$tmpl = $local = $e[0];
+
+				$chain = array($local);
+				while(true){	
+					$local = resolve_chain($local);
+					if(false === $local)
+						break;
+					else
+						$chain[]= $local;  
+				}
+
+				$chain = array_reverse($chain);
+				$tmpl = implode('',$chain);
+
+				unset($local);
+
+				$inject = array();
+				preg_match_all('/{@inject.*?}.*?{@(rewrite|append|prepend)}/ms',$tmpl,$inject);
 
 				$map = array();
-				if(isset($sections[0])){
-					foreach($sections[0] as $k=>$s){
+				if(isset($inject[0])){
+					foreach($inject[0] as $k=>$s){
 						$m = array();
-						preg_match('/{@section.*?}/',$s,$m);
+						preg_match('/{@inject.*?}/',$s,$m);
 
-						$name = trim(str_replace('@section','',$m[0]),' {()}');
+						$name = trim(str_replace('@inject','',$m[0]),' {()}');
 
-						$s = preg_replace('/{@section\s*?\(\s*?' . $name . '\s*?\)\s*?}/','',$s);
-						$s = str_replace('{@' . $sections[1][$k] . '}','',$s);
+						$s = preg_replace('/{@inject\s*?\(\s*?' . $name . '\s*?\)\s*?}/','',$s);
+						$s = str_replace('{@' . $inject[1][$k] . '}','',$s);
 
 						$map[] = array(
 							$name,
 							$s,
-							$sections[1][$k]
+							$inject[1][$k]
 						);
 					}
 				}
-				
 
 				foreach($map as $key=>$value){
-					$c = preg_replace_callback(
-						'/{@section\s*?\(\s*?' . $value[0] . '\s*?\)\s*?}(.*)?{@end}/ms',
+					$tmpl = preg_replace_callback(
+						'/{@section\s*?\(\s*?' . $value[0] . '\s*?\)\s*?}.*?{@end}/ms',
 						function($e)use($value){
 							switch($value[2]){
 								case 'prepend':
-									return '{@section(' . $value[0] . ')}' . $value[1] . $e[1] . '{@end}';
+									return '{@section(' . $value[0] . ')}' . $value[1] . $e[0] . '{@end}';
 								break;
 
 								case 'append':
-									return '{@section(' . $value[0] . ')}' . $e[1] . $value[1] . '{@end}';
+									return '{@section(' . $value[0] . ')}' . $e[0] . $value[1] . '{@end}';
 								break;
 
 								case 'rewrite':
@@ -79,14 +101,20 @@
 								break;
 							}
 						},
-						$c
+						$tmpl
 					);
+
+					//echo '<pre>';
+					//var_dump($tmpl);
+					//echo '</pre>';
+					//echo '<hr>';
 				}
 
-				$c = preg_replace('/{@section.*?}/','', $c);
-				$c = preg_replace('/{@(rewrite|append|prepend|end)}/','',$c);
+				$tmpl = str_replace($chain,'',$tmpl);
+				$tmpl = preg_replace('/{@(section|inject).*?}/','', $tmpl);
+				$tmpl = preg_replace('/{@(rewrite|append|prepend|end)}/','',$tmpl);
 
-				return $c;
+				return $tmpl;
 			}
 
 			public static function comment($e)

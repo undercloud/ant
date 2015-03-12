@@ -1,10 +1,10 @@
 {@extends(index)}
 
-{@section (   main ) } 
-<div>THIS CONTENT WAS REWRITED</div>
-{@rewrite}
+{@inject(main)} 
+<div>THIS CONTENT WAS prepended</div>
+{@prepend}
 
 
-{@section(main)} 
+{@inject(main)} 
 <div>THIS CONTENT WAS Appended Mazafucked aga</div>
 {@append}
