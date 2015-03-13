@@ -6,8 +6,8 @@
 			public static function parse($s)
 			{
 				$s = preg_replace_callback('/{@extends.*/ms', 'Ant\Parser::xtends', $s);
-				$s = preg_replace('/{@section.*?}.*?{@(rewrite|append|prepend)}/ms', '', $s);
-				$s = preg_replace_callback('/{\*.*\*}/ms', 'Ant\Parser::comment', $s);
+				//$s = preg_replace('/{@inject.*?}.*?{@(rewrite|append|prepend)}/ms', '', $s);
+				$s = preg_replace_callback('/{\*.*?\*}/ms', 'Ant\Parser::comment', $s);
 				$s = preg_replace_callback('/{{{.+?}}}/', 'Ant\Parser::escape', $s);
 				$s = preg_replace_callback('/{{.+?}}/', 'Ant\Parser::variable', $s);
 				$s = preg_replace_callback('/{@import.+?}/', 'Ant\Parser::import', $s);
@@ -103,11 +103,6 @@
 						},
 						$tmpl
 					);
-
-					//echo '<pre>';
-					//var_dump($tmpl);
-					//echo '</pre>';
-					//echo '<hr>';
 				}
 
 				$tmpl = str_replace($chain,'',$tmpl);
