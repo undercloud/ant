@@ -3,10 +3,13 @@
 	{
 		class Parser 
 		{
+			private static $skips = array();
+
 			public static function parse($s)
 			{
 				//$s = preg_replace_callback('/{@extends.*/ms', 'Ant\Parser::xtends', $s);
 				//$s = preg_replace('/{@inject.*?}.*?{@(rewrite|append|prepend)}/ms', '', $s);
+				$s = preg_replace_callback('/@skip.+?@endskip/ms', 'Ant\Parser::skip', $s);
 				$s = preg_replace_callback('/{\*.*?\*}/ms', 'Ant\Parser::comment', $s);
 				$s = preg_replace_callback('/@?{{{.+?}}}/', 'Ant\Parser::escape', $s);
 				$s = preg_replace_callback('/@?{{.+?}}/', 'Ant\Parser::variable', $s);
@@ -14,10 +17,35 @@
 				$s = preg_replace_callback('/@forelse.+/', 'Ant\Parser::forelse', $s);
 				$s = preg_replace_callback('/@empty/', 'Ant\Parser::isempty', $s);
 				$s = preg_replace_callback('/@endforelse/', 'Ant\Parser::endforelse', $s);
-				$s = preg_replace_callback('/@(foreach|for|while|switch|case|break|default|continue|end|if|else).+/', 'Ant\Parser::control', $s);
+				$s = preg_replace_callback('/@(foreach|for|while|switch|case|break|default|continue|endforeach|endfor|endwhile|endswitch|endif|if|else).+/', 'Ant\Parser::control', $s);
+
 				$s = str_replace('@{{','{{', $s);
 
+				if(self::$skips){
+					$s = str_replace(
+						array_keys(self::$skips),
+						array_values(self::$skips),
+						$s
+					);
+
+					self::$skips = array();
+				}
+				
+				$s = str_replace(
+					array('@php','@endphp','@skip','@endskip'),
+					array('<?php','?>','',''),
+					$s
+				);
+
 				return $s;
+			}
+
+			public static function skip($e)
+			{
+				$uniqid = '~SKIP_' . strtoupper(uniqid()) . '_CONTENT~';
+				self::$skips[$uniqid] = $e[0];
+
+				return $uniqid;
 			}
 
 			/*public static function xtends($e)
