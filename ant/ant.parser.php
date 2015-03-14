@@ -10,6 +10,7 @@
 				//$s = preg_replace_callback('/{@extends.*/ms', 'Ant\Parser::xtends', $s);
 				//$s = preg_replace('/{@inject.*?}.*?{@(rewrite|append|prepend)}/ms', '', $s);
 				$s = preg_replace_callback('/@skip.+?@endskip/ms', 'Ant\Parser::skip', $s);
+				$s = preg_replace_callback('/@php.+?@endphp/ms', 'Ant\Parser::skip', $s);
 				$s = preg_replace_callback('/{\*.*?\*}/ms', 'Ant\Parser::comment', $s);
 				$s = preg_replace_callback('/@?{{{.+?}}}/', 'Ant\Parser::escape', $s);
 				$s = preg_replace_callback('/@?{{.+?}}/', 'Ant\Parser::variable', $s);
@@ -42,7 +43,7 @@
 
 			public static function skip($e)
 			{
-				$uniqid = '~SKIP_' . strtoupper(uniqid()) . '_CONTENT~';
+				$uniqid = '~SKIP_' . strtoupper(uniqid()) . count(self::$skips) . '_CONTENT~';
 				self::$skips[$uniqid] = $e[0];
 
 				return $uniqid;

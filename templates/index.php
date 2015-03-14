@@ -6,49 +6,47 @@
 <body>
 	<h1>{{ $.get.ebeleh or 'Dinahuile' }}</h1>
 
-	{@import( header,array('ovarahalla' => range(1,2)) ) }
+	@import(header,array('ovarahalla' => range(1,2)))
 
 	Life is {{ $body.first }}
 
-	{@section(ovarah)}
-		Ovarahalla
-	{@end}
-
 	<input type="text" value="{{{ $escaper.nest }}}" data-host="{{{ $.server.HTTP_HOST }}}">
 
-	some@mail.com
+	@{{ some@mail.com }}
 
-	{@section(main)}
-		Content must be replaced
-	{@end}
-
-	{@if(true == false)}
+	@if(true == false)
 		ebelehae
-	{@elseif(false == false)}
+	@elseif(false == false)
 		wassup
-	{@else}
+	@else
 		ovarahalla
-	{@endif}
+	@endif
 
-	{@if($.get and $.get.x)}
+	@if($.get and $.get.x)
 		<h1>{{ $.get.x }}</h1>
-	{@endif}
+	@endif
 
 	<ul>
-	{@foreach($inside_suka.arr as $k=>$v)}
+	@foreach($inside_suka.arr as $k=>$v)
 		<li>{{ $v.id }} - {{ $v.name }}</li>
-	{@endforeach}
+	@endforeach
 	</ul>
 
-	{@
-		$x = md5(time());
-		echo $x;
-	}
-
-	{@forelse($mas as $m)}
+	@forelse($mas as $m)
 		{{ $m }}
-	{@empty}
+	@empty
 		Array is empty
-	{@endforelse}
+	@endforelse
+
+	@switch($boom): case 'first'
+		<h1>{{$boom}}</h1>
+		@break; case 'second':
+			<h1>Lalka</h1>
+		@break
+
+		@default
+		<h1>Not boom</h1>
+		@break
+	@endswitch
 </body>
 </html>
