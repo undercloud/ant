@@ -20,6 +20,16 @@
 				if(false === is_array(self::$map))
 					self::$map = array();
 
+				//garbage collector
+				if(mt_rand(0, 100) < 5){
+					foreach(self::$map as $k=>$v){
+						if(false == file_exists($k)){
+							unset(self::$map[$k]);
+							$this->is_changed = true;
+						}
+					}
+				}
+
 				$io->out();
 			}
 

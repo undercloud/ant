@@ -5,21 +5,22 @@
 		{
 			public static function parse($s)
 			{
-				$s = preg_replace_callback('/{@extends.*/ms', 'Ant\Parser::xtends', $s);
+				//$s = preg_replace_callback('/{@extends.*/ms', 'Ant\Parser::xtends', $s);
 				//$s = preg_replace('/{@inject.*?}.*?{@(rewrite|append|prepend)}/ms', '', $s);
 				$s = preg_replace_callback('/{\*.*?\*}/ms', 'Ant\Parser::comment', $s);
-				$s = preg_replace_callback('/{{{.+?}}}/', 'Ant\Parser::escape', $s);
-				$s = preg_replace_callback('/{{.+?}}/', 'Ant\Parser::variable', $s);
-				$s = preg_replace_callback('/{@import.+?}/', 'Ant\Parser::import', $s);
-				$s = preg_replace_callback('/{@forelse.+?}/', 'Ant\Parser::forelse', $s);
-				$s = preg_replace_callback('/{@empty}/', 'Ant\Parser::isempty', $s);
-				$s = preg_replace_callback('/{@endforelse}/', 'Ant\Parser::endforelse', $s);
-				$s = preg_replace_callback('/{@.+?}/ms', 'Ant\Parser::control', $s);
+				$s = preg_replace_callback('/@?{{{.+?}}}/', 'Ant\Parser::escape', $s);
+				$s = preg_replace_callback('/@?{{.+?}}/', 'Ant\Parser::variable', $s);
+				$s = preg_replace_callback('/@import.+/', 'Ant\Parser::import', $s);
+				$s = preg_replace_callback('/@forelse.+/', 'Ant\Parser::forelse', $s);
+				$s = preg_replace_callback('/@empty/', 'Ant\Parser::isempty', $s);
+				$s = preg_replace_callback('/@endforelse/', 'Ant\Parser::endforelse', $s);
+				$s = preg_replace_callback('/@(foreach|for|while|switch|case|break|default|continue|end|if|else).+/', 'Ant\Parser::control', $s);
+				$s = str_replace('@{{','{{', $s);
 
 				return $s;
 			}
 
-			public static function xtends($e)
+			/*public static function xtends($e)
 			{
 				if(false == function_exists('resolve_chain')){
 					function resolve_chain($tmpl){
@@ -110,20 +111,16 @@
 				$tmpl = preg_replace('/{@(rewrite|append|prepend|end)}/','',$tmpl);
 
 				return $tmpl;
-			}
+			}*/
 
 			public static function comment($e)
 			{
-				return '';
+				return '<?php /*' . $e[0] . '*/ ?>';
 			}
 
 			public static function import($e)
 			{
-				$v = $e[0];
-				
-				$v = trim($v,'{}');
-				$v = str_replace('@import', '', $v);
-				$v = trim($v);
+				$v = trim(str_replace('@import', '', $e[0]));
 				$v = substr($v,1,-1);
 				
 				$as = false;
@@ -141,12 +138,11 @@
 
 			public static function variable($e)
 			{
-				$v = $e[0];
+				if($e[0][0] == '@')
+					return $e[0];
 
-				$v = str_replace('{{', '', $v);
-				$v = str_replace('}}', '', $v);
-				$v = trim($v);
-
+				$v = trim(str_replace(array('{{','}}'), '', $e[0]));
+				
 				$v = \Ant\Helper::findVariable($v);
 				$v = \Ant\Helper::findOr($v);
 				
@@ -155,11 +151,10 @@
 
 			public static function escape($e)
 			{
-				$v = $e[0];
+				if($e[0][0] == '@')
+					return $e[0];
 
-				$v = str_replace('{{{', '', $v);
-				$v = str_replace('}}}', '', $v);
-				$v = trim($v);
+				$v = trim(str_replace(array('{{{','}}}'), '', $e[0]));
 
 				$v = \Ant\Helper::findVariable($v);
 				$v = \Ant\Helper::findOr($v);
@@ -169,10 +164,7 @@
 
 			public static function control($e)
 			{
-				$v = $e[0];
-
-				$v = substr($v,2,-1);
-				$v = trim($v);
+				$v = trim(ltrim($e[0],'@'));
 
 				$v = \Ant\Helper::findVariable($v);
 
@@ -181,9 +173,12 @@
 					0 === strpos($v, 'else') ||
 					0 === strpos($v, 'for') ||
 					0 === strpos($v, 'while') ||
-					0 === strpos($v, 'switch')
+					0 === strpos($v, 'switch') ||
+					0 === strpos($v, 'case') ||
+					0 === strpos($v, 'default')
 				){
-					$v .= ':';
+					if(':' != substr($v,-1))	
+						$v .= ':';
 				}else{
 					$v .= ';';
 				}
@@ -198,8 +193,7 @@
 				$m = array();
 				preg_match('/\$[A-z0-9_.]+/',$v,$m);
 
-				$foreach = str_replace('{@forelse', 'foreach', $v);
-				$foreach = str_replace('}', '', $foreach);
+				$foreach = trim(str_replace('@forelse', 'foreach', $v));
 
 				$parsed = \Ant\Helper::parseVariable($m[0]);
 
