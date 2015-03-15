@@ -7,9 +7,9 @@
 			private $is_changed = false;
 			private $cache_file = null;
 
-			public function __construct($cache_file = false)
+			public function __construct($cache_path = false)
 			{
-				$this->cache_file = $cache_file;
+				$this->cache_file = $cache_path . DIRECTORY_SEPARATOR . 'cache.json';
 			}
 
 			public function getMap()
