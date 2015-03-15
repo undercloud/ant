@@ -94,6 +94,10 @@ p {
 .code-wrap {
 	overflow: auto;
 	font-size: 14px;
+	background: #f7f7f7;
+	padding: 10px;
+	padding-left: 20px;
+	margin: 10px 0;
 }
 
 @media screen and (max-width: 800px) {
