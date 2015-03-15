@@ -34,8 +34,9 @@ Sed dapibus sit amet neque faucibus pretium. Phasellus hendrerit odio eros, in m
 				<div class="code-wrap">
 					<code class=" language-php">
 &lt;?php
-	require 'ant.php';
+	require '/path/to/ant.php';
 
+	/* global init */
 	Ant::init()
 	->setup(
 		array(
@@ -44,6 +45,18 @@ Sed dapibus sit amet neque faucibus pretium. Phasellus hendrerit odio eros, in m
 			'map'   => $_SERVER['DOCUMENT_ROOT'] . '/trunk/cache.json'
 		)
 	);
+
+	...
+
+	/* usage */
+	echo Ant::init()
+	->get('index')
+	->assign(
+		array(
+			'title' => 'Welcome'
+		)
+	)
+	->draw()
 ?&gt;
 					</code>
 				</div>

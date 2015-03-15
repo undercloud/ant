@@ -1,0 +1,116 @@
+body {
+	font-family: "PT Sans";
+	color: #383838;
+	width: 100%;
+	height: 100%;
+	font-size: 15px;
+}
+
+.container
+{
+	position: relative;
+	width: 100%;
+}
+
+.head,
+.content {
+	width: 50%;
+	position: relative;
+	box-sizing: border-box;
+}
+
+.head {
+	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-image: url(http://d3thflcq1yqzn0.cloudfront.net/023501208_prevstill.jpeg);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: auto 100%;
+}
+
+.content {
+	margin-left: 50%;
+	padding: 0 20px;
+}
+
+.head .fade {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background-color: #434143;
+	opacity: 0.5;
+}
+
+.ant-title {
+	color: white;
+	font-weight: bold;
+	font-size: 72px;
+	text-align: center;
+}
+
+.ant-title:before,
+.ant-title:after {
+	content: "";
+	border-top: 1px solid #fff;
+	width: 50px;
+	display: inline-block;
+	margin: 0 15px;
+	top: -25px;
+	position: relative;
+}
+
+.ant-subtitle {
+	color: #fff;
+	font-size: 20px;
+	text-align: center;
+}
+
+.titles-wrap {
+	margin-top: 30%;
+	background-color: rgba(22,22,22,0.5);
+	padding-bottom: 15px;
+}
+
+.github-button {
+	background-color: #22A7F0;
+	margin: 10px auto;
+	width: 200px;
+	text-align: center;
+	color: #fff;
+	padding: 10px 0;
+	border-radius: 5px;
+	font-size: 15px;
+	line-height: 30px;
+}
+
+p {
+	text-indent: 20px;
+}
+
+.code-wrap {
+	overflow: auto;
+	font-size: 14px;
+}
+
+@media screen and (max-width: 800px) {
+	.head {
+		position: relative;
+		width: 100%;
+		height: auto;
+		padding: 50px 0;
+		background-size: 200% auto;
+	}
+
+	.head .titles-wrap {
+		margin-top: 0;
+	}
+
+	.content {
+		width: 100%;
+		margin-left: 0;
+	}
+}
