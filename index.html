@@ -6,14 +6,14 @@
 		<title>ANT - Awesome New Templates</title>
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.2/normalize.min.css">
 		<link rel="stylesheet" type="text/css" href="css/style.css">
-
-		<script type="text/javascript" src="js/prism.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/prism.css">
+
+		<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+		<script type="text/javascript" src="js/prism.js"></script>
 	</head>
 	<body>
 		<div class="container">
 			<div class="head">
-				<!--div class="fade"></div-->
 				<div class="titles-wrap">
 					<div class="ant-title">ANT</div>
 					<div class="ant-subtitle">Awesome New Templates</div>
@@ -23,50 +23,42 @@
 			<div class="content">
 				<h1>Getting Started</h1>
 				<div class="code-wrap">
-					<code class=" language-php">
-&lt;?php
-	require '/path/to/ant.php';
+					<code class="language-php" src="source/example_01.txt"></code>
+				</div>
 
-	/* global init */
-	Ant::init()
-	->setup(
-		array(
-			'path'  => $_SERVER['DOCUMENT_ROOT'] . '/trunk/templates',
-			'cache' => $_SERVER['DOCUMENT_ROOT'] . '/trunk/cache',
-			'map'   => $_SERVER['DOCUMENT_ROOT'] . '/trunk/cache.json'
-		)
-	);
+				<div class="code-wrap">
+					<code class="language-markup" src="source/example_02.txt"></code>
+				</div>
 
-	...
+				<div class="code-wrap">
+					<code class="language-php" src="source/example_03.txt"></code>
+				</div>
 
-	/* usage */
-	echo Ant::init()
-	->get('index')
-	->assign(
-		array(
-			'title' => 'Welcome'
-		)
-	)
-	->draw()
-?&gt;</code>
-</div>
+				<div class="code-wrap">
+					<code class="language-php" src="source/example_04.txt"></code>
+				</div>
 
-<div class="code-wrap">
-	<code class="language-markup">
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-	&lt;head&gt;
-		&lt;title&gt;{{ $title }}&lt;/title&gt;
-	&lt;/head&gt;
-	&lt;body&gt;
-		{{ $content }}
-	&lt;/body&gt;
-&lt;/html&gt;</code>
-</div>
+				<div class="code-wrap">
+					<code class="language-php" src="source/example_05.txt"></code>
+				</div>
+
+				<div class="code-wrap">
+					<code class="language-php" src="source/example_06.txt"></code>
+				</div>
 			</div>
 		</div>
 		<script type="text/javascript">
-			Prism.highlightAll()
-			</script>
+			$(document).ready(function(){
+				$('code').each(function(i,d){
+					$.get(
+						$(d).attr('src'),
+						function(data){
+							$(d).text(data).removeAttr('src')
+							Prism.highlightElement($(d).get(0))
+						}
+					)
+				})
+			})
+		</script>
 	</body>
 </html>

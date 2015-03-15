@@ -1,0 +1,25 @@
+<?php
+	require '/path/to/ant.php';
+
+	/* global init */
+	Ant::init()
+	->setup(
+		array(
+			'view'  => '/path/to/templates',
+			'cache' => '/path/to/cache'
+		)
+	);
+
+	...
+
+	/* usage */
+	echo Ant::init()
+	->get('index')
+	->assign(
+		array(
+			'title' => 'Welcome',
+			'content' => 'Hello'
+		)
+	)
+	->draw()
+?>

@@ -22,6 +22,7 @@ body {
 .head {
 	height: 100%;
 	position: fixed;
+	 display: table;
 	top: 0;
 	left: 0;
 	background-image: url(http://d3thflcq1yqzn0.cloudfront.net/023501208_prevstill.jpeg);
@@ -50,6 +51,7 @@ body {
 	font-weight: bold;
 	font-size: 72px;
 	text-align: center;
+	white-space: nowrap;
 }
 
 .ant-title:before,
@@ -73,6 +75,8 @@ body {
 	margin-top: 30%;
 	background-color: rgba(22,22,22,0.5);
 	padding-bottom: 15px;
+	display: table-cell;
+	vertical-align: middle;
 }
 
 .github-button {
