@@ -12,7 +12,7 @@
 
 	<input type="text" value="<?php echo htmlentities($escaper['nest'],ENT_QUOTES,"UTF-8");?>" data-host="<?php echo htmlentities($_SERVER['HTTP_HOST'],ENT_QUOTES,"UTF-8");?>">
 
-	{{ some@mail.com }}
+	 @{{ some@mail.com }} 
 
 	<?php if(true == false):?>
 		ebelehae

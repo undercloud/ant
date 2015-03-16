@@ -12,15 +12,13 @@
 				$s = preg_replace_callback('/@skip.+?@endskip/ms', 'Ant\Parser::skip', $s);
 				$s = preg_replace_callback('/@php.+?@endphp/ms', 'Ant\Parser::skip', $s);
 				$s = preg_replace_callback('/{\*.*?\*}/ms', 'Ant\Parser::comment', $s);
-				$s = preg_replace_callback('/@?{{{.+?}}}/', 'Ant\Parser::escape', $s);
-				$s = preg_replace_callback('/@?{{.+?}}/', 'Ant\Parser::variable', $s);
+				$s = preg_replace_callback('/{{{.+?}}}/', 'Ant\Parser::escape', $s);
+				$s = preg_replace_callback('/{{.+?}}/', 'Ant\Parser::variable', $s);
 				$s = preg_replace_callback('/@import.+/', 'Ant\Parser::import', $s);
 				$s = preg_replace_callback('/@forelse.+/', 'Ant\Parser::forelse', $s);
 				$s = preg_replace_callback('/@empty/', 'Ant\Parser::isempty', $s);
 				$s = preg_replace_callback('/@endforelse/', 'Ant\Parser::endforelse', $s);
 				$s = preg_replace_callback('/@(foreach|for|while|switch|case|break|default|continue|endforeach|endfor|endwhile|endswitch|endif|if|else).+/', 'Ant\Parser::control', $s);
-
-				$s = str_replace('@{{','{{', $s);
 
 				if(self::$skips){
 					$s = str_replace(
@@ -43,7 +41,7 @@
 
 			public static function skip($e)
 			{
-				$uniqid = '~SKIP_' . strtoupper(uniqid()) . count(self::$skips) . '_CONTENT~';
+				$uniqid = '~SKIP_' . strtoupper(str_replace('.','',uniqid('',true))) . '_CONTENT~';
 				self::$skips[$uniqid] = $e[0];
 
 				return $uniqid;
@@ -156,9 +154,9 @@
 				$pos = strpos($v,',');
 
 				if(false === $pos){
-					$t = trim($v);
+					$t = trim(trim($v),"'\"");
 				}else{
-					$t = trim(substr($v,0,$pos));
+					$t = trim(trim(substr($v,0,$pos)),"'\"");
 					$as = trim(substr($v,$pos + 1));
 				}
 
@@ -167,9 +165,6 @@
 
 			public static function variable($e)
 			{
-				if($e[0][0] == '@')
-					return $e[0];
-
 				$v = trim(str_replace(array('{{','}}'), '', $e[0]));
 				
 				$v = \Ant\Helper::findVariable($v);
@@ -180,9 +175,6 @@
 
 			public static function escape($e)
 			{
-				if($e[0][0] == '@')
-					return $e[0];
-
 				$v = trim(str_replace(array('{{{','}}}'), '', $e[0]));
 
 				$v = \Ant\Helper::findVariable($v);

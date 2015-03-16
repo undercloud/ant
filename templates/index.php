@@ -6,13 +6,13 @@
 <body>
 	<h1>{{ $.get.ebeleh or 'Dinahuile' }}</h1>
 
-	@import(header,array('ovarahalla' => range(1,2)))
+	@import("header",array('ovarahalla' => range(1,2)))
 
 	Life is {{ $body.first }}
 
 	<input type="text" value="{{{ $escaper.nest }}}" data-host="{{{ $.server.HTTP_HOST }}}">
 
-	@{{ some@mail.com }}
+	@skip @{{ some@mail.com }} @endskip
 
 	@if(true == false)
 		ebelehae
