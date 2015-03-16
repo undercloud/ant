@@ -1,0 +1,1 @@
+<?php (isset($variable) and $variable) ? $variable : 'Default'; ?>
