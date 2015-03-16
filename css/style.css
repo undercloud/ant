@@ -6,8 +6,7 @@ body {
 	font-size: 15px;
 }
 
-.container
-{
+.container {
 	position: relative;
 	width: 100%;
 }
@@ -73,22 +72,30 @@ body {
 
 .titles-wrap {
 	margin-top: 30%;
-	background-color: rgba(22,22,22,0.5);
+	background-color: rgba(22,22,22,0.25);
 	padding-bottom: 15px;
 	display: table-cell;
 	vertical-align: middle;
 }
 
 .github-button {
-	background-color: #22A7F0;
+	background-color: #46b98a;
 	margin: 10px auto;
-	width: 200px;
+	border: 0 none;
+	border-radius: 2px 2px 2px 2px;
+	color: #FFFFFF;
+	cursor: pointer;
+	font-family: Arial,sans-serif;
+	font-size: 13px;
+	line-height: 20px;
+	margin-bottom: 0;
+	padding: 7px 10px;
+	text-transform: none;
+	transition: all 0.3s ease 0s;
+	-moz-transition: all 0.3s ease 0s;
+	-webkit-transition: all 0.3s ease 0s;
+	width: 16.795%;
 	text-align: center;
-	color: #fff;
-	padding: 10px 0;
-	border-radius: 5px;
-	font-size: 15px;
-	line-height: 30px;
 }
 
 p {
