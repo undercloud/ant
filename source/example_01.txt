@@ -5,7 +5,9 @@
 	Ant::init()
 	->setup(
 		array(
+			//readable path
 			'view'  => '/path/to/templates',
+			//readable and wrireable path
 			'cache' => '/path/to/cache'
 		)
 	);
@@ -14,7 +16,7 @@
 
 	/* usage */
 	echo Ant::init()
-	->get('index')
+	->get('path.to.index')
 	->assign(
 		array(
 			'title' => 'Welcome',

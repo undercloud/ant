@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+	</head>
+	<body>
+		@import('header')
+
+		...
+
+		@import('main',array('comments' => $comments))
+
+		...
+
+		@import('footer')
+	</body>
+</html>

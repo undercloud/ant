@@ -79,23 +79,33 @@ body {
 }
 
 .github-button {
-	background-color: #46b98a;
+	display: block;
+	background-color: #cf2227;
+	background-image: linear-gradient(to bottom, #F7272D, #A11217);
 	margin: 10px auto;
 	border: 0 none;
-	border-radius: 2px 2px 2px 2px;
+	border-radius: 3px;
 	color: #FFFFFF;
 	cursor: pointer;
 	font-family: Arial,sans-serif;
 	font-size: 13px;
 	line-height: 20px;
-	margin-bottom: 0;
-	padding: 7px 10px;
-	text-transform: none;
-	transition: all 0.3s ease 0s;
-	-moz-transition: all 0.3s ease 0s;
-	-webkit-transition: all 0.3s ease 0s;
-	width: 16.795%;
+	padding: 15px 30px;
 	text-align: center;
+	width: 100px;
+	text-decoration: none;
+	position: relative;
+}
+
+.github-button:active {
+	top: 2px;
+	left: 2px;
+}
+
+h1 {
+	font-weight: normal;
+	color: #cf2227;
+	font-size: 22px;
 }
 
 p {

@@ -1,0 +1,5 @@
+@forelse ($comments as $c)
+	{{ $c.text }}
+@empty
+	no comments...
+@endforelse
