@@ -26,6 +26,30 @@
 				 - lower
 				 - format digit
 			*/
+
+			public static function escape($s)
+			{
+				return htmlentities($s,ENT_QUOTES,'UTF-8');
+			}
+
+			public static function capitalize($s)
+			{
+				$enc = mb_detect_encoding($s);
+				return mb_strtoupper(
+					mb_substr($str, 0, 1, $enc), $enc) .
+					mb_substr($str, 1, mb_strlen($str, $enc), $enc
+				); 
+			}
+
+			public static function upper($s)
+			{
+				return mb_strtoupper($s,mb_detect_encoding($s));
+			}
+
+			public static function lower($s)
+			{
+				return mb_strtolower($s,mb_detect_encoding($s));
+			}
 		}
 	}
 ?>
