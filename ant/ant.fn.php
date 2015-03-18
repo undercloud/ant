@@ -60,6 +60,16 @@
 			{
 				return http_build_query($a);
 			}
+
+			public static function whitespace($s)
+			{
+				return preg_replace('/\s+/',' ',$s);
+			}
+
+			public static function doctype($d = 'HTML5')
+			{
+				
+			}
 		}
 	}
 ?>
