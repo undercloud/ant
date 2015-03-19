@@ -17,14 +17,17 @@
 				$io = IO::init()->in($this->cache_file);
 				self::$map = json_decode($io->get(),true);
 
-				if(false === is_array(self::$map))
+				if(false == is_array(self::$map))
 					self::$map = array();
+
+				if(false === is_array(self::$map['view']))
+					self::$map['view'] = array();
 
 				//garbage collector
 				if(mt_rand(0, 100) < 5){
-					foreach(self::$map as $k=>$v){
+					foreach(self::$map['view'] as $k=>$v){
 						if(false == file_exists($k)){
-							unset(self::$map[$k]);
+							unset(self::$map['view'][$k]);
 							$this->is_changed = true;
 						}
 					}
@@ -39,11 +42,11 @@
 					$this->getMap();
 
 				$mtime = filemtime($path);
-				if(array_key_exists($path, self::$map))
-					if(self::$map[$path] == $mtime)
+				if(array_key_exists($path, self::$map['view']))
+					if(self::$map['view'][$path] == $mtime)
 						return true;
 
-				self::$map[$path] = $mtime;
+				self::$map['view'][$path] = $mtime;
 				$this->is_changed = true;
 
 				return false;
