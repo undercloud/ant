@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+###---<!DOCTYPE html>
 <html>
 <head>
 	<title><?php echo $title;?> <?php echo $body['second'];?> <?php echo $_SERVER['DOCUMENT_ROOT'];?></title>
@@ -49,4 +49,4 @@
 		<?php break;?>
 	<?php endswitch;?>
 </body>
-</html>
+</html>---###
