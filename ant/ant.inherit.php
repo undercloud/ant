@@ -29,7 +29,7 @@
 				);
 			}
 
-			public static function resolveChain($path,$view)
+			public static function resolveChain($view,$path,$ant)
 			{
 				$chain = $next = array(
 					'path' => $path,
@@ -47,9 +47,9 @@
 				return array_reverse($chain);
 			}
 
-			public static function extend($path,$view)
+			public static function extend($view,$path,$ant)
 			{
-				$chain = self::resolveChain($path,$view);
+				$chain = self::resolveChain($view,$path,$ant);
 				$view = implode('',array_values($chain));
 
 				return $view;

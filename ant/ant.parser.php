@@ -5,11 +5,12 @@
 		{
 			private static $skips = array();
 
-			public static function parse($view,$path = false)
+			public static function parse($view,$path = false,$ant = null)
 			{
 				//$s = preg_replace_callback('/{@extends.*/ms', 'Ant\Parser::xtends', $s);
 				//$s = preg_replace('/{@inject.*?}.*?{@(rewrite|append|prepend)}/ms', '', $s);
-				$view = \Ant\Inherit::extend($path,$view);
+
+				$view = \Ant\Inherit::extend($view,$path,$ant);
 				$view = preg_replace_callback('/@skip.+?@endskip/ms', 'Ant\Parser::skip', $view);
 				$view = preg_replace_callback('/@php.+?@endphp/ms', 'Ant\Parser::skip', $view);
 				$view = preg_replace_callback('/{\*.*?\*}/ms', 'Ant\Parser::comment', $view);
