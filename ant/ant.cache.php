@@ -23,6 +23,9 @@
 				if(false === is_array(self::$map['view']))
 					self::$map['view'] = array();
 
+				if(false === is_array(self::$map['chain']))
+					self::$map['chain'] = array();
+
 				//garbage collector
 				if(mt_rand(0, 100) < 5){
 					foreach(self::$map['view'] as $k=>$v){
@@ -41,6 +44,10 @@
 				if(null === self::$map)
 					$this->getMap();
 
+				if(array_key_exists($path, self::$map['chain']) and self::$map['chain']){
+					
+				}
+
 				$mtime = filemtime($path);
 				if(array_key_exists($path, self::$map['view']))
 					if(self::$map['view'][$path] == $mtime)
@@ -50,6 +57,15 @@
 				$this->is_changed = true;
 
 				return false;
+			}
+
+			public function chain($path,$chain)
+			{
+				if(null === self::$map)
+					$this->getMap();
+
+				self::$map['chain'][$path] = $chain;
+				$this->is_changed = true;
 			}
 
 			public function __destruct()

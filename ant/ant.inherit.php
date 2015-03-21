@@ -6,19 +6,15 @@
 			public static function checkNext($view)
 			{
 				$name = array();
-				preg_match('/{@extends.+?}/',$view,$name);
+				preg_match('/@extends.+\)/',$view,$name);
 
 				if(!$name)
 					return false;
 
-				$name = $name[0];
-				$name = trim($name,'{}');
-				$name = str_replace('@extends', '', $name);
-				$name = trim($name);
-				$name = substr($name,1,-1);
+				$name = trim(str_replace(array('@extends','(',')','"','\''), '', $name[0]));
 
-				$path = \Ant::settings('path') . DIRECTORY_SEPARATOR  . str_replace('.', DIRECTORY_SEPARATOR , $name) . '.php';
-
+				$path = \Ant::settings('view') . DIRECTORY_SEPARATOR  . \Ant\Helper::realPath($name) . '.php';
+				
 				$io = IO::init()->in($path);
 				$nextview = $io->get();
 				$io->out();
@@ -29,80 +25,90 @@
 				);
 			}
 
-			public static function resolveChain($view,$path,$ant)
+			public static function resolveChain($view,$path)
 			{
-				$chain = $next = array(
+				$next = array(
 					'path' => $path,
 					'view' => $view
 				);
+
+				$chain = array($next['view']);
+				$checks = array();
 
 				while(true){	
 					$next = self::checkNext($next['view']);
 					if(false === $next)
 						break;
 					else
-						$chain[$next['path']] = $next['view'];
+						$chain[] = $next['view'];
+
+					$checks[] = $next['path'];
+				}
+
+				if(null !== $path){
+					\Ant::getCache()->chain($path,$checks);
 				}
 
 				return array_reverse($chain);
 			}
 
-			public static function extend($view,$path,$ant)
+			public static function clear($view)
 			{
-				$chain = self::resolveChain($view,$path,$ant);
-				$view = implode('',array_values($chain));
+				return preg_replace(
+					'/@(rewrite|append|prepend|end)/',
+					'',
+					preg_replace('/@(section|inject).+?\)/','', $view)
+				);
+			}
 
-				return $view;
+			public static function extend($view,$path)
+			{
+				$chain = self::resolveChain($view,$path);
 
-				$injects = array();
-				preg_match_all('/{@inject.*?}.*?{@(rewrite|append|prepend)}/ms',$view,$injects);
+				$view = array_shift($chain);
+				foreach($chain as $item){
+					$injects = array();
+					preg_match_all('/@inject.*?@(rewrite|append|prepend)/ms',$item,$injects);
 
-				$map = array();
-				if(isset($injects[0])){
-					foreach($injects[0] as $k=>$s){
-						$m = array();
-						preg_match('/{@inject.*?}/',$s,$m);
+					$map = array();
+					if(isset($injects[0])){
+						foreach($injects[0] as $k=>$s){
+							$m = array();
+							preg_match('/@inject.+\)?/',$s,$m);
+							$name = trim(str_replace(array('@inject','(',')','"','\''),'',$m[0]));
 
-						$name = trim(str_replace('@inject','',$m[0]),' {()}');
+							$map[] = array(
+								$name,
+								trim(self::clear($s)),
+								$injects[1][$k]
+							);
+						}
+					}
 
-						$s = preg_replace('/{@inject\s*?\(\s*?' . $name . '\s*?\)\s*?}/','',$s);
-						$s = str_replace('{@' . $injects[1][$k] . '}','',$s);
+					foreach($map as $key=>$value){
+						$view = preg_replace_callback(
+							'/@section\s*?\(\s*?\'' . $value[0] . '\'\s*?\)\s*?.*?@end/ms',
+							function($e)use($value){
+								switch($value[2]){
+									case 'prepend':
+										return '@section(\'' . $value[0] . '\')' . $value[1] . Inherit::clear($e[0]) . '@end';
+									break;
 
-						$map[] = array(
-							$name,
-							$s,
-							$injects[1][$k]
+									case 'append':
+										return '@section(\'' . $value[0] . '\')' . Inherit::clear($e[0]) . $value[1] . '@end';
+									break;
+
+									case 'rewrite':
+										return '@section(\'' . $value[0] . '\')' . $value[1] . '@end';
+									break;
+								}
+							},
+							$view
 						);
 					}
 				}
 
-				foreach($map as $key=>$value){
-					$view = preg_replace_callback(
-						'/{@section\s*?\(\s*?' . $value[0] . '\s*?\)\s*?}.*?{@end}/ms',
-						function($e)use($value){
-							switch($value[2]){
-								case 'prepend':
-									return '{@section(' . $value[0] . ')}' . $value[1] . $e[0] . '{@end}';
-								break;
-
-								case 'append':
-									return '{@section(' . $value[0] . ')}' . $e[0] . $value[1] . '{@end}';
-								break;
-
-								case 'rewrite':
-									return '{@section(' . $value[0] . ')}' . $value[1] . '{@end}';
-								break;
-							}
-						},
-						$view
-					);
-				}
-
-				$view = str_replace($chain,'',$view);
-				$view = preg_replace('/{@(section|inject).*?}/','', $view);
-				$view = preg_replace('/{@(rewrite|append|prepend|end)}/','',$view);
-
-				return $view;
+				return self::clear($view);
 			}
 		}
 	}

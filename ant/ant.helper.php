@@ -3,6 +3,11 @@
 	{
 		class Helper
 		{
+			public static function realPath($fakepath)
+			{
+				return str_replace('.', DIRECTORY_SEPARATOR, $fakepath);
+			}
+
 			public static function parseVariable($e)
 			{
 				$exp = explode('.',$e);
@@ -30,6 +35,23 @@
 			public static function findOr($e)
 			{
 				return preg_replace('/^(?=\$)(.+?)(?:\s+or\s+)(.+?)$/s', '(isset($1) and $1) ? $1 : $2', $e);
+			}
+
+			public static function compress($buffer)
+			{
+				$search = array(
+					'/\>[^\S ]+/s',  // strip whitespaces after tags, except space
+					'/[^\S ]+\</s',  // strip whitespaces before tags, except space
+					'/(\s)+/s'       // shorten multiple whitespace sequences
+				);
+
+				$replace = array(
+					'>',
+					'<',
+					'\\1'
+				);
+
+				return preg_replace($search, $replace, $buffer);
 			}
 		}
 	}
