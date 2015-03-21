@@ -44,19 +44,38 @@
 				if(null === self::$map)
 					$this->getMap();
 
+				$view_changed = true;
+				$chain_changed = true;
+
 				if(array_key_exists($path, self::$map['chain']) and self::$map['chain']){
-					
+					foreach(self::$map['chain'][$path] as $item){
+						$mtime = filemtime($item);
+						if(
+							false == array_key_exists($item, self::$map['view']) or
+							self::$map['view'][$item] != $mtime
+						){
+							self::$map['view'][$item] = $mtime;
+							$this->is_changed = true;
+							break;
+						}
+					}
+
+					$chain_changed = false;
+				}else{
+					$chain_changed = false;
 				}
 
 				$mtime = filemtime($path);
 				if(array_key_exists($path, self::$map['view']))
 					if(self::$map['view'][$path] == $mtime)
-						return true;
+						$view_changed = false;
 
-				self::$map['view'][$path] = $mtime;
-				$this->is_changed = true;
+				if($view_changed == true){
+					self::$map['view'][$path] = $mtime;
+					$this->is_changed = true;
+				}
 
-				return false;
+				return ($view_changed == false and $chain_changed == false);
 			}
 
 			public function chain($path,$chain)
