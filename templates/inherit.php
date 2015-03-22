@@ -12,6 +12,6 @@
 	@end
 	@section('article')@end
 
-	<h1>GANDARASKA</h1>
+	<h1>GANDARASKA Ti 45</h1>
 </body>
 </html>

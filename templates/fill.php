@@ -5,7 +5,7 @@
 @append
 
 @inject('header')
-<h1>CUSTOME HEADER FOR IT section UX</h1>
+<h1>CUSTOME HEADER FOR IT section UX Aeae</h1>
 @rewrite
 
 @inject('article')

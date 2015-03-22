@@ -6,7 +6,7 @@
 			public static function checkNext($view)
 			{
 				$name = array();
-				preg_match('/@extends.+\)/',$view,$name);
+				preg_match('/@extends.+?\)/',$view,$name);
 
 				if(!$name)
 					return false;
@@ -74,7 +74,7 @@
 					if(isset($injects[0])){
 						foreach($injects[0] as $k=>$s){
 							$m = array();
-							preg_match('/@inject.+\)?/',$s,$m);
+							preg_match('/@inject.+?\)/',$s,$m);
 							$name = trim(str_replace(array('@inject','(',')','"','\''),'',$m[0]));
 
 							$map[] = array(
