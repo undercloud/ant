@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="utf-8">
 	<title>{{ $title }} {{ $body.second }} {{ $.server.DOCUMENT_ROOT }}</title>
 </head>
 <body>

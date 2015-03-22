@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title></title>
+	<meta charset="utf-8">
 	@section('css')
 	{{ Ant::css('ebeleh.css') }}
 	@end
@@ -12,6 +13,6 @@
 	@end
 	@section('article')@end
 
-	<h1>GANDARASKA Ti 45</h1>
+	<h1>Русский текст</h1>
 </body>
 </html>
