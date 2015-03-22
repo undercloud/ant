@@ -35,7 +35,7 @@
 
 			public static function capitalize($s)
 			{
-				$enc = mb_detect_encoding($s);
+				$enc = 'UTF-8';
 				$s = mb_strtolower($s,$enc);
 
 				return mb_strtoupper(mb_substr($s, 0, 1, $enc), $enc) .
@@ -44,12 +44,12 @@
 
 			public static function upper($s)
 			{
-				return mb_strtoupper($s,mb_detect_encoding($s));
+				return mb_strtoupper($s,'UTF-8');
 			}
 
 			public static function lower($s)
 			{
-				return mb_strtolower($s,mb_detect_encoding($s));
+				return mb_strtolower($s,'UTF-8');
 			}
 
 			public static function url(array $a)

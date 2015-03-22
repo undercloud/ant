@@ -15,6 +15,9 @@
 
 				$path = \Ant::settings('view') . DIRECTORY_SEPARATOR  . \Ant\Helper::realPath($name) . '.php';
 				
+				if(false == file_exists($path))
+					throw new Ant\AntException('Template file not found at ' . $path);
+
 				$io = IO::init()->in($path);
 				$nextview = $io->get();
 				$io->out();
@@ -27,6 +30,9 @@
 
 			public static function resolveChain($view,$path)
 			{
+				$view = preg_replace_callback('/@skip.+?@endskip/ms', 'Ant\Parser::skip', $view);
+				$view = preg_replace_callback('/@php.+?@endphp/ms', 'Ant\Parser::skip', $view);
+
 				$next = array(
 					'path' => $path,
 					'view' => $view
@@ -39,8 +45,12 @@
 					$next = self::checkNext($next['view']);
 					if(false === $next)
 						break;
-					else
+					else{
+						$next['view'] = preg_replace_callback('/@skip.+?@endskip/ms', 'Ant\Parser::skip', $next['view']);
+						$next['view'] = preg_replace_callback('/@php.+?@endphp/ms', 'Ant\Parser::skip', $next['view']);
+
 						$chain[] = $next['view'];
+					}
 
 					$checks[] = $next['path'];
 				}

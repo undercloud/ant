@@ -10,7 +10,10 @@
 <body>
 	<h1>CUSTOME HEADER FOR IT section UX Aeae</h1>
 	Lorem ipsum...
+	
+		@section('article') На твоей спине черт @end
+	
 
-	<h1>Русский текст</h1>
+	<h1>Русский текст! Да бичо!</h1>
 </body>
 </html>

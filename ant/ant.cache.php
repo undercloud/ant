@@ -3,12 +3,14 @@
 	{
 		class Cache
 		{
-			public static $map = null;
+			private static $map = null;
 			private $is_changed = false;
+			private $cache_path = null;
 			private $cache_file = null;
 
 			public function __construct($cache_path = false)
 			{
+				$this->cache_path = $cache_path;
 				$this->cache_file = $cache_path . DIRECTORY_SEPARATOR . 'cache.json';
 			}
 
@@ -57,6 +59,18 @@
 							self::$map['view'][$item] != $mtime
 						){
 							self::$map['view'][$item] = $mtime;
+
+							$chain_path = $this->cache_path . DIRECTORY_SEPARATOR . basename($item);
+							if(file_exists($chain_path))
+								unlink($chain_path);
+
+							foreach(self::$map['chain'] as $k=>$v){
+								$chain_path = $this->cache_path . DIRECTORY_SEPARATOR . basename($k);
+								if(in_array($item,$v) and file_exists($chain_path)){
+									unlink($chain_path);
+								}
+							}
+
 							$this->is_changed = $chain_changed = true;
 							break;
 						}

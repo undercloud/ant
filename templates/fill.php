@@ -10,4 +10,7 @@
 
 @inject('article')
 Lorem ipsum...
+	@skip
+		@section('article') На твоей спине черт @end
+	@endskip
 @append

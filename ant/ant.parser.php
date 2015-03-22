@@ -53,74 +53,74 @@
 
 			public static function import($e)
 			{
-				$v = trim(str_replace('@import', '', $e[0]));
-				$v = substr($v,1,-1);
+				$view = trim(str_replace('@import', '', $e[0]));
+				$view = substr($view,1,-1);
 				
 				$as = false;
-				$pos = strpos($v,',');
+				$pos = strpos($view,',');
 
 				if(false === $pos){
-					$t = trim(trim($v),"'\"");
+					$tmpl = trim(trim($view),"'\"");
 				}else{
-					$t = trim(trim(substr($v,0,$pos)),"'\"");
-					$as = trim(substr($v,$pos + 1));
+					$tmpl = trim(trim(substr($view,0,$pos)),"'\"");
+					$as = trim(substr($view,$pos + 1));
 				}
 
-				return '<?php echo \Ant::init()->get("' . $t .'")->' . ($as ? 'assign(' . Helper::parseVariable($as) . ')->' : ''). 'draw(); ?>';
+				return '<?php echo \Ant::init()->get("' . $tmpl .'")->' . ($as ? 'assign(' . Helper::parseVariable($as) . ')->' : ''). 'draw(); ?>';
 			}
 
 			public static function variable($e)
 			{
-				$v = trim(str_replace(array('{{','}}'), '', $e[0]));
+				$view = trim(str_replace(array('{{','}}'), '', $e[0]));
 				
-				$v = \Ant\Helper::findVariable($v);
-				$v = \Ant\Helper::findOr($v);
+				$view = \Ant\Helper::findVariable($view);
+				$view = \Ant\Helper::findOr($view);
 				
-				return '<?php echo ' . $v . ';?>';
+				return '<?php echo ' . $view . ';?>';
 			}
 
 			public static function escape($e)
 			{
-				$v = trim(str_replace(array('{{{','}}}'), '', $e[0]));
+				$view = trim(str_replace(array('{{{','}}}'), '', $e[0]));
 
-				$v = \Ant\Helper::findVariable($v);
-				$v = \Ant\Helper::findOr($v);
+				$view = \Ant\Helper::findVariable($view);
+				$view = \Ant\Helper::findOr($view);
 
-				return '<?php echo htmlentities(' . $v . ',ENT_QUOTES,"UTF-8");?>';
+				return '<?php echo htmlentities(' . $view . ',ENT_QUOTES,"UTF-8");?>';
 			}
 
 			public static function control($e)
 			{
-				$v = trim(ltrim($e[0],'@'));
+				$view = trim(ltrim($e[0],'@'));
 
-				$v = \Ant\Helper::findVariable($v);
+				$view = \Ant\Helper::findVariable($view);
 
 				if(
-					0 === strpos($v, 'if') ||
-					0 === strpos($v, 'else') ||
-					0 === strpos($v, 'for') ||
-					0 === strpos($v, 'while') ||
-					0 === strpos($v, 'switch') ||
-					0 === strpos($v, 'case') ||
-					0 === strpos($v, 'default')
+					0 === strpos($view, 'if') ||
+					0 === strpos($view, 'else') ||
+					0 === strpos($view, 'for') ||
+					0 === strpos($view, 'while') ||
+					0 === strpos($view, 'switch') ||
+					0 === strpos($view, 'case') ||
+					0 === strpos($view, 'default')
 				){
-					if(':' != substr($v,-1))	
-						$v .= ':';
+					if(':' != substr($view,-1))	
+						$view .= ':';
 				}else{
-					$v .= ';';
+					$view .= ';';
 				}
 
-				return '<?php ' . $v . '?>';
+				return '<?php ' . $view . '?>';
 			}
 
 			public static function forelse($e)
 			{
-				$v = $e[0];
+				$view = $e[0];
 
 				$m = array();
-				preg_match('/\$[A-z0-9_.]+/',$v,$m);
+				preg_match('/\$[A-z0-9_.]+/',$view,$m);
 
-				$foreach = trim(str_replace('@forelse', 'foreach', $v));
+				$foreach = trim(str_replace('@forelse', 'foreach', $view));
 
 				$parsed = \Ant\Helper::parseVariable($m[0]);
 
