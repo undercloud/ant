@@ -53,7 +53,7 @@
 
 			public static function import($e)
 			{
-				$v = trim(str_replace(array('@import','(',')','"','\''), '', $e[0]));
+				$v = trim(str_replace('@import', '', $e[0]));
 				$v = substr($v,1,-1);
 				
 				$as = false;

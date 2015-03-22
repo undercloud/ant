@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="utf-8">
 	<title><?php echo $title;?> <?php echo $body['second'];?> <?php echo $_SERVER['DOCUMENT_ROOT'];?></title>
 </head>
 <body>
