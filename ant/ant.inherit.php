@@ -97,7 +97,7 @@
 
 					foreach($map as $key=>$value){
 						$view = preg_replace_callback(
-							'/@section\s*?\(\s*?\'' . $value[0] . '\'\s*?\)\s*?.*?@end/ms',
+							'/@section\s*?\(\s*?(\'|")' . $value[0] . '(\'|")\s*?\).*?@end/ms',
 							function($e)use($value){
 								switch($value[2]){
 									case 'prepend':

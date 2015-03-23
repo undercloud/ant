@@ -11,8 +11,8 @@
 				$view = preg_replace_callback('/@skip.+?@endskip/ms', 'Ant\Parser::skip', $view);
 				$view = preg_replace_callback('/@php.+?@endphp/ms', 'Ant\Parser::skip', $view);
 				$view = preg_replace_callback('/{\*.*?\*}/ms', 'Ant\Parser::comment', $view);
-				$view = preg_replace_callback('/{{{.+?}}}/', 'Ant\Parser::escape', $view);
-				$view = preg_replace_callback('/{{.+?}}/', 'Ant\Parser::variable', $view);
+				$view = preg_replace_callback('/{{{.+?}}}/ms', 'Ant\Parser::escape', $view);
+				$view = preg_replace_callback('/{{.+?}}/ms', 'Ant\Parser::variable', $view);
 				$view = preg_replace_callback('/@import.+/', 'Ant\Parser::import', $view);
 				$view = preg_replace_callback('/@forelse.+/', 'Ant\Parser::forelse', $view);
 				$view = preg_replace_callback('/@empty/', 'Ant\Parser::isempty', $view);

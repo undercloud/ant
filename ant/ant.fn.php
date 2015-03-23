@@ -18,10 +18,10 @@
 				return '<link type="text/css" rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . '/>';
 			}
 
-			/*
-				public static function ...
-				 - format digit
-			*/
+			public static function number($n)
+			{
+				return (float)number_format($n, 2, '.', ' ');
+			}
 
 			public static function escape($s)
 			{
@@ -60,6 +60,34 @@
 			public static function whitespace($s)
 			{
 				return preg_replace('/\s+/',' ',$s);
+			}
+
+			public static function limit($str,$limit = 250,$postfix="...")
+			{
+				$limit = int($limit);
+				$encoding = 'UTF-8';
+				if(mb_strlen($str,$encoding) > $limit){
+					return mb_substr($str,0,$limit,$encoding) . $postfix;
+				}else{
+					return $str;
+				}
+			}
+
+			public static function limitWords($str,$limit = 250,$postfix="...")
+			{
+				//preg_replace('/([^\s]{512})[^\s]+/', '$1...', $string)
+			}
+
+			public static function bytes2human($size,$precision = 2) 
+			{
+			    $units = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
+			    foreach ($units as $unit) {
+			        if ($size >= 1024 && $unit != 'YB') {
+			            $size = ($size / 1024);
+			        } else {
+			            return round($size, $precision) . " " . $unit;
+			        }
+			    }
 			}
 
 			public static function doctype($d = 'HTML5')
