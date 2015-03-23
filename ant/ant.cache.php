@@ -33,7 +33,17 @@
 					foreach(self::$map['view'] as $k=>$v){
 						if(false == file_exists($k)){
 							unset(self::$map['view'][$k]);
+							unset(self::$map['chain'][$k]);
 							$this->is_changed = true;
+						}
+					}
+
+					foreach(self::$map['chain'] as $k=>$v){
+						foreach($v as $subk=>$subv){
+							if(false == file_exists($subv)){
+								unset(self::$map['chain'][$k][$subk]);
+								$this->is_changed = true;
+							}
 						}
 					}
 				}
