@@ -3,6 +3,8 @@
 	{
 		class Fn
 		{
+			private static $encoding = 'UTF-8';
+
 			public static function iterable($o)
 			{
 				return (is_array($o) || $o instanceof Traversable || $o instanceof stdClass);
@@ -20,36 +22,41 @@
 
 			public static function number($n)
 			{
-				return (float)number_format($n, 2, '.', ' ');
+				return rtrim(rtrim(number_format((float)$n, 2, '.', ' '),'0'),'.');
 			}
 
 			public static function escape($s)
 			{
-				return htmlentities($s,ENT_QUOTES,'UTF-8');
+				return htmlentities($s,ENT_QUOTES,self::$encoding);
 			}
 
-			public function decode($s)
+			public static function decode($s)
 			{
-				return html_entity_decode($s,ENT_QUOTES,'UTF-8');
+				return html_entity_decode($s,ENT_QUOTES,self::$encoding);
 			}
 
 			public static function capitalize($s)
 			{
-				$enc = 'UTF-8';
+				$enc = self::$encoding;
 				$s = mb_strtolower($s,$enc);
 
 				return mb_strtoupper(mb_substr($s, 0, 1, $enc), $enc) .
-					   mb_substr($s, 1, mb_strlen($str, $enc), $enc); 
+					   mb_substr($s, 1, mb_strlen($s, $enc), $enc); 
+			}
+
+			public static function capitalizeAll($s)
+			{
+				return mb_convert_case($s,MB_CASE_TITLE,self::$encoding);
 			}
 
 			public static function upper($s)
 			{
-				return mb_strtoupper($s,'UTF-8');
+				return mb_strtoupper($s,self::$encoding);
 			}
 
 			public static function lower($s)
 			{
-				return mb_strtolower($s,'UTF-8');
+				return mb_strtolower($s,self::$encoding);
 			}
 
 			public static function url(array $a)
@@ -62,20 +69,20 @@
 				return preg_replace('/\s+/',' ',$s);
 			}
 
-			public static function limit($str,$limit = 250,$postfix="...")
+			public static function limit($s,$limit = 250,$postfix="...")
 			{
-				$limit = int($limit);
-				$encoding = 'UTF-8';
-				if(mb_strlen($str,$encoding) > $limit){
-					return mb_substr($str,0,$limit,$encoding) . $postfix;
+				$limit = (int)$limit;
+				$encoding = self::$encoding;
+				if(mb_strlen($s,$encoding) > $limit){
+					return mb_substr($s,0,$limit,$encoding) . $postfix;
 				}else{
-					return $str;
+					return $s;
 				}
 			}
 
-			public static function limitWords($str,$limit = 250,$postfix="...")
+			public static function limitWords($s,$limit = 2,$postfix="...")
 			{
-				//preg_replace('/([^\s]{512})[^\s]+/', '$1...', $string)
+				return preg_replace("/([^\s]{$limit})[^\s]+/", '$1...', $s);
 			}
 
 			public static function bytes2human($size,$precision = 2) 
