@@ -56,11 +56,8 @@
 				if(null === self::$map)
 					$this->getMap();
 
-				$view_changed = true;
-				$chain_changed = true;
-
+				$chain_changed = false;
 				if(array_key_exists($path, self::$map['chain'])){
-					$chain_changed = false;
 					foreach(self::$map['chain'][$path] as $item){
 						$mtime = filemtime($item);
 
@@ -85,19 +82,21 @@
 							break;
 						}
 					}
-				}else{
-					$chain_changed = false;
 				}
 
+				$view_changed = true;
 				$mtime = filemtime($path);
 				if(array_key_exists($path, self::$map['view']))
-					if(self::$map['view'][$path] == $mtime)
+					if(false !== $mtime and self::$map['view'][$path] == $mtime)
 						$view_changed = false;
 
 				if($view_changed == true){
 					self::$map['view'][$path] = $mtime;
 					$this->is_changed = true;
 				}
+
+				if(false == file_exists($this->cache_path))
+					return false;
 
 				return ($view_changed == false and $chain_changed == false);
 			}
