@@ -71,7 +71,6 @@
 
 			public static function limit($s,$limit = 250,$postfix="...")
 			{
-				$limit = (int)$limit;
 				$encoding = self::$encoding;
 				if(mb_strlen($s,$encoding) > $limit){
 					return mb_substr($s,0,$limit,$encoding) . $postfix;
@@ -80,9 +79,18 @@
 				}
 			}
 
-			public static function limitWords($s,$limit = 2,$postfix="...")
+			public static function limitWords($s,$limit = 250,$postfix="...")
 			{
-				return preg_replace("/([^\s]{$limit})[^\s]+/", '$1...', $s);
+				$encoding = self::$encoding;
+				if(mb_strlen($s,$encoding) > $limit){
+					$pos = mb_strpos($s, ' ',$limit,$encoding);
+					if(false !== $pos)
+						return mb_substr($s,0,$pos,$encoding) . $postfix;
+					else
+						return $s;
+				}else{
+					return $s;
+				}
 			}
 
 			public static function bytes2human($size,$precision = 2) 
