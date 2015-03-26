@@ -22,10 +22,10 @@
 				if(false == is_array(self::$map))
 					self::$map = array();
 
-				if(false === is_array(self::$map['view']))
+				if(false == isset(self::$map['view']) or false === is_array(self::$map['view']))
 					self::$map['view'] = array();
 
-				if(false === is_array(self::$map['chain']))
+				if(false == isset(self::$map['chain']) or false === is_array(self::$map['chain']))
 					self::$map['chain'] = array();
 
 				//garbage collector
