@@ -1,36 +1,24 @@
+!!! 5
 html
-  body
-    div. 
-      Okays Multiline
-      some text
-
-    @forelse($.server as $k=>$item)
-    <div>{{ $k }} -> {{ $item }}</div>
-    @empty
-      :(
-    @endforelse
-
+  head
+    title(name="oj") {{ date('Y-m-d') }}
+  body Hello Multiline text
     @php
-      // hallo bitches
-
       class X {
-        /*
-          multiline comments
-          lol okay sasai
-        */
-
         public function __construct(){
-          // return
+          echo __DIR__;
         }
       }
+
+      new X();
     @endphp
+
+    div(
+      class="x",
+      id="y"
+    ) divline text
 
     style.
       body {
         color: red;
       }
-
-    script.
-    	if(true){
-    		console.log('Jade!')
-    	}

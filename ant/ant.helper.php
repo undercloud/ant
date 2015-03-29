@@ -58,7 +58,8 @@
 			{
 				$buffer = preg_replace('~//.*~', '', $buffer);
 				$buffer = preg_replace('~/\*.*?\*/~ms', '', $buffer);
-				$buffer = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
+				$buffer = preg_replace('/\s+/',' ',$buffer);
+				$buffer = str_replace(array("\r\n", "\r", "\n", "\t"), '', $buffer);
 				
 				return $buffer;
 			}
