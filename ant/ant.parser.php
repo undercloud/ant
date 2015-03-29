@@ -11,13 +11,14 @@
 				$view = preg_replace_callback('/@skip.+?@endskip/ms', 'Ant\Parser::skip', $view);
 				$view = preg_replace_callback('/@php.+?@endphp/ms', 'Ant\Parser::skip', $view);
 				$view = preg_replace_callback('/{\*.*?\*}/ms', 'Ant\Parser::comment', $view);
-				$view = preg_replace_callback('/{{{.+?}}}/ms', 'Ant\Parser::escape', $view);
-				$view = preg_replace_callback('/{{.+?}}/ms', 'Ant\Parser::variable', $view);
+				$view = preg_replace_callback('/{{{.+?}}}/', 'Ant\Parser::escape', $view);
+				$view = preg_replace_callback('/{{.+?}}/', 'Ant\Parser::variable', $view);
 				$view = preg_replace_callback('/@import.+/', 'Ant\Parser::import', $view);
 				$view = preg_replace_callback('/@forelse.+/', 'Ant\Parser::forelse', $view);
 				$view = preg_replace_callback('/@empty/', 'Ant\Parser::isempty', $view);
-				$view = preg_replace_callback('/@endforelse/', 'Ant\Parser::endforelse', $view);
-				$view = preg_replace_callback('/@(foreach|for|while|switch|case|break|default|continue|endforeach|endfor|endwhile|endswitch|endif|if|else).*/', 'Ant\Parser::control', $view);
+				$view = preg_replace_callback('/[ ,	]+@(case|default)/', 'Ant\Parser::caseSpace', $view);
+				$view = preg_replace_callback('/@(foreach|for|while|switch|case|default|if|else).*\)?/', 'Ant\Parser::control', $view);
+				$view = preg_replace_callback('/@(break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif)/', 'Ant\Parser::endControl', $view);
 
 				if(self::$skips){
 					$view = str_replace(
@@ -40,6 +41,9 @@
 
 			public static function skip($e)
 			{
+				if(0 === strpos($e[0],'@php'))
+					$e[0] = \Ant\Helper::phpMinify('<?php ' . substr($e[0],4,-7) . ';?>');
+
 				$uniqid = '~SKIP_' . strtoupper(str_replace('.','',uniqid('',true))) . '_CONTENT~';
 				self::$skips[$uniqid] = $e[0];
 
@@ -48,7 +52,7 @@
 
 			public static function comment($e)
 			{
-				return '<?php /*' . $e[0] . '*/ ?>';
+				return '<?php /*'. PHP_EOL . substr($e[0],2,-2) . PHP_EOL . '*/ ?>';
 			}
 
 			public static function import($e)
@@ -89,28 +93,29 @@
 				return '<?php echo htmlentities(' . $view . ',ENT_QUOTES,"UTF-8");?>';
 			}
 
+			public static function caseSpace($e)
+			{
+				return ltrim($e[0]);
+			}
+
 			public static function control($e)
 			{
-				$view = trim(ltrim($e[0],'@'));
+				$view = trim($e[1]);
 
 				$view = \Ant\Helper::findVariable($view);
 
-				if(
-					0 === strpos($view, 'if') ||
-					0 === strpos($view, 'else') ||
-					0 === strpos($view, 'for') ||
-					0 === strpos($view, 'while') ||
-					0 === strpos($view, 'switch') ||
-					0 === strpos($view, 'case') ||
-					0 === strpos($view, 'default')
-				){
-					if(':' != substr($view,-1))	
-						$view .= ':';
-				}else{
-					$view .= ';';
-				}
+				if(':' != substr($view,-1))	
+					$view .= ':';
 
 				return '<?php ' . $view . '?>';
+			}
+
+			public static function endControl($e)
+			{
+				if($e[1] == 'endforelse')
+					$e[1] = 'endif';
+
+				return '<?php ' . $e[1] . '; ?>';
 			}
 
 			public static function forelse($e)
@@ -119,10 +124,12 @@
 
 				$m = array();
 				preg_match('/\$[A-z0-9_.]+/',$view,$m);
+				$parsed = \Ant\Helper::parseVariable($m[0]);
 
 				$foreach = trim(str_replace('@forelse', 'foreach', $view));
-
-				$parsed = \Ant\Helper::parseVariable($m[0]);
+				$foreach = preg_replace_callback('/\$[A-z0-9_.]+/', function($e){
+					return \Ant\Helper::parseVariable($e[0]);
+				}, $foreach, 1);		
 
 				return '<?php if(count(' . $parsed .  ') and Ant::iterable(' . $parsed . ')): ' . $foreach . ': ?>';
 			}
@@ -130,11 +137,6 @@
 			public static function isempty($e)
 			{
 				return '<?php endforeach; else: ?>';
-			}
-
-			public static function endforelse($e)
-			{
-				return '<?php endif; ?>';
 			}
 		}
 	}
