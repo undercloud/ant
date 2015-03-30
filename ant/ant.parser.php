@@ -17,7 +17,7 @@
 				$view = preg_replace_callback('/@forelse.+/', 'Ant\Parser::forelse', $view);
 				$view = preg_replace_callback('/@empty/', 'Ant\Parser::isempty', $view);
 				$view = preg_replace_callback('/[ ,	]+@(case|default)/', 'Ant\Parser::caseSpace', $view);
-				$view = preg_replace_callback('/@(foreach|for|while|switch|case|default|if|else).*\)?/', 'Ant\Parser::control', $view);
+				$view = preg_replace_callback('/@(foreach|for|while|switch|case|default|if|else).+?\)/', 'Ant\Parser::control', $view);
 				$view = preg_replace_callback('/@(break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif)/', 'Ant\Parser::endControl', $view);
 
 				if(self::$skips){
@@ -100,9 +100,8 @@
 
 			public static function control($e)
 			{
-				$view = trim($e[1]);
-
-				$view = \Ant\Helper::findVariable($view);
+				$view = trim($e[0]);
+				$view = ltrim(\Ant\Helper::findVariable($view),'@');
 
 				if(':' != substr($view,-1))	
 					$view .= ':';
