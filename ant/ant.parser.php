@@ -130,7 +130,7 @@
 					return \Ant\Helper::parseVariable($e[0]);
 				}, $foreach, 1);		
 
-				return '<?php if(count(' . $parsed .  ') and Ant::iterable(' . $parsed . ')): ' . $foreach . ': ?>';
+				return '<?php if(Ant::iterable(' . $parsed . ') and count(' . $parsed .  ')): ' . $foreach . ': ?>';
 			}
 
 			public static function isempty($e)
