@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{{ $title }}</title>
+	<title>{{ $title }} </title>
 </head>
 <body>
 	<h1>{{ $head }}</h1>
-	<input type="text" value="{{ $escaped }}}" />
+	<input type="text" value="{{{ $escaped }}}" />
+	<div>{{ date('d/m/Y') }}</div>
 </body>
 </html>
