@@ -27,7 +27,7 @@
 
 			public static function findVariable($v)
 			{
-				return preg_replace_callback('/\$[A-z0-9_.]+/', function($l){
+				return preg_replace_callback('/\$[A-Za-z0-9_\.]+/', function($l){
 					return Helper::parseVariable($l[0]);
 				},$v);
 			}
