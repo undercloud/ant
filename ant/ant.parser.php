@@ -124,11 +124,11 @@
 				$view = $e[0];
 
 				$m = array();
-				preg_match('/\$[A-z0-9_.]+/',$view,$m);
+				preg_match('/(\$|->)[A-Za-z0-9_\.]+/',$view,$m);
 				$parsed = \Ant\Helper::parseVariable($m[0]);
 
 				$foreach = trim(str_replace('@forelse', 'foreach', $view));
-				$foreach = preg_replace_callback('/\$[A-z0-9_.]+/', function($e){
+				$foreach = preg_replace_callback('/(\$|->)[A-Za-z0-9_\.]+/', function($e){
 					return \Ant\Helper::parseVariable($e[0]);
 				}, $foreach, 1);		
 
