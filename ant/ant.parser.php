@@ -42,7 +42,7 @@
 			public static function skip($e)
 			{
 				if(0 === strpos($e[0],'@php'))
-					$e[0] = \Ant\Helper::phpMinify('<?php ' . substr($e[0],4,-7) . ';?>');
+					$e[0] = \Ant\Helper::phpMinify($e[0]);
 
 				$uniqid = '~SKIP_' . strtoupper(str_replace('.','',uniqid('',true))) . '_CONTENT~';
 				self::$skips[$uniqid] = $e[0];
@@ -52,7 +52,7 @@
 
 			public static function comment($e)
 			{
-				return '<?php /*'. PHP_EOL . substr($e[0],2,-2) . PHP_EOL . '*/ ?>';
+				return '';
 			}
 
 			public static function import($e)
@@ -70,7 +70,7 @@
 					$as = trim(substr($view,$pos + 1));
 				}
 
-				return '<?php echo \Ant::init()->get("' . $tmpl .'")->' . ($as ? 'assign(' . Helper::parseVariable($as) . ')->' : ''). 'draw(); ?>';
+				return '<?php echo \Ant::init()->get("' . $tmpl .'")->' . ($as ? 'assign(' . \Ant\Helper::findVariable($as) . ')->' : ''). 'draw(); ?>';
 			}
 
 			public static function variable($e)
