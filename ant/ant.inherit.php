@@ -65,7 +65,7 @@
 			public static function clear($view)
 			{
 				return preg_replace(
-					'/@(rewrite|append|prepend|end)(\s|$)/',
+					'/@(rewrite|append|prepend|end)/',
 					'',
 					preg_replace('/@(section|inject).+?\)/','', $view)
 				);

@@ -12,12 +12,12 @@
 
 			public static function js($src,$defer = "")
 			{
-				return '<script type="text/javascript" src="' . $src . '"' . ($defer ? " " . $defer : '') . '></script>';
+				return '<script src="' . $src . '"' . ($defer ? " " . $defer : '') . '></script>';
 			}
 
 			public static function css($href,$media = "")
 			{
-				return '<link type="text/css" rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . '/>';
+				return '<link rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . '/>';
 			}
 
 			public static function number($n)
