@@ -12,12 +12,12 @@
 
 			public static function js($src,$defer = "")
 			{
-				return '<script src="' . $src . '"' . ($defer ? " " . $defer : '') . '></script>';
+				return '<script type="text/javascript" src="' . $src . '"' . ($defer ? " " . $defer : '') . '></script>';
 			}
 
 			public static function css($href,$media = "")
 			{
-				return '<link rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . '/>';
+				return '<link type="text/css" rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . '/>';
 			}
 
 			public static function number($n)
@@ -104,6 +104,18 @@
 			        }
 			    }
 			}
+
+			public static roundHuman($size,$precision = 2)
+			{
+				
+			}
+
+			public static function highlight($string,$word,$class){
+                $words = array_filter(explode(' ',preg_quote($word)));
+                $rx = '/(' . implode('|',$words) . ')/i';
+               
+                return preg_replace($rx, '<span class="' . $class . '">$0</span>', $string);
+        	}
 
 			public static function doctype($d = 'HTML5')
 			{
