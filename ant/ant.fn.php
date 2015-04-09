@@ -95,27 +95,34 @@
 
 			public static function bytes2human($size,$precision = 2) 
 			{
-			    $units = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
-			    foreach ($units as $unit) {
-			        if ($size >= 1024 && $unit != 'YB') {
-			            $size = ($size / 1024);
-			        } else {
-			            return round($size, $precision) . " " . $unit;
-			        }
-			    }
+				$units = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
+				foreach ($units as $unit) {
+					if ($size >= 1024 && $unit != 'YB') {
+						$size = ($size / 1024);
+					} else {
+						return round($size, $precision) . " " . $unit;
+					}
+				}
 			}
 
-			public static roundHuman($size,$precision = 2)
+			public static function roundHuman($size,$precision = 2)
 			{
-				
+				$units = array('', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y');
+				foreach ($units as $unit) {
+					if ($size >= 1000 && $unit != 'Y') {
+						$size = ($size / 1000);
+					} else {
+						return round($size, $precision) . ($unit ? (" " . $unit) : '');
+					}
+				}
 			}
 
 			public static function highlight($string,$word,$class){
-                $words = array_filter(explode(' ',preg_quote($word)));
-                $rx = '/(' . implode('|',$words) . ')/i';
-               
-                return preg_replace($rx, '<span class="' . $class . '">$0</span>', $string);
-        	}
+				$words = array_filter(explode(' ',preg_quote($word)));
+				$rx = '/(' . implode('|',$words) . ')/i';
+
+				return preg_replace($rx, '<span class="' . $class . '">$0</span>', $string);
+			}
 
 			public static function doctype($d = 'HTML5')
 			{
@@ -160,6 +167,27 @@
 
 				return self::limitWords($s,$limit);
 			}
+
+			public static function slug($text)
+			{
+				$text = preg_replace('~[^\\pL\d]+~u', '-', $text);
+				$text = trim($text, '-');
+				$text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+				$text = strtolower($text);
+				$text = preg_replace('~[^-\w]+~', '', $text);
+
+				return $text;
+			}
+
+			/*
+				$regex = "((https?|ftp)\:\/\/)?"; // SCHEME
+				$regex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?"; // User and Pass
+				$regex .= "([a-z0-9-.]*)\.([a-z]{2,4})"; // Host or IP
+				$regex .= "(\:[0-9]{2,5})?"; // Port
+				$regex .= "(\/([a-z0-9+\$_-]\.?)+)*\/?"; // Path
+				$regex .= "(\?[a-z+&\$_.-][a-z0-9;:@&%=+\/\$_.-]*)?"; // GET Query
+				$regex .= "(#[a-z_.-][a-z0-9+\$_.-]*)?"; // Anchor
+			*/
 		}
 	}
 ?>
