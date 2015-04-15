@@ -37,11 +37,10 @@
 
 			public static function capitalize($s)
 			{
-				$enc = self::$encoding;
-				$s = mb_strtolower($s,$enc);
+				$s = mb_strtolower($s,self::$encoding);
 
-				return mb_strtoupper(mb_substr($s, 0, 1, $enc), $enc) .
-					   mb_substr($s, 1, mb_strlen($s, $enc), $enc); 
+				return mb_strtoupper(mb_substr($s, 0, 1, self::$encoding), self::$encoding) .
+					   mb_substr($s, 1, mb_strlen($s, self::$encoding), self::$encoding); 
 			}
 
 			public static function capitalizeAll($s)
@@ -71,9 +70,8 @@
 
 			public static function limit($s,$limit = 250,$postfix="...")
 			{
-				$encoding = self::$encoding;
-				if(mb_strlen($s,$encoding) > $limit){
-					return mb_substr($s,0,$limit,$encoding) . $postfix;
+				if(mb_strlen($s,self::$encoding) > $limit){
+					return mb_substr($s,0,$limit,self::$encoding) . $postfix;
 				}else{
 					return $s;
 				}
@@ -81,11 +79,10 @@
 
 			public static function limitWords($s,$limit = 250,$postfix="...")
 			{
-				$encoding = self::$encoding;
-				if(mb_strlen($s,$encoding) > $limit){
-					$pos = mb_strpos($s, ' ',$limit,$encoding);
+				if(mb_strlen($s,self::$encoding) > $limit){
+					$pos = mb_strpos($s, ' ',$limit,self::$encoding);
 					if(false !== $pos)
-						return mb_substr($s,0,$pos,$encoding) . $postfix;
+						return mb_substr($s,0,$pos,self::$encoding) . $postfix;
 					else
 						return $s;
 				}else{
@@ -117,7 +114,7 @@
 				}
 			}
 
-			public static function highlight($string,$word,$class){
+			public static function highlight($string,$word,$class = ''){
 				$words = array_filter(explode(' ',preg_quote($word)));
 				$rx = '/(' . implode('|',$words) . ')/i';
 
@@ -168,17 +165,6 @@
 				return self::limitWords($s,$limit);
 			}
 
-			public static function slug($text)
-			{
-				$text = preg_replace('~[^\\pL\d]+~u', '-', $text);
-				$text = trim($text, '-');
-				$text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-				$text = strtolower($text);
-				$text = preg_replace('~[^-\w]+~', '', $text);
-
-				return $text;
-			}
-
 			public static function limitMiddle($text,$limit = 128)
 			{
 				$len = mb_strlen($text,self::$encoding);
@@ -191,9 +177,19 @@
 				}
 			}
 
-			public static function autoUrl($text,$call = null)
+			/*public static function slug($text)
 			{
-				/*
+				$text = preg_replace('~[^\\pL\d]+~u', '-', $text);
+				$text = trim($text, '-');
+				$text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+				$text = strtolower($text);
+				$text = preg_replace('~[^-\w]+~', '', $text);
+
+				return $text;
+			}*/
+
+			/*public static function autoUrl($text,$call = null)
+			{
 				if(null == $call)
 					$call = function($s){
 
@@ -206,9 +202,8 @@
 				$regex .= "(\/([a-z0-9+\$_-]\.?)+)*\/?"; // Path
 				$regex .= "(\?[a-z+&\$_.-][a-z0-9;:@&%=+\/\$_.-]*)?"; // GET Query
 				$regex .= "(#[a-z_.-][a-z0-9+\$_.-]*)?"; // Anchor
-				*/
 
-			}
+			}*/
 		}
 	}
 ?>
