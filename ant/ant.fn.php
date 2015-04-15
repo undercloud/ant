@@ -179,17 +179,17 @@
 				return $text;
 			}
 
-			/*public static function limitMiddle($text)
+			public static function limitMiddle($text,$limit = 128)
 			{
-				$separator = '...';
-				$separatorlength = 3 ;
-				$maxlength = 25 - $separatorlength;
-				$start = $maxlength / 2 ;
-				$trunc =  strlen($text) - $maxlength;
+				$len = mb_strlen($text,self::$encoding);
 
-				echo substr_replace($text, $separator, $start, $trunc);
-
-			}*/
+				if($len > $limit){
+					$mid = (int)(($limit - 3) / 2);
+					return mb_substr($text,0,$mid,self::$encoding) . '...' . mb_substr($text,$len - $mid,$len,self::$encoding);
+				}else{
+					return $text;
+				}
+			}
 
 			public static function autoUrl($text,$call = null)
 			{
