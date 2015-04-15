@@ -70,7 +70,7 @@
 					$as = trim(substr($view,$pos + 1));
 				}
 
-				return '<?php echo \Ant::init()->get("' . $tmpl .'")->' . ($as ? 'assign(' . \Ant\Helper::findVariable($as) . ')->' : ''). 'draw(); ?>';
+				return '<?php echo \Ant::init()->get(\'' . $tmpl .'\')->' . ($as ? 'assign(' . \Ant\Helper::findVariable($as) . ')->' : ''). 'draw(); ?>';
 			}
 
 			public static function variable($e)
@@ -90,7 +90,7 @@
 				$view = \Ant\Helper::findVariable($view);
 				$view = \Ant\Helper::findOr($view);
 
-				return '<?php echo htmlentities(' . $view . ',ENT_QUOTES,"UTF-8");?>';
+				return '<?php echo htmlentities(' . $view . ',ENT_QUOTES,\'UTF-8\');?>';
 			}
 
 			public static function caseSpace($e)
