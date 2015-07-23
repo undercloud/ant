@@ -30,8 +30,8 @@
 
 			public static function resolveChain($view,$path)
 			{
-				$view = preg_replace_callback('/@skip.+?@endskip/ms', 'Ant\Parser::skip', $view);
-				$view = preg_replace_callback('/@php.+?@endphp/ms', 'Ant\Parser::skip', $view);
+				$view = preg_replace_callback('/@skip.+?@endskip/ms', '\Ant\Parser::skip', $view);
+				$view = preg_replace_callback('/@php.+?@endphp/ms', '\Ant\Parser::skip', $view);
 
 				$next = array(
 					'path' => $path,
@@ -46,8 +46,8 @@
 					if(false === $next)
 						break;
 					else{
-						$next['view'] = preg_replace_callback('/@skip.+?@endskip/ms', 'Ant\Parser::skip', $next['view']);
-						$next['view'] = preg_replace_callback('/@php.+?@endphp/ms', 'Ant\Parser::skip', $next['view']);
+						$next['view'] = preg_replace_callback('/@skip.+?@endskip/ms', '\Ant\Parser::skip', $next['view']);
+						$next['view'] = preg_replace_callback('/@php.+?@endphp/ms', '\Ant\Parser::skip', $next['view']);
 
 						$chain[] = $next['view'];
 					}
@@ -65,7 +65,7 @@
 			public static function clear($view)
 			{
 				return preg_replace(
-					'/@(rewrite|append|prepend|end)/',
+					'/@(rewrite|append|prepend|endblock)/',
 					'',
 					preg_replace('/@(section|inject).+?\)/','', $view)
 				);
@@ -97,19 +97,19 @@
 
 					foreach($map as $key=>$value){
 						$view = preg_replace_callback(
-							'/@section\s*?\(\s*?(\'|")' . $value[0] . '(\'|")\s*?\).*?@end/ms',
+							'/@block\s*?\(\s*?(\'|")' . $value[0] . '(\'|")\s*?\).*?@endblock/ms',
 							function($e)use($value){
 								switch($value[2]){
 									case 'prepend':
-										return '@section(\'' . $value[0] . '\')' . $value[1] . Inherit::clear($e[0]) . '@end';
+										return '@block(\'' . $value[0] . '\')' . $value[1] . Inherit::clear($e[0]) . '@endblock';
 									break;
 
 									case 'append':
-										return '@section(\'' . $value[0] . '\')' . Inherit::clear($e[0]) . $value[1] . '@end';
+										return '@block(\'' . $value[0] . '\')' . Inherit::clear($e[0]) . $value[1] . '@endblock';
 									break;
 
 									case 'rewrite':
-										return '@section(\'' . $value[0] . '\')' . $value[1] . '@end';
+										return '@block(\'' . $value[0] . '\')' . $value[1] . '@endblock';
 									break;
 								}
 							},
