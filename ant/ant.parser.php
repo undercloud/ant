@@ -8,17 +8,17 @@
 			public static function parse($view,$path = null)
 			{
 				$view = \Ant\Inherit::extend($view,$path);
-				$view = preg_replace_callback('/@skip.+?@endskip/ms', 'Ant\Parser::skip', $view);
-				$view = preg_replace_callback('/@php.+?@endphp/ms', 'Ant\Parser::skip', $view);
-				$view = preg_replace_callback('/{\*.*?\*}/ms', 'Ant\Parser::comment', $view);
-				$view = preg_replace_callback('/{{{.+?}}}/', 'Ant\Parser::escape', $view);
-				$view = preg_replace_callback('/{{.+?}}/', 'Ant\Parser::variable', $view);
-				$view = preg_replace_callback('/@import.+/', 'Ant\Parser::import', $view);
-				$view = preg_replace_callback('/@forelse.+/', 'Ant\Parser::forelse', $view);
-				$view = preg_replace_callback('/@empty/', 'Ant\Parser::isempty', $view);
-				$view = preg_replace_callback('/[ 	]+@(case|default)/', 'Ant\Parser::caseSpace', $view);
-				$view = preg_replace_callback('/@(foreach|for|while|switch|case|default|if|elseif|else).+/', 'Ant\Parser::control', $view);
-				$view = preg_replace_callback('/@(break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif).+/', 'Ant\Parser::endControl', $view);
+				$view = preg_replace_callback('/@skip.+?@endskip/ms', '\Ant\Parser::skip', $view);
+				$view = preg_replace_callback('/@php.+?@endphp/ms', '\Ant\Parser::skip', $view);
+				$view = preg_replace_callback('/{\*.*?\*}/ms', '\Ant\Parser::comment', $view);
+				$view = preg_replace_callback('/{{{.+?}}}/', '\Ant\Parser::escape', $view);
+				$view = preg_replace_callback('/{{.+?}}/', '\Ant\Parser::variable', $view);
+				$view = preg_replace_callback('/@import.+/', '\Ant\Parser::import', $view);
+				$view = preg_replace_callback('/@forelse.+/', '\Ant\Parser::forelse', $view);
+				$view = preg_replace_callback('/@empty/', '\Ant\Parser::isempty', $view);
+				$view = preg_replace_callback('/[ 	]+@(case|default)/', '\Ant\Parser::caseSpace', $view);
+				$view = preg_replace_callback('/@(foreach|for|while|switch|case|default|if|elseif|else).+/', '\Ant\Parser::control', $view);
+				$view = preg_replace_callback('/@(break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif).+/', '\Ant\Parser::endControl', $view);
 
 				if(self::$skips){
 					$view = str_replace(
