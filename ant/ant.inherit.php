@@ -16,7 +16,7 @@
 				$path = \Ant::settings('view') . DIRECTORY_SEPARATOR  . \Ant\Helper::realPath($name) . '.' . \Ant::settings('extension');
 				
 				if(false == file_exists($path))
-					throw new Ant\AntException('Template file not found at ' . $path);
+					throw new \Ant\AntException('Template file not found at ' . $path);
 
 				$io = IO::init()->in($path);
 				$nextview = $io->get();
