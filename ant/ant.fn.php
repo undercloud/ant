@@ -10,6 +10,21 @@
 				return (is_array($o) || $o instanceof Traversable || $o instanceof stdClass);
 			}
 
+			public static function unicode($s)
+			{
+				return implode(
+					'',
+					array_map(
+						function($v){
+							return '&#' . hexdec($v) . ';';
+						},
+						array_filter(
+							explode('\u',$s)
+						)
+					)
+				);
+			}
+
 			public static function js($src,$defer = "")
 			{
 				return '<script type="text/javascript" src="' . $src . '"' . ($defer ? " " . $defer : '') . '></script>';

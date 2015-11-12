@@ -17,8 +17,8 @@
 				$view = preg_replace_callback('/@forelse.+/', '\Ant\Parser::forelse', $view);
 				$view = preg_replace_callback('/@empty/', '\Ant\Parser::isempty', $view);
 				$view = preg_replace_callback('/[ 	]+@(case|default)/', '\Ant\Parser::caseSpace', $view);
-				$view = preg_replace_callback('/@(foreach|for|while|switch|case|default|if|elseif|else).+/', '\Ant\Parser::control', $view);
-				$view = preg_replace_callback('/@(break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif).+/', '\Ant\Parser::endControl', $view);
+				$view = preg_replace_callback('/\B@(foreach|for|while|switch|case|default|if|elseif|else)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', '\Ant\Parser::control', $view);
+				$view = preg_replace_callback('/@(break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif)/', '\Ant\Parser::endControl', $view);
 
 				if(self::$skips){
 					$view = str_replace(
