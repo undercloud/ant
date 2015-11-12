@@ -28,7 +28,7 @@
 
 				rewind($this->handle);
 
-				$data = "";
+				$data = '';
 				while (!feof($this->handle)){
 					$data .= fgets($this->handle);
 				}

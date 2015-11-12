@@ -3,16 +3,12 @@
 	{
 		class Helper
 		{
-			public static function realPath($fakepath)
-			{
-				return str_replace('.', DIRECTORY_SEPARATOR, $fakepath);
-			}
 
 			public static function parseVariable($e)
 			{
 				$exp = explode('.',$e);
 
-				foreach ($exp as $key => $value) {
+				foreach($exp as $key => $value){
 					if(0 == $key){
 						$exp[$key] = $value;
 					}else if($key == 1 and $exp[0] === '$'){

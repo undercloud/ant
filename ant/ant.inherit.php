@@ -13,7 +13,7 @@
 
 				$name = trim(str_replace(array('@extends','(',')','"','\''), '', $name[0]));
 
-				$path = \Ant::settings('view') . DIRECTORY_SEPARATOR  . \Ant\Helper::realPath($name) . '.' . \Ant::settings('extension');
+				$path = \Ant::settings('view') . DIRECTORY_SEPARATOR  . $name . '.' . \Ant::settings('extension');
 				
 				if(false == file_exists($path))
 					throw new \Ant\AntException('Template file not found at ' . $path);

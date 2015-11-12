@@ -122,7 +122,7 @@
 		{
 			$this->mode = self::MODE_FILE;
 
-			$this->tmpl_path  = self::$settings['view'] . DIRECTORY_SEPARATOR . \Ant\Helper::realPath($path) . '.' . self::$settings['extension'];
+			$this->tmpl_path  = self::$settings['view'] . DIRECTORY_SEPARATOR . $path . '.' . self::$settings['extension'];
 			
 			if(false == file_exists($this->tmpl_path))
 				throw new \Ant\AntException('Template file not found at ' . $this->tmpl_path);
@@ -136,12 +136,14 @@
 		{
 			$this->mode = self::MODE_STRING;
 			$this->string = $s;
+
 			return $this;
 		}
 
 		public function assign(array $data = array())
 		{
 			$this->assign = $data;
+
 			return $this;
 		}
 
