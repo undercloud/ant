@@ -3,7 +3,6 @@
 	{
 		class Helper
 		{
-
 			public static function parseVariable($e)
 			{
 				$exp = explode('.',$e);
@@ -12,7 +11,7 @@
 					if(0 == $key){
 						$exp[$key] = $value;
 					}else if($key == 1 and $exp[0] === '$'){
-						$exp[$key] = '_' . strtoupper($value);
+						$exp[$key] = ($value != 'globals' ? '_' : '') . strtoupper($value);
 					}else{
 						$exp[$key] = '[\'' . $value . '\']';
 					}
