@@ -12,24 +12,34 @@
 
 			public function in($path)
 			{
-				if(!$path)
-					return $this;
+				if (!$path) {
+					throw new Exception();
+				}
 
-				$this->handle = fopen($path,'a+');
-				flock($this->handle,LOCK_EX);
+				$this->handle = fopen($path, 'a+');
+
+				if (false === $this->handle) {
+					throw new Exception();
+				}
+
+				if (false === flock($this->handle,LOCK_EX)) {
+					throw new Exception();
+				}
 
 				return $this;
 			}
 
 			public function get()
 			{
-				if(!$this->handle)
-					return '';
+				if (!$this->handle) {
+					throw new Exception();
+				}
 
-				rewind($this->handle);
+				if(false === rewind($this->handle))
+					throw new Exception();
 
 				$data = '';
-				while (!feof($this->handle)){
+				while (!feof($this->handle)) {
 					$data .= fgets($this->handle);
 				}
 
@@ -38,12 +48,13 @@
 
 			public function set($data)
 			{
-				if(!$this->handle)
+				if (!$this->handle) {
 					return $this;
+				}
 
 				rewind($this->handle);
-				ftruncate($this->handle,0);
-				fwrite($this->handle,$data); 
+				ftruncate($this->handle, 0);
+				fwrite($this->handle, $data); 
 				fflush($this->handle);
 
 				return $this;
@@ -51,10 +62,11 @@
 
 			public function out()
 			{
-				if(!$this->handle)
+				if (!$this->handle) {
 					return $this;
+				}
 
-				flock($this->handle,LOCK_UN);
+				flock($this->handle, LOCK_UN);
 				fclose($this->handle);
 				$this->handle = null;
 

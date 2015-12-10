@@ -15,44 +15,44 @@
 				return implode(
 					'',
 					array_map(
-						function($v){
+						function ($v) {
 							return '&#' . hexdec($v) . ';';
 						},
 						array_filter(
-							explode('\u',$s)
+							explode('\u', $s)
 						)
 					)
 				);
 			}
 
-			public static function js($src,$defer = "")
+			public static function js($src, $defer = "")
 			{
 				return '<script type="text/javascript" src="' . $src . '"' . ($defer ? " " . $defer : '') . '></script>';
 			}
 
-			public static function css($href,$media = "")
+			public static function css($href, $media = "")
 			{
 				return '<link type="text/css" rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . '/>';
 			}
 
 			public static function number($n)
 			{
-				return rtrim(rtrim(number_format((float)$n, 2, '.', ' '),'0'),'.');
+				return rtrim(rtrim(number_format((float)$n, 2, '.', ' '), '0'), '.');
 			}
 
 			public static function escape($s)
 			{
-				return htmlentities($s,ENT_QUOTES,self::$encoding);
+				return htmlentities($s, ENT_QUOTES, self::$encoding);
 			}
 
 			public static function decode($s)
 			{
-				return html_entity_decode($s,ENT_QUOTES,self::$encoding);
+				return html_entity_decode($s, ENT_QUOTES, self::$encoding);
 			}
 
 			public static function capitalize($s)
 			{
-				$s = mb_strtolower($s,self::$encoding);
+				$s = mb_strtolower($s, self::$encoding);
 
 				return mb_strtoupper(mb_substr($s, 0, 1, self::$encoding), self::$encoding) .
 					   mb_substr($s, 1, mb_strlen($s, self::$encoding), self::$encoding); 
@@ -60,17 +60,17 @@
 
 			public static function capitalizeAll($s)
 			{
-				return mb_convert_case($s,MB_CASE_TITLE,self::$encoding);
+				return mb_convert_case($s, MB_CASE_TITLE, self::$encoding);
 			}
 
 			public static function upper($s)
 			{
-				return mb_strtoupper($s,self::$encoding);
+				return mb_strtoupper($s, self::$encoding);
 			}
 
 			public static function lower($s)
 			{
-				return mb_strtolower($s,self::$encoding);
+				return mb_strtolower($s, self::$encoding);
 			}
 
 			public static function url(array $a)
@@ -80,27 +80,28 @@
 
 			public static function whitespace($s)
 			{
-				return preg_replace('/\s+/',' ',$s);
+				return preg_replace('/\s+/', ' ', $s);
 			}
 
-			public static function limit($s,$limit = 250,$postfix="...")
+			public static function limit($s, $limit = 250, $postfix="...")
 			{
-				if(mb_strlen($s,self::$encoding) > $limit){
-					return mb_substr($s,0,$limit,self::$encoding) . $postfix;
-				}else{
+				if (mb_strlen($s,self::$encoding) > $limit) {
+					return mb_substr($s, 0, $limit, self::$encoding) . $postfix;
+				} else {
 					return $s;
 				}
 			}
 
-			public static function limitWords($s,$limit = 250,$postfix="...")
+			public static function limitWords($s, $limit = 250, $postfix="...")
 			{
-				if(mb_strlen($s,self::$encoding) > $limit){
-					$pos = mb_strpos($s, ' ',$limit,self::$encoding);
-					if(false !== $pos)
-						return mb_substr($s,0,$pos,self::$encoding) . $postfix;
-					else
+				if (mb_strlen($s, self::$encoding) > $limit) {
+					$pos = mb_strpos($s, ' ', $limit, self::$encoding);
+					if (false !== $pos) {
+						return mb_substr($s, 0, $pos, self::$encoding) . $postfix;
+					} else {
 						return $s;
-				}else{
+					}
+				} else {
 					return $s;
 				}
 			}
@@ -112,7 +113,7 @@
 					if ($size >= 1024 && $unit != 'YB') {
 						$size = ($size / 1024);
 					} else {
-						return round($size, $precision) . " " . $unit;
+						return round($size, $precision) . ' ' . $unit;
 					}
 				}
 			}
@@ -129,7 +130,8 @@
 				}
 			}
 
-			public static function highlight($string,$word,$class = ''){
+			public static function highlight($string,$word,$class = '')
+			{
 				$words = array_filter(explode(' ',preg_quote($word)));
 				$rx = '/(' . implode('|',$words) . ')/i';
 

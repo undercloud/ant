@@ -5,26 +5,26 @@
 		{
 			public static function parseVariable($e)
 			{
-				$exp = explode('.',$e);
+				$exp = explode('.', $e);
 
-				foreach($exp as $key => $value){
-					if(0 == $key){
+				foreach ($exp as $key => $value) {
+					if (0 == $key) {
 						$exp[$key] = $value;
-					}else if($key == 1 and $exp[0] === '$'){
+					} else if($key == 1 and $exp[0] === '$') {
 						$exp[$key] = ($value != 'globals' ? '_' : '') . strtoupper($value);
-					}else{
+					} else {
 						$exp[$key] = '[\'' . $value . '\']';
 					}
 				}
 
-				return implode('',$exp);
+				return implode($exp);
 			}
 
 			public static function findVariable($v)
 			{
 				return preg_replace_callback('/(\$|->)[A-Za-z0-9_\.]+/', function($l){
 					return Helper::parseVariable($l[0]);
-				},$v);
+				}, $v);
 			}
 
 			public static function findOr($e)

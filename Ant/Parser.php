@@ -5,14 +5,14 @@
 		{
 			private static $skips = array();
 
-			public static function parse($view,$path = null)
+			public static function parse($view, $path = null)
 			{
-				$view = \Ant\Inherit::extend($view,$path);
+				$view = Inherit::extend($view,$path);
 				$view = preg_replace_callback('/@skip.+?@endskip/ms', '\Ant\Parser::skip', $view);
 				$view = preg_replace_callback('/@php.+?@endphp/ms', '\Ant\Parser::skip', $view);
 				$view = preg_replace_callback('/{\*.*?\*}/ms', '\Ant\Parser::comment', $view);
-				$view = preg_replace_callback('/{{{.+?}}}/', '\Ant\Parser::escape', $view);
-				$view = preg_replace_callback('/{{.+?}}/', '\Ant\Parser::variable', $view);
+				$view = preg_replace_callback('/{{{.+?}}}/ms', '\Ant\Parser::variable', $view);
+				$view = preg_replace_callback('/{{.+?}}/ms', '\Ant\Parser::escape', $view);
 				$view = preg_replace_callback('/@import.+/', '\Ant\Parser::import', $view);
 				$view = preg_replace_callback('/@forelse.+/', '\Ant\Parser::forelse', $view);
 				$view = preg_replace_callback('/@empty/', '\Ant\Parser::isempty', $view);
@@ -20,7 +20,7 @@
 				$view = preg_replace_callback('/\B@(foreach|for|while|switch|case|default|if|elseif|else)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', '\Ant\Parser::control', $view);
 				$view = preg_replace_callback('/@(break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif)/', '\Ant\Parser::endControl', $view);
 
-				if(self::$skips){
+				if (self::$skips) {
 					$view = str_replace(
 						array_keys(self::$skips),
 						array_values(self::$skips),
@@ -31,8 +31,8 @@
 				}
 				
 				$view = str_replace(
-					array('@php','@endphp','@skip','@endskip'),
-					array('<?php','?>','',''),
+					array('@php','@endphp', '@skip', '@endskip'),
+					array('<?php','?>', '', ''),
 					$view
 				);
 
@@ -41,10 +41,11 @@
 
 			public static function skip($e)
 			{
-				if(0 === strpos($e[0],'@php'))
-					$e[0] = \Ant\Helper::phpMinify($e[0]);
+				if (0 === strpos($e[0],'@php')) {
+					$e[0] = Helper::phpMinify($e[0]);
+				}
 
-				$uniqid = '~SKIP_' . strtoupper(str_replace('.','',uniqid('',true))) . '_CONTENT~';
+				$uniqid = '~SKIP_' . strtoupper(str_replace('.', '', uniqid('',true))) . '_CONTENT~';
 				self::$skips[$uniqid] = $e[0];
 
 				return $uniqid;
@@ -61,21 +62,21 @@
 				$view = substr($view,1,-1);
 				
 				$as = false;
-				$pos = strpos($view,',');
+				$pos = strpos($view, ',');
 
-				if(false === $pos){
-					$tmpl = trim(trim($view),"'\"");
-				}else{
-					$tmpl = trim(trim(substr($view,0,$pos)),"'\"");
-					$as = trim(substr($view,$pos + 1));
+				if (false === $pos) {
+					$tmpl = trim(trim($view), "'\"");
+				} else {
+					$tmpl = trim(trim(substr($view, 0, $pos)), "'\"");
+					$as   = trim(substr($view, $pos + 1));
 				}
 
-				return '<?php echo \Ant::init()->get(\'' . $tmpl .'\')->' . ($as ? 'assign(' . \Ant\Helper::findVariable($as) . ')->' : ''). 'draw(); ?>';
+				return '<?php echo \Ant\Ant::init()->get(\'' . $tmpl .'\')->' . ($as ? 'assign(' . \Ant\Helper::findVariable($as) . ')->' : ''). 'draw(); ?>';
 			}
 
 			public static function variable($e)
 			{
-				$view = trim(str_replace(array('{{','}}'), '', $e[0]));
+				$view = trim(str_replace(array('{{{','}}}'), '', $e[0]));
 				
 				$view = \Ant\Helper::findVariable($view);
 				$view = \Ant\Helper::findOr($view);
@@ -85,12 +86,12 @@
 
 			public static function escape($e)
 			{
-				$view = trim(str_replace(array('{{{','}}}'), '', $e[0]));
+				$view = trim(str_replace(array('{{', '}}'), '', $e[0]));
 
 				$view = \Ant\Helper::findVariable($view);
 				$view = \Ant\Helper::findOr($view);
 
-				return '<?php echo htmlentities(' . $view . ',ENT_QUOTES,\'UTF-8\');?>';
+				return '<?php echo \Ant\Fn::escape(' . $view . ');?>';
 			}
 
 			public static function caseSpace($e)
@@ -101,20 +102,22 @@
 			public static function control($e)
 			{
 				$view = trim($e[0]);
-				$view = ltrim(\Ant\Helper::findVariable($view),'@');
+				$view = ltrim(Helper::findVariable($view), '@');
 
-				if(':' != substr($view,-1))	
+				if (':' != substr($view,-1)) {
 					$view .= ':';
+				}
 
 				return '<?php ' . $view . '?>';
 			}
 
 			public static function endControl($e)
 			{
-				$view = ltrim(trim($e[0]),'@');
+				$view = ltrim(trim($e[0]), '@');
 
-				if($view == 'endforelse')
+				if ($view == 'endforelse') {
 					$view = 'endif';
+				}
 
 				return '<?php ' . $view . '; ?>';
 			}
@@ -124,15 +127,15 @@
 				$view = $e[0];
 
 				$m = array();
-				preg_match('/(\$|->)[A-Za-z0-9_\.]+/',$view,$m);
-				$parsed = \Ant\Helper::parseVariable($m[0]);
+				preg_match('/(\$|->)[A-Za-z0-9_\.]+/', $view, $m);
+				$parsed = Helper::parseVariable($m[0]);
 
 				$foreach = trim(str_replace('@forelse', 'foreach', $view));
-				$foreach = preg_replace_callback('/(\$|->)[A-Za-z0-9_\.]+/', function($e){
-					return \Ant\Helper::parseVariable($e[0]);
+				$foreach = preg_replace_callback('/(\$|->)[A-Za-z0-9_\.]+/', function($e) {
+					return Helper::parseVariable($e[0]);
 				}, $foreach, 1);		
 
-				return '<?php if(Ant::iterable(' . $parsed . ') and count(' . $parsed .  ')): ' . $foreach . ': ?>';
+				return '<?php if(\Ant\Ant::iterable(' . $parsed . ') and count(' . $parsed .  ')): ' . $foreach . ': ?>';
 			}
 
 			public static function isempty($e)
