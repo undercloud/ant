@@ -53,22 +53,34 @@
 
 		public function fire($event, $string)
 		{
-			if(isset($this->local_events[$event])){
-				if(is_callable($this->local_events[$event][0])){
-					$s = call_user_func_array($this->local_events[$event][0],array($string));
+			if (isset($this->local_events[$event])) {
+				if (is_callable($this->local_events[$event][0])) {
+					$s = call_user_func_array(
+						$this->local_events[$event][0], 
+						array($string)
+					);
 					
-					if($this->local_events[$event][1] == true){
-						if(isset(self::$global_events[$event]))
-							if(is_callable(self::$global_events[$event]))
-								return call_user_func_array(self::$global_events[$event],array($s));
-					}else{
+					if ($this->local_events[$event][1] == true) {
+						if (isset(self::$global_events[$event])) {
+							if (is_callable(self::$global_events[$event])) {
+								return call_user_func_array(
+									self::$global_events[$event], 
+									array($s)
+								);
+							}
+						}
+					} else {
 						return $s;
 					}
 				}
-			}else if(isset(self::$global_events[$event])){
-				if(is_callable(self::$global_events[$event]))
-					return call_user_func_array(self::$global_events[$event],array($string));
-			}else{
+			} else if (isset(self::$global_events[$event])) {
+				if (is_callable(self::$global_events[$event])) {
+					return call_user_func_array(
+						self::$global_events[$event], 
+						array($string)
+					);
+				}
+			} else {
 				return $string;
 			}
 		}
@@ -136,11 +148,18 @@
 			return self::$cache_obj;
 		}
 
+		public function has($path)
+		{
+			$path = self::$settings['view'] . DIRECTORY_SEPARATOR . \Ant\Helper::realPath($path) . '.' . self::$settings['extension'];
+			
+			return file_exists($path);
+		}
+
 		public function get($path)
 		{
 			$this->mode = self::MODE_FILE;
 
-			$this->tmpl_path = self::$settings['view'] . DIRECTORY_SEPARATOR . $path . '.' . self::$settings['extension'];
+			$this->tmpl_path = self::$settings['view'] . DIRECTORY_SEPARATOR . \Ant\Helper::realPath($path) . '.' . self::$settings['extension'];
 			
 			if (false == file_exists($this->tmpl_path)) {
 				throw new Exception(

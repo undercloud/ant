@@ -14,8 +14,6 @@
 				$view = preg_replace_callback('/{{{.+?}}}/ms', '\Ant\Parser::variable', $view);
 				$view = preg_replace_callback('/{{.+?}}/ms', '\Ant\Parser::escape', $view);
 				$view = preg_replace_callback('/@import.+/', '\Ant\Parser::import', $view);
-				//$view = preg_replace_callback('/@forelse.+/', '\Ant\Parser::forelse', $view);
-				//$view = preg_replace_callback('/@empty/', '\Ant\Parser::isempty', $view);
 				$view = preg_replace_callback('/[ 	]+@(case|default)/', '\Ant\Parser::caseSpace', $view);
 				$view = preg_replace_callback('/\B@(forelse|foreach|for|while|switch|case|default|if|elseif|else|unless)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', '\Ant\Parser::control', $view);
 				$view = preg_replace_callback('/@(empty|break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif|endunless)/', '\Ant\Parser::endControl', $view);
@@ -31,8 +29,8 @@
 				}
 				
 				$view = str_replace(
-					array('@php','@endphp', '@skip', '@endskip'),
-					array('<?php','?>', '', ''),
+					array('@php', '@endphp', '@skip', '@endskip'),
+					array('<?php', '?>', '', ''),
 					$view
 				);
 
@@ -133,27 +131,6 @@
 
 				return '<?php ' . $view . '; ?>';
 			}
-
-			/*public static function forelse($e)
-			{
-				$view = $e[0];
-
-				$m = array();
-				preg_match('/(\$|->)[A-Za-z0-9_\.]+/', $view, $m);
-				$parsed = Helper::parseVariable($m[0]);
-
-				$foreach = trim(str_replace('@forelse', 'foreach', $view));
-				$foreach = preg_replace_callback('/(\$|->)[A-Za-z0-9_\.]+/', function($e) {
-					return Helper::parseVariable($e[0]);
-				}, $foreach, 1);		
-
-				return '<?php if(\Ant\Fn::iterable(' . $parsed . ') and count(' . $parsed .  ')): ' . $foreach . ': ?>';
-			}
-
-			public static function isempty($e)
-			{
-				return '<?php endforeach; else: ?>';
-			}*/
 		}
 	}
 ?>

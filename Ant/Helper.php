@@ -3,6 +3,11 @@
 	{
 		class Helper
 		{
+			public static function realPath($fakepath)
+			{
+				return str_replace('.', DIRECTORY_SEPARATOR, $fakepath);
+			}
+			
 			public static function parseVariable($e)
 			{
 				$exp = explode('.', $e);

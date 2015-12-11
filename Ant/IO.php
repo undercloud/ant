@@ -3,7 +3,8 @@
 	{
 		class IO
 		{
-			private $handle = null;
+			private $path;
+			private $handle;
 
 			public static function init()
 			{
@@ -12,18 +13,24 @@
 
 			public function in($path)
 			{
-				if (!$path) {
-					throw new Exception();
+				$this->path = $path;
+
+				if (!$this->path) {
+					throw new Exception('Path is empty');
 				}
 
-				$this->handle = fopen($path, 'a+');
+				$this->handle = fopen($this->path, 'a+');
 
 				if (false === $this->handle) {
-					throw new Exception();
+					throw new Exception(
+						sprintf('Can\'t open file %s', $this->path)
+					);
 				}
 
-				if (false === flock($this->handle,LOCK_EX)) {
-					throw new Exception();
+				if (false === flock($this->handle, LOCK_EX)) {
+					throw new Exception(
+						sprintf('Can\'t lock file %s', $this->path)
+					);
 				}
 
 				return $this;
@@ -31,12 +38,11 @@
 
 			public function get()
 			{
-				if (!$this->handle) {
-					throw new Exception();
+				if(false === rewind($this->handle)) {
+					throw new Exception(
+						sprintf('Can\'t rewind file %s', $this->path)
+					);
 				}
-
-				if(false === rewind($this->handle))
-					throw new Exception();
 
 				$data = '';
 				while (!feof($this->handle)) {
@@ -48,26 +54,47 @@
 
 			public function set($data)
 			{
-				if (!$this->handle) {
-					return $this;
+				if (false === rewind($this->handle)) {
+					throw new Exception(
+						sprintf('Can\'t rewind file %s', $this->path)
+					);
 				}
 
-				rewind($this->handle);
-				ftruncate($this->handle, 0);
-				fwrite($this->handle, $data); 
-				fflush($this->handle);
+				if (false === ftruncate($this->handle, 0)) {
+					throw new Exception(
+						sprintf('Can\'t truncate file %s', $this->path)
+					);
+				}
+				
+				if (false === fwrite($this->handle, $data)) {
+					throw new Exception(
+						sprintf('Can\'t write file %s', $this->path)
+					);
+				} 
+				
+				if (false === fflush($this->handle)) {
+					throw new Exception(
+						sprintf('Can\'t flush file %s', $this->path)
+					);
+				}
 
 				return $this;
 			}
 
 			public function out()
 			{
-				if (!$this->handle) {
-					return $this;
+				if (false === flock($this->handle, LOCK_UN)) {
+					throw new Exception(
+						sprintf('Can\'t unlock file %s', $this->path)
+					);
+				}
+				
+				if (false === fclose($this->handle)) {
+					throw new Exception(
+						sprintf('Can\'t close file %s', $this->path)
+					);
 				}
 
-				flock($this->handle, LOCK_UN);
-				fclose($this->handle);
 				$this->handle = null;
 
 				return $this;

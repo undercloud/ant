@@ -5,6 +5,11 @@
 		{
 			private static $encoding = 'UTF-8';
 
+			private static function setEncoding($encoding)
+			{
+				self::$encoding = $encoding;
+			}
+
 			public static function iterable($o)
 			{
 				return (is_array($o) || $o instanceof Traversable || $o instanceof stdClass);
