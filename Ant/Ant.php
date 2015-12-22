@@ -5,13 +5,14 @@
 
 	namespace Ant;
 
-	require_once __DIR__ . DIRECTORY_SEPARATOR . 'Parser.php';
-	require_once __DIR__ . DIRECTORY_SEPARATOR . 'Helper.php';
-	require_once __DIR__ . DIRECTORY_SEPARATOR . 'IO.php';
-	require_once __DIR__ . DIRECTORY_SEPARATOR . 'Fn.php';
-	require_once __DIR__ . DIRECTORY_SEPARATOR . 'Cache.php';
-	require_once __DIR__ . DIRECTORY_SEPARATOR . 'Exception.php';
-	require_once __DIR__ . DIRECTORY_SEPARATOR . 'Inherit.php';
+	require_once __DIR__ . '/Parser.php';
+	require_once __DIR__ . '/Helper.php';
+	require_once __DIR__ . '/IO.php';
+	require_once __DIR__ . '/Fn.php';
+	require_once __DIR__ . '/Cache.php';
+	require_once __DIR__ . '/Exception.php';
+	require_once __DIR__ . '/Inherit.php';
+	require_once __DIR__ . '/Plugins/PluginBase.php';
 
 	class Ant
 	{
@@ -22,6 +23,8 @@
 		private static $settings = array();
 
 		private $mode;
+
+		private $prevent_parent = false;
 		private static $global_events = array();
 		private $local_events = array();
 
@@ -31,6 +34,7 @@
 		private $string      = '';
 
 		private static $fn = array();
+		public static $plugin;
 
 		public static function init()
 		{
@@ -39,55 +43,87 @@
 
 		public function bind($event, $call)
 		{
-			self::$global_events[$event] = $call;
+			self::$global_events[$event][] = $call;
 
 			return $this;
 		}
 
-		public function on($event, $call, $parent = true)
+		public function on($event, $call)
 		{
-			$this->local_events[$event] = array($call, $parent);
+			$this->local_events[$event][] = $call;
 
 			return $this;
+		}
+
+		public function preventParentEvent($prevent)
+		{
+			$this->prevent_parent = $prevent;
 		}
 
 		public function fire($event, $string)
 		{
+			$queue = array();
+
 			if (isset($this->local_events[$event])) {
-				if (is_callable($this->local_events[$event][0])) {
-					$s = call_user_func_array(
-						$this->local_events[$event][0], 
-						array($string)
-					);
-					
-					if ($this->local_events[$event][1] == true) {
-						if (isset(self::$global_events[$event])) {
-							if (is_callable(self::$global_events[$event])) {
-								return call_user_func_array(
-									self::$global_events[$event], 
-									array($s)
-								);
-							}
-						}
-					} else {
-						return $s;
-					}
+				$queue = array_merge($queue, $this->local_events[$event]);
+			}
+
+			if (false === $this->prevent_parent) {
+				if (isset(self::$global_events[$event])) {
+					$queue = array_merge($queue, self::$global_events[$event]);
 				}
-			} else if (isset(self::$global_events[$event])) {
-				if (is_callable(self::$global_events[$event])) {
-					return call_user_func_array(
-						self::$global_events[$event], 
-						array($string)
-					);
-				}
-			} else {
-				return $string;
+			}
+
+			foreach ($queue as $call) {
+				$string = call_user_func_array($call, array($string));
+			}
+
+			return $string;
+		}
+
+		private function checkInject($name)
+		{
+			if (array_key_exists($name, self::$fn) or isset(self::$plugin->name)) {
+				throw new Exception(
+					sprintf('Cannot register %s', $name)
+				);
 			}
 		}
 
 		public function share($name, $call)
 		{
+			$this->checkInject($name);
+
 			self::$fn[$name] = $call;
+		}
+
+		public function register($plugin, $call)
+		{
+			$this->checkInject($plugin);
+
+			self::$plugin->$plugin = $call;
+		}
+
+		public function activate($plugin)
+		{
+			$path = __DIR__ . '/Plugins/' . $plugin . '.php';
+
+			if (file_exists($path)) {
+				require_once $path;
+
+				$classname = '\\Ant\\Plugins\\' . $plugin;
+
+				call_user_func_array(
+					array(new $classname, 'register'),
+					array($this)
+				);
+			} else {
+				throw new Exception(
+					sprintf('Plugin not exists %s', $plugin)
+				);
+			}
+
+			return $this;
 		}
 
 		public function setup($s)
@@ -122,6 +158,8 @@
 			self::$settings  = $s;
 			self::$cache_obj = new Cache($s['cache']);
 
+			self::$plugin = new \stdClass;
+
 			return $this;
 		}
 
@@ -130,9 +168,32 @@
 			return $name != false ? self::$settings[$name] : self::$settings;
 		}
 
+		public function __call($name, $arguments)
+		{
+			return self::call($name, $arguments);
+		}
+
 		public static function __callStatic($name, $arguments)
 		{
-			if (method_exists('Fn',$name)) {
+			return self::call($name, $arguments);
+		}
+
+		public function __get($key)
+		{
+			switch ($key) {
+				case 'plugin':
+					return self::$plugin;
+
+				default:
+					throw new \Exception(
+						sprintf('Undefined property %s', $key)
+					);
+			}
+		}
+
+		private static function call($name, $arguments)
+		{
+			if (method_exists('\Ant\Fn',$name)) {
 				return call_user_func_array('\Ant\Fn::' . $name, $arguments);
 			} else if (array_key_exists($name, self::$fn) and is_callable(self::$fn[$name])) {
 				return call_user_func_array(self::$fn[$name], $arguments);
@@ -159,14 +220,13 @@
 		{
 			$this->mode = self::MODE_FILE;
 
-			$this->tmpl_path = self::$settings['view'] . DIRECTORY_SEPARATOR . \Ant\Helper::realPath($path) . '.' . self::$settings['extension'];
-			
-			if (false == file_exists($this->tmpl_path)) {
+			if (false == $this->has($path)) {
 				throw new Exception(
 					sprintf('Template file not found at %s', $this->tmpl_path)
 				);
 			}
 
+			$this->tmpl_path  = self::$settings['view'] . DIRECTORY_SEPARATOR . \Ant\Helper::realPath($path) . '.' . self::$settings['extension'];
 			$this->cache_path = self::$settings['cache'] . DIRECTORY_SEPARATOR . str_replace('/', '.', $path) . '.php';
 
 			return $this;

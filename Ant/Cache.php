@@ -86,6 +86,7 @@
 							}
 
 							$this->is_changed = $chain_changed = true;
+							
 							break;
 						}
 					}

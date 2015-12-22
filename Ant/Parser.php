@@ -10,7 +10,7 @@
 				$view = Inherit::extend($view, $path);
 				$view = preg_replace_callback('/@skip.+?@endskip/ms', '\Ant\Parser::skip', $view);
 				$view = preg_replace_callback('/@php.+?@endphp/ms', '\Ant\Parser::skip', $view);
-				$view = preg_replace_callback('/{\*.*?\*}/ms', '\Ant\Parser::comment', $view);
+				$view = preg_replace_callback('/{{--.*?--}}/ms', '\Ant\Parser::comment', $view);
 				$view = preg_replace_callback('/{{{.+?}}}/ms', '\Ant\Parser::variable', $view);
 				$view = preg_replace_callback('/{{.+?}}/ms', '\Ant\Parser::escape', $view);
 				$view = preg_replace_callback('/@import.+/', '\Ant\Parser::import', $view);
@@ -39,9 +39,9 @@
 
 			public static function skip($e)
 			{
-				if (0 === strpos($e[0],'@php')) {
-					$e[0] = Helper::phpMinify($e[0]);
-				}
+				//if (0 === strpos($e[0],'@php')) {
+				//	$e[0] = Helper::phpMinify($e[0]);
+				//}
 
 				$uniqid = '~SKIP_' . strtoupper(str_replace('.', '', uniqid('',true))) . '_CONTENT~';
 				self::$skips[$uniqid] = $e[0];
@@ -59,7 +59,7 @@
 				$view = trim(str_replace('@import', '', $e[0]));
 				$view = substr($view,1,-1);
 				
-				$as = false;
+				$as  = false;
 				$pos = strpos($view, ',');
 
 				if (false === $pos) {

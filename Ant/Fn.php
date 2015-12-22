@@ -32,12 +32,21 @@
 
 			public static function js($src, $defer = "")
 			{
+				if (isset(Ant::$plugin->asset)) {
+					$src = Ant::$plugin->asset->check($src);
+				}
+
 				return '<script type="text/javascript" src="' . $src . '"' . ($defer ? " " . $defer : '') . '></script>';
 			}
 
 			public static function css($href, $media = "")
 			{
 				return '<link type="text/css" rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . '/>';
+			}
+
+			public static function img($src, $alt = "") 
+			{
+				return '<img src="' . $src . '" alt="' . $alt . '" />';
 			}
 
 			public static function number($n)
@@ -108,6 +117,18 @@
 					}
 				} else {
 					return $s;
+				}
+			}
+
+			public static function limitMiddle($text,$limit = 128)
+			{
+				$len = mb_strlen($text,self::$encoding);
+
+				if($len > $limit){
+					$mid = (int)(($limit - 3) / 2);
+					return mb_substr($text,0,$mid,self::$encoding) . '...' . mb_substr($text,$len - $mid,$len,self::$encoding);
+				}else{
+					return $text;
 				}
 			}
 
@@ -185,18 +206,6 @@
 					$s = str_repeat($s, (int)($limit / $n) + 1);
 
 				return self::limitWords($s,$limit);
-			}
-
-			public static function limitMiddle($text,$limit = 128)
-			{
-				$len = mb_strlen($text,self::$encoding);
-
-				if($len > $limit){
-					$mid = (int)(($limit - 3) / 2);
-					return mb_substr($text,0,$mid,self::$encoding) . '...' . mb_substr($text,$len - $mid,$len,self::$encoding);
-				}else{
-					return $text;
-				}
 			}
 
 			/*public static function slug($text)
