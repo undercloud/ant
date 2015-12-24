@@ -1,12 +1,11 @@
 <?php
-	namespace Ant
+	namespace Ant;
+	
+	class Exception extends \Exception
 	{
-		class Exception extends \Exception
+		public function __construct($message)
 		{
-			public function __construct($message)
-			{
-				parent::__construct($message);
-			}
+			parent::__construct($message);
 		}
 	}
 ?>

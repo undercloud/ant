@@ -3,8 +3,6 @@
 
 	class Asset extends PluginBase
 	{
-		public $x = 100500;
-
 		private function isLocalPath($path)
 		{
 			if (strpos($path, '//') >= max(strpos($path, '.'), strpos($path, '/'))) {
@@ -28,7 +26,11 @@
 
 		public function register($ant)
 		{
-			$ant->register('asset', new self());
+			$asset = new self();
+
+			$ant->register('asset', function($path)use($asset){
+				return $asset->check($path);
+			});
 		}
 	}
 ?>

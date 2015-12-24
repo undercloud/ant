@@ -12,6 +12,7 @@
 	require_once __DIR__ . '/Cache.php';
 	require_once __DIR__ . '/Exception.php';
 	require_once __DIR__ . '/Inherit.php';
+	require_once __DIR__ . '/Plugin.php';
 	require_once __DIR__ . '/Plugins/PluginBase.php';
 
 	class Ant
@@ -19,10 +20,10 @@
 		const MODE_FILE   = 0xFF;
 		const MODE_STRING = 0x00;
 
+		private $mode;
+
 		private static $cache_obj;
 		private static $settings = array();
-
-		private $mode;
 
 		private $prevent_parent = false;
 		private static $global_events = array();
@@ -34,11 +35,53 @@
 		private $string      = '';
 
 		private static $fn = array();
-		public static $plugin;
+		private static $plugin;
 
 		public static function init()
 		{
-			return new self();
+			return new static();
+		}
+
+		public function setup($s)
+		{
+			if (false == isset($s['view'])) {
+				throw new Exception('View path is not defined');
+			}
+			
+			if (false == @is_readable($s['view'])) {
+				throw new Exception(
+					sprintf('View path %s is not available', $s['view'])
+				);
+			}
+				
+			if (false == isset($s['cache'])) {
+				throw new Exception('Cache path is not defined');
+			}
+
+			if (false == @is_readable($s['cache']) or false == @is_writeable($s['cache'])) {
+				throw new Exception(
+					sprintf('Cache path %s is not available', $s['cache'])
+				);
+			}
+
+			if (false == isset($s['extension'])) $s['extension'] = 'php';
+			if (false == isset($s['debug']))     $s['debug']     = false;
+			if (false == isset($s['freeze']))    $s['freeze']    = false;
+
+			$s['cache'] = rtrim($s['cache'], ' 	\\/');
+			$s['view']  = rtrim($s['view'], ' 	\\/');
+
+			self::$settings  = $s;
+			self::$cache_obj = new Cache($s['cache']);
+
+			self::$plugin = new Plugin;
+
+			return $this;
+		}
+
+		public static function settings($name = false)
+		{	
+			return (($name != false) ? self::$settings[$name] : self::$settings);
 		}
 
 		public function bind($event, $call)
@@ -126,46 +169,21 @@
 			return $this;
 		}
 
-		public function setup($s)
+		public static function getPlugin()
 		{
-			if (false == isset($s['view'])) {
-				throw new Exception('View path is not defined');
-			}
-			
-			if (false == @is_readable($s['view'])) {
-				throw new Exception(
-					sprintf('View path %s is not available', $s['view'])
-				);
-			}
-				
-			if (false == isset($s['cache'])) {
-				throw new Exception('Cache path is not defined');
-			}
-
-			if (false == @is_readable($s['cache']) or false == @is_writeable($s['cache'])) {
-				throw new Exception(
-					sprintf('Cache path %s is not available', $s['cache'])
-				);
-			}
-
-			if (false == isset($s['extension'])) $s['extension'] = 'php';
-			if (false == isset($s['debug']))     $s['debug']     = false;
-			if (false == isset($s['freeze']))    $s['freeze']    = false;
-
-			$s['cache'] = rtrim($s['cache'], ' 	\\/');
-			$s['view']  = rtrim($s['view'], ' 	\\/');
-
-			self::$settings  = $s;
-			self::$cache_obj = new Cache($s['cache']);
-
-			self::$plugin = new \stdClass;
-
-			return $this;
+			return self::$plugin;
 		}
 
-		public static function settings($name = false)
-		{	
-			return $name != false ? self::$settings[$name] : self::$settings;
+		public function __get($key)
+		{
+			switch ($key) {
+				case 'plugin':
+					return self::$plugin;
+				default:
+					throw new \Exception(
+						sprintf('Undefined property %s', $key)
+					);
+			}
 		}
 
 		public function __call($name, $arguments)
@@ -176,19 +194,6 @@
 		public static function __callStatic($name, $arguments)
 		{
 			return self::call($name, $arguments);
-		}
-
-		public function __get($key)
-		{
-			switch ($key) {
-				case 'plugin':
-					return self::$plugin;
-
-				default:
-					throw new \Exception(
-						sprintf('Undefined property %s', $key)
-					);
-			}
 		}
 
 		private static function call($name, $arguments)
