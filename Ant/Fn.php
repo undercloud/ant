@@ -12,7 +12,7 @@
 
 		public static function iterable($o)
 		{
-			return (is_array($o) || $o instanceof Traversable || $o instanceof stdClass);
+			return (is_array($o) || $o instanceof Traversable || $o instanceof \stdClass);
 		}
 
 		public static function unicode($s)
@@ -60,12 +60,12 @@
 
 		public static function escape($s)
 		{
-			return htmlentities($s, ENT_QUOTES, self::$encoding);
+			return htmlentities($s, ENT_QUOTES, self::$encoding, false);
 		}
 
 		public static function decode($s)
 		{
-			return html_entity_decode($s, ENT_QUOTES, self::$encoding);
+			return html_entity_decode($s, ENT_QUOTES, self::$encoding, self::$encoding);
 		}
 
 		public static function capitalize($s)

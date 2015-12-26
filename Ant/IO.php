@@ -19,7 +19,7 @@
 				throw new Exception('Path is empty');
 			}
 
-			$this->handle = fopen($this->path, 'a+');
+			$this->handle = @fopen($this->path, 'a+');
 
 			if (false === $this->handle) {
 				throw new Exception(
@@ -27,7 +27,7 @@
 				);
 			}
 
-			if (false === flock($this->handle, LOCK_EX)) {
+			if (false === @flock($this->handle, LOCK_EX)) {
 				throw new Exception(
 					sprintf('Can\'t lock file %s', $this->path)
 				);
@@ -60,19 +60,19 @@
 				);
 			}
 
-			if (false === ftruncate($this->handle, 0)) {
+			if (false === @ftruncate($this->handle, 0)) {
 				throw new Exception(
 					sprintf('Can\'t truncate file %s', $this->path)
 				);
 			}
 			
-			if (false === fwrite($this->handle, $data)) {
+			if (false === @fwrite($this->handle, $data)) {
 				throw new Exception(
 					sprintf('Can\'t write file %s', $this->path)
 				);
 			} 
 			
-			if (false === fflush($this->handle)) {
+			if (false === @fflush($this->handle)) {
 				throw new Exception(
 					sprintf('Can\'t flush file %s', $this->path)
 				);
@@ -83,13 +83,13 @@
 
 		public function out()
 		{
-			if (false === flock($this->handle, LOCK_UN)) {
+			if (false === @flock($this->handle, LOCK_UN)) {
 				throw new Exception(
 					sprintf('Can\'t unlock file %s', $this->path)
 				);
 			}
 			
-			if (false === fclose($this->handle)) {
+			if (false === @fclose($this->handle)) {
 				throw new Exception(
 					sprintf('Can\'t close file %s', $this->path)
 				);

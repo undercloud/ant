@@ -15,7 +15,7 @@
 			foreach ($exp as $key => $value) {
 				if (0 == $key) {
 					$exp[$key] = $value;
-				} else if($key == 1 and $exp[0] === '$') {
+				} else if ((int)$key == 1 and $exp[0] === '$') {
 					$exp[$key] = ($value != 'globals' ? '_' : '') . strtoupper($value);
 				} else {
 					$exp[$key] = '[\'' . $value . '\']';

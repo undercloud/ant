@@ -101,6 +101,8 @@
 		public function preventParentEvent($prevent)
 		{
 			$this->prevent_parent = $prevent;
+
+			return $this;
 		}
 
 		public function fire($event, $string)
@@ -124,47 +126,35 @@
 			return $string;
 		}
 
-		private function checkInject($name)
+		public function share($name, $call)
 		{
-			if (array_key_exists($name, self::$fn) or isset(self::$plugin->name)) {
+			if (array_key_exists($name, self::$fn)) {
 				throw new Exception(
 					sprintf('Cannot register %s', $name)
 				);
 			}
-		}
-
-		public function share($name, $call)
-		{
-			$this->checkInject($name);
 
 			self::$fn[$name] = $call;
+
+			return $this;
 		}
 
 		public function register($plugin, $call)
 		{
-			$this->checkInject($plugin);
-
-			self::$plugin->$plugin = $call;
-		}
-
-		public function activate($plugin)
-		{
-			$path = __DIR__ . '/Plugins/' . $plugin . '.php';
-
-			if (file_exists($path)) {
-				require_once $path;
-
-				$classname = '\\Ant\\Plugins\\' . $plugin;
-
-				call_user_func_array(
-					array(new $classname, 'register'),
-					array($this)
-				);
-			} else {
+			if (isset(self::$plugin->{$plugin})) {
 				throw new Exception(
-					sprintf('Plugin not exists %s', $plugin)
+					sprintf('Cannot register %s, plugin already exists', $plugin)
 				);
 			}
+
+			self::$plugin->{$plugin} = $call;
+
+			return $this;
+		}
+
+		public function activate($plugin, array $options = array())
+		{
+			self::$plugin->activate($this, $plugin, $options);
 
 			return $this;
 		}
@@ -179,6 +169,7 @@
 			switch ($key) {
 				case 'plugin':
 					return self::$plugin;
+
 				default:
 					throw new \Exception(
 						sprintf('Undefined property %s', $key)

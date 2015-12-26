@@ -11,7 +11,7 @@
 			'type'        => 'text/html',
 			'width'       => '640',
 			'height'      => '390',
-			'frameborder' => 0
+			'frameborder' => '0'
 		);
 
 		public static function setup(array $params, array $attrs)

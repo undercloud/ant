@@ -14,7 +14,7 @@
 			$view = preg_replace_callback('/{{{.+?}}}/ms', '\Ant\Parser::variable', $view);
 			$view = preg_replace_callback('/{{.+?}}/ms', '\Ant\Parser::escape', $view);
 			$view = preg_replace_callback('/@import.+/', '\Ant\Parser::import', $view);
-			$view = preg_replace_callback('/[ 	]+@(case|default)/', '\Ant\Parser::caseSpace', $view);
+			$view = preg_replace_callback('/[\s\t]+@(case|default)/', '\Ant\Parser::caseSpace', $view);
 			$view = preg_replace_callback('/\B@(forelse|foreach|for|while|switch|case|default|if|elseif|else|unless)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', '\Ant\Parser::control', $view);
 			$view = preg_replace_callback('/@(empty|break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif|endunless)/', '\Ant\Parser::endControl', $view);
 

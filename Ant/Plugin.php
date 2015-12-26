@@ -3,7 +3,7 @@
 
 	class Plugin
 	{
-		public function activate(Ant $ant, $plugin)
+		public function activate(Ant $ant, $plugin, array $options = array())
 		{
 			$path = __DIR__ . '/Plugins/' . $plugin . '.php';
 
@@ -14,7 +14,7 @@
 				$classname = '\\Ant\\Plugins\\' . $plugin;
 
 				call_user_func_array(
-					array(new $classname, 'register'),
+					array(new $classname($options), 'register'),
 					array($ant)
 				);
 			} else {

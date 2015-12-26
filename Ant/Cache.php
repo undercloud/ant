@@ -8,7 +8,7 @@
 		private $cache_path;
 		private $cache_file;
 
-		public function __construct($cache_path = false)
+		public function __construct($cache_path = '')
 		{
 			$this->cache_path = $cache_path;
 			$this->cache_file = $cache_path . DIRECTORY_SEPARATOR . 'cache.json';
@@ -65,7 +65,13 @@
 			$chain_changed = false;
 			if (array_key_exists($path, self::$map['chain'])) {
 				foreach (self::$map['chain'][$path] as $item) {
-					$mtime = filemtime($item);
+					$mtime = @filemtime($item);
+
+					if (false === $mtime) {
+						throw new Exception(
+							sprintf('Cannot get file modification time %s', $path)
+						);
+					}
 
 					if (
 						false == array_key_exists($item, self::$map['view']) 
@@ -75,14 +81,22 @@
 
 						$chain_path = $this->cache_path . DIRECTORY_SEPARATOR . basename($item);
 						if (file_exists($chain_path)) {
-							unlink($chain_path);
+							if (false === @unlink($chain_path)) {
+								throw new Exception(
+									sprintf('Cannot delete file %s', $chain_path)
+								);
+							}
 						}
 
 						foreach (self::$map['chain'] as $k => $v) {
 							$chain_path = $this->cache_path . DIRECTORY_SEPARATOR . basename($k);
 							
 							if (in_array($item, $v) and file_exists($chain_path)) {
-								unlink($chain_path);
+								if (false === @unlink($chain_path)) {
+									throw new Exception(
+										sprintf('Cannot delete file %s', $chain_path)
+									);
+								}
 							}
 						}
 
