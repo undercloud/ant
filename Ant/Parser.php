@@ -65,15 +65,15 @@
 				$as   = trim(substr($view, $pos + 1));
 			}
 
-			return '<?php echo \Ant\Ant::init()->get(\'' . $tmpl .'\')->' . ($as ? 'assign(' . \Ant\Helper::findVariable($as) . ')->' : ''). 'draw(); ?>';
+			return '<?php echo \Ant\Ant::init()->get(\'' . $tmpl .'\')->' . ($as ? 'assign(' . Helper::findVariable($as) . ')->' : ''). 'draw(); ?>';
 		}
 
 		public static function variable($e)
 		{
 			$view = trim(str_replace(array('{{{','}}}'), '', $e[0]));
 			
-			$view = \Ant\Helper::findVariable($view);
-			$view = \Ant\Helper::findOr($view);
+			$view = Helper::findVariable($view);
+			$view = Helper::findOr($view);
 			
 			return '<?php echo ' . $view . ';?>';
 		}
@@ -82,8 +82,8 @@
 		{
 			$view = trim(str_replace(array('{{', '}}'), '', $e[0]));
 
-			$view = \Ant\Helper::findVariable($view);
-			$view = \Ant\Helper::findOr($view);
+			$view = Helper::findVariable($view);
+			$view = Helper::findOr($view);
 
 			return '<?php echo \Ant\Fn::escape(' . $view . ');?>';
 		}

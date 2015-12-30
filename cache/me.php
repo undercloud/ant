@@ -3,8 +3,7 @@
 
 	<h1><?php echo \Ant\Fn::escape($GLOBALS['sasaika']);?></h1>
 
-	<?php switch('kitty'):?>
-<?php case('kitty'):?>
+	<?php switch('kitty'):?><?php case('kitty'):?>
 			<?php echo \Ant\Fn::escape($_SERVER['HTTP_HOST']);?>
 		<?php break; ?>
 	<?php endswitch; ?>

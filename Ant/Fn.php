@@ -148,6 +148,17 @@
 			}
 		}
 
+		public static function ordinal($cdnl)
+		{
+			$c   = abs($cdnl) % 10;
+			$ext = ((abs($cdnl) %100 < 21 && abs($cdnl) %100 > 4) ? 'th'
+				: (($c < 4) ? ($c < 3) ? ($c < 2) ? ($c < 1)
+				? 'th' : 'st' : 'nd' : 'rd' : 'th')
+			);
+
+			return $cdnl.$ext;
+		}
+
 		public static function roundHuman($size,$precision = 2)
 		{
 			$units = array('', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y');

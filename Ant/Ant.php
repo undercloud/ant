@@ -29,14 +29,15 @@
 		private static $global_events = array();
 		private $local_events = array();
 
-		private $assign      = array();
-		private $tmpl_path   = '';
-		private $cache_path  = '';
-		private $string      = '';
+		private $assign     = array();
+		private $tmpl_path  = '';
+		private $cache_path = '';
+		private $logic_path = '';
+		private $string     = '';
 
 		private static $fn = array();
 		private static $plugin;
-
+		
 		public static function init()
 		{
 			return new static();
@@ -70,6 +71,12 @@
 
 			$s['cache'] = rtrim($s['cache'], ' 	\\/');
 			$s['view']  = rtrim($s['view'], ' 	\\/');
+
+			if (isset($s['logic'])) {
+				$s['logic'] = rtrim($s['logic'], ' 	\\/');
+			} else {
+				$s['logic'] = '';
+			}
 
 			self::$settings  = $s;
 			self::$cache_obj = new Cache($s['cache']);
@@ -205,9 +212,16 @@
 			return self::$cache_obj;
 		}
 
+		public function logic($path)
+		{
+			$this->logic_path = self::$settings['logic'] . '/' . Helper::realPath($path) . '.php';
+			
+			return $this;
+		}
+
 		public function has($path)
 		{
-			$path = self::$settings['view'] . DIRECTORY_SEPARATOR . \Ant\Helper::realPath($path) . '.' . self::$settings['extension'];
+			$path = self::$settings['view'] . '/' . Helper::realPath($path) . '.' . self::$settings['extension'];
 			
 			return file_exists($path);
 		}
@@ -216,24 +230,29 @@
 		{
 			$this->mode = self::MODE_FILE;
 
-			if (false == $this->has($path)) {
-				throw new Exception(
-					sprintf('Template file not found at %s', $this->tmpl_path)
-				);
-			}
-
-			$this->tmpl_path  = self::$settings['view'] . DIRECTORY_SEPARATOR . \Ant\Helper::realPath($path) . '.' . self::$settings['extension'];
-			$this->cache_path = self::$settings['cache'] . DIRECTORY_SEPARATOR . str_replace('/', '.', $path) . '.php';
+			$this->tmpl_path  = self::$settings['view']  . '/' . Helper::realPath($path) . '.' . self::$settings['extension'];
+			$this->cache_path = self::$settings['cache'] . '/' . str_replace('/', '.', $path) . '.php';
+			$this->logic_path = self::$settings['logic'] . '/' . Helper::realPath($path) . '.php';
 
 			return $this;
 		}
 
 		public function fromString($s)
 		{
-			$this->mode = self::MODE_STRING;
+			$this->mode   = self::MODE_STRING;
 			$this->string = $s;
 
 			return $this;
+		}
+
+		public function fromFile($path)
+		{
+			$full_path        = self::$settings['view']  . '/' . Helper::realPath($path) . '.' . self::$settings['extension'];
+			$this->logic_path = self::$settings['logic'] . '/' . Helper::realPath($path) . '.php';
+			
+			$content = IO::init()->in($full_path)->get();
+
+			return $this->fromString($content);
 		}
 
 		public function assign(array $data = array())
@@ -257,12 +276,13 @@
 						)
 					);
 
-					if (isset(self::$settings['minify']) and true === self::$settings['minify']) {
-						$s = Helper::compress($s);
-					}
-
 					ob_start();
 					extract($this->assign);
+
+					if ($this->logic_path and file_exists($this->logic_path)) {
+						require $this->logic_path;
+					}
+
 					eval(' ?>' . $s . '<?php ');
 					$echo = ob_get_contents();
 					ob_end_clean();
@@ -272,7 +292,7 @@
 				case self::MODE_FILE:
 					if (false === self::$settings['freeze']) {
 						if (true === self::$settings['debug'] or false == self::$cache_obj->check($this->tmpl_path)) {
-							$io = \Ant\IO::init()->in($this->tmpl_path);
+							$io = IO::init()->in($this->tmpl_path);
 
 							$s = $this->fire(
 								'build',
@@ -285,10 +305,6 @@
 								)
 							);
 
-							if (isset(self::$settings['minify']) and true === self::$settings['minify']) {
-								$s = Helper::compress($s);
-							}
-
 							$io->out()
 							   ->in($this->cache_path)
 							   ->set($s)
@@ -298,6 +314,11 @@
 
 					ob_start();
 					extract($this->assign);
+
+					if (file_exists($this->logic_path)) {
+						require $this->logic_path;
+					}
+
 					require $this->cache_path;
 					$echo = ob_get_contents();
 					ob_end_clean();
