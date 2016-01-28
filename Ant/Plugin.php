@@ -13,7 +13,7 @@
 
 				$classname = '\\Ant\\Plugins\\' . $plugin;
 
-				call_user_func_array(
+				return call_user_func_array(
 					array(new $classname($options), 'register'),
 					array($ant)
 				);

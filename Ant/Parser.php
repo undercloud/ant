@@ -7,6 +7,11 @@
 
 		public static function parse($view, $path = null)
 		{
+			$rules = Ant::getRule();
+			foreach ($rules as $rx => $call) {
+				$view = preg_replace_callback($rx, $call, $view);
+			}
+
 			$view = Inherit::extend($view, $path);
 			$view = preg_replace_callback('/@skip.+?@endskip/ms', '\Ant\Parser::skip', $view);
 			$view = preg_replace_callback('/@php.+?@endphp/ms', '\Ant\Parser::skip', $view);

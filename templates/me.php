@@ -1,6 +1,8 @@
 @unless(false)
 	{{{ $this->js('/script.js') }}}
 
+	{@ HUI @}
+
 	<h1>{{ $.globals.sasaika }}</h1>
 
 	@switch('kitty')

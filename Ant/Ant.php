@@ -37,6 +37,7 @@
 
 		private static $fn = array();
 		private static $plugin;
+		private static $rules = array();
 		
 		public static function init()
 		{
@@ -162,6 +163,18 @@
 		public function activate($plugin, array $options = array())
 		{
 			self::$plugin->activate($this, $plugin, $options);
+
+			return $this;
+		}
+
+		public static function getRule()
+		{
+			return self::$rules;
+		}
+
+		public function rule($rx, $call)
+		{
+			self::$rules[$rx] = $call;
 
 			return $this;
 		}

@@ -15,6 +15,29 @@
 			return (is_array($o) || $o instanceof Traversable || $o instanceof \stdClass);
 		}
 
+		public static function isBlank($what)
+		{
+			if (is_string($what)) {
+				$what = trim($what);
+			}
+
+			return (
+				($v === '')    or
+				($v === null)  or
+				($v === false) or
+				(is_array($v)  and 0 == count($v))
+			);
+		}
+
+		public static function isEmpty($what)
+		{
+			if (is_string($what)) {
+				$what = trim($what);
+			}
+
+			return @empty($what);
+		}
+
 		public static function unicode($s)
 		{
 			return implode(
@@ -48,16 +71,6 @@
 			return '<link type="text/css" rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . '/>';
 		}
 
-		/*public static function img($src, $alt = "") 
-		{
-			return '<img src="' . $src . '" alt="' . $alt . '" />';
-		}*/
-
-		public static function number($n)
-		{
-			return rtrim(rtrim(number_format((float)$n, 2, '.', ' '), '0'), '.');
-		}
-
 		public static function escape($s)
 		{
 			return htmlentities($s, ENT_QUOTES, self::$encoding, false);
@@ -65,7 +78,7 @@
 
 		public static function decode($s)
 		{
-			return html_entity_decode($s, ENT_QUOTES, self::$encoding, self::$encoding);
+			return html_entity_decode($s, ENT_QUOTES, self::$encoding);
 		}
 
 		public static function capitalize($s)
@@ -101,7 +114,7 @@
 			return preg_replace('/\s+/', ' ', $s);
 		}
 
-		public static function limit($s, $limit = 250, $postfix="...")
+		public static function limit($s, $limit = 250, $postfix = '...')
 		{
 			if (mb_strlen($s,self::$encoding) > $limit) {
 				return mb_substr($s, 0, $limit, self::$encoding) . $postfix;
@@ -110,7 +123,7 @@
 			}
 		}
 
-		public static function limitWords($s, $limit = 250, $postfix="...")
+		public static function limitWords($s, $limit = 250, $postfix = '...')
 		{
 			if (mb_strlen($s, self::$encoding) > $limit) {
 				$pos = mb_strpos($s, ' ', $limit, self::$encoding);
@@ -124,13 +137,15 @@
 			}
 		}
 
-		public static function limitMiddle($text,$limit = 128)
+		public static function limitMiddle($text, $limit = 128, $postfix = '...')
 		{
-			$len = mb_strlen($text,self::$encoding);
+			$len = mb_strlen($text, self::$encoding);
 
 			if($len > $limit){
 				$mid = (int)(($limit - 3) / 2);
-				return mb_substr($text,0,$mid,self::$encoding) . '...' . mb_substr($text,$len - $mid,$len,self::$encoding);
+				return (
+					mb_substr($text, 0, $mid, self::$encoding) . $postfix . 
+					mb_substr($text, $len - $mid, $len, self::$encoding);
 			}else{
 				return $text;
 			}
@@ -159,7 +174,7 @@
 			return $cdnl.$ext;
 		}
 
-		public static function roundHuman($size,$precision = 2)
+		public static function roundHuman($size, $precision = 2)
 		{
 			$units = array('', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y');
 			foreach ($units as $unit) {
@@ -171,10 +186,11 @@
 			}
 		}
 
-		public static function highlight($string,$word,$class = '')
+		public static function highlight($string, $word, $class = '')
 		{
-			$words = array_filter(explode(' ',preg_quote($word)));
-			$rx = '/(' . implode('|',$words) . ')/i';
+			$words = array_filter(explode(' ', preg_quote($word)));
+			$words = array_map('preg_quote', $words); 
+			$rx    = '/(' . implode('|',$words) . ')/i';
 
 			return preg_replace($rx, '<span class="' . $class . '">$0</span>', $string);
 		}
@@ -220,7 +236,7 @@
 			if($limit > $n)
 				$s = str_repeat($s, (int)($limit / $n) + 1);
 
-			return self::limitWords($s,$limit);
+			return self::limitWords($s, $limit);
 		}
 
 		/*public static function slug($text)

@@ -1,6 +1,8 @@
 <?php if(!(false)):?>
 	<?php echo $this->js('/script.js');?>
 
+	<h1>Ebal ebal</h1>
+
 	<h1><?php echo \Ant\Fn::escape($GLOBALS['sasaika']);?></h1>
 
 	<?php switch('kitty'):?><?php case('kitty'):?>
