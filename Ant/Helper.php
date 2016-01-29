@@ -16,6 +16,7 @@
 				if (0 == $key) {
 					$exp[$key] = $value;
 				} else if ((int)$key == 1 and $exp[0] === '$') {
+					//$.plugin.some()
 					$exp[$key] = ($value != 'globals' ? '_' : '') . strtoupper($value);
 				} else {
 					$exp[$key] = '[\'' . $value . '\']';
