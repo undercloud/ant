@@ -5,7 +5,7 @@
 
 	namespace Ant\Plugins;
 
-	class Haml extends PluginBase
+	class Haml extends Base
 	{
 		public function register($ant)
 		{

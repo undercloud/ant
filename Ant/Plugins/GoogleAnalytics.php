@@ -1,7 +1,7 @@
 <?php
 	namespace Ant\Plugins;
 
-	class GoogleAnalytics extends PluginBase
+	class GoogleAnalytics extends Base
 	{
 		public function embed($code, $domain = '')
 		{

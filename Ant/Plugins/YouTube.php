@@ -1,8 +1,10 @@
 <?php
 	namespace Ant\Plugins;
 
-	class YouTube extends PluginBase
+	class YouTube extends Base
 	{
+		private $options = array();
+
 		protected static $service_url = '//www.youtube.com/embed/';
 
 		protected static $default_params = array();
@@ -13,6 +15,11 @@
 			'height'      => '390',
 			'frameborder' => '0'
 		);
+
+		public function __construct(array $options = array())
+		{
+			$this->options = $options;
+		}
 
 		public static function setup(array $params, array $attrs)
 		{
@@ -64,6 +71,11 @@
 
 		public function register($ant)
 		{
+			$params = (isset($this->options['params']) ? $this->options['params'] : array());
+			$attrs  = (isset($this->options['attrs'])  ? $this->options['attrs']  : array());
+
+			self::setup($params, $attrs);
+
 			$ant->register('youtube', new self());
 		}
 	}

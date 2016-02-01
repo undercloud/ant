@@ -20,8 +20,8 @@
 			$view = preg_replace_callback('/{{.+?}}/ms', '\Ant\Parser::escape', $view);
 			$view = preg_replace_callback('/@import.+/', '\Ant\Parser::import', $view);
 			$view = preg_replace_callback('/[\s\t]+@(case|default)/', '\Ant\Parser::caseSpace', $view);
-			$view = preg_replace_callback('/\B@(forelse|foreach|for|while|switch|case|default|if|elseif|else|unless)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', '\Ant\Parser::control', $view);
-			$view = preg_replace_callback('/@(empty|break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif|endunless)/', '\Ant\Parser::endControl', $view);
+			$view = preg_replace_callback('/\B@(forelse|foreach|for|while|switch|case|default|if|elseif|else|unless|each)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', '\Ant\Parser::control', $view);
+			$view = preg_replace_callback('/\B@(empty|break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif|endunless)/', '\Ant\Parser::endControl', $view);
 
 			if (self::$skips) {
 				$view = str_replace(
@@ -55,22 +55,35 @@
 			return '';
 		}
 
+		public static function each($view, $collection, $item = 'item', array $scope = array())
+		{
+			if(Fn::iterable($collection)) {
+				$tmpl = $tmpl = Ant::init()->fromFile($view);
+
+				foreach ($collection as $single) {
+					$scope[$item] = $single;
+
+					echo $tmpl->assign($scope)->draw();
+				}
+			}
+		}
+
 		public static function import($e)
 		{
 			$view = trim(str_replace('@import', '', $e[0]));
-			$view = substr($view,1,-1);
+			$view = substr($view, 1, -1);
 			
-			$as  = false;
-			$pos = strpos($view, ',');
-
-			if (false === $pos) {
-				$tmpl = trim(trim($view), "'\"");
-			} else {
-				$tmpl = trim(trim(substr($view, 0, $pos)), "'\"");
-				$as   = trim(substr($view, $pos + 1));
+			$args = explode(',', $view);
+			if (1 == count($args)) {
+				$args[] = null;
 			}
 
-			return '<?php echo \Ant\Ant::init()->get(\'' . $tmpl .'\')->' . ($as ? 'assign(' . Helper::findVariable($as) . ')->' : ''). 'draw(); ?>';
+			list($tmpl, $assign) = $args;
+
+			$tmpl   = Helper::findVariable($tmpl);
+			$assign = Helper::findVariable($assign); 
+
+			return '<?php echo \Ant\Ant::init()->get(' . $tmpl .')->assign(' . $assign . ')->draw(); ?>';
 		}
 
 		public static function variable($e)
@@ -80,7 +93,7 @@
 			$view = Helper::findVariable($view);
 			$view = Helper::findOr($view);
 			
-			return '<?php echo ' . $view . ';?>';
+			return '<?php echo ' . $view . '; ?>';
 		}
 
 		public static function escape($e)
@@ -90,7 +103,7 @@
 			$view = Helper::findVariable($view);
 			$view = Helper::findOr($view);
 
-			return '<?php echo \Ant\Fn::escape(' . $view . ');?>';
+			return '<?php echo \Ant\Fn::escape(' . $view . '); ?>';
 		}
 
 		public static function caseSpace($e)
@@ -101,7 +114,10 @@
 		public static function control($e)
 		{
 			$op = trim($e[1]);
-			if ($op == 'unless') {
+
+			if ($op == 'each') {
+				$view = 'Ant\Parser::each' . Helper::findVariable($e[3]);
+			} else if ($op == 'unless') {
 				$view = 'if(!' . Helper::findVariable($e[3]) . ')'; 
 			} else if ($op == 'forelse') {
 				$m = array();
@@ -113,11 +129,11 @@
 				$view = $op . Helper::findVariable($e[3]);
 			}
 
-			if (':' != substr($view,-1)) {
+			if ('each' != $op and ':' != substr($view,-1)) {
 				$view .= ':';
 			}
 
-			return '<?php ' . $view . '?>';
+			return '<?php ' . $view . ' ?>';
 		}
 
 		public static function endControl($e)

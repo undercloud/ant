@@ -10,14 +10,19 @@
 		
 		public static function parseVariable($e)
 		{
+
 			$exp = explode('.', $e);
 
 			foreach ($exp as $key => $value) {
 				if (0 == $key) {
 					$exp[$key] = $value;
 				} else if ((int)$key == 1 and $exp[0] === '$') {
-					//$.plugin.some()
-					$exp[$key] = ($value != 'globals' ? '_' : '') . strtoupper($value);
+					if ('scope' == $value) {
+						$exp[$key] = 'get_defined_vars()';
+						unset($exp[0]);
+					} else {
+						$exp[$key] = ($value != 'globals' ? '_' : '') . strtoupper($value);
+					}
 				} else {
 					$exp[$key] = '[\'' . $value . '\']';
 				}

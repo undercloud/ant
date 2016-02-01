@@ -1,7 +1,7 @@
 <?php
 	namespace Ant\Plugins;
 
-	abstract class PluginBase
+	abstract class Base
 	{
 		abstract public function register($ant); 
 	}

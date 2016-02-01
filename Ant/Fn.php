@@ -12,7 +12,7 @@
 
 		public static function iterable($o)
 		{
-			return (is_array($o) || $o instanceof Traversable || $o instanceof \stdClass);
+			return (is_array($o) or $o instanceof Traversable or $o instanceof \stdClass);
 		}
 
 		public static function isBlank($what)
@@ -22,10 +22,10 @@
 			}
 
 			return (
-				($v === '')    or
-				($v === null)  or
-				($v === false) or
-				(is_array($v)  and 0 == count($v))
+				($what === '')    or
+				($what === null)  or
+				($what === false) or
+				(is_array($what)  and 0 == count($what))
 			);
 		}
 
@@ -145,7 +145,8 @@
 				$mid = (int)(($limit - 3) / 2);
 				return (
 					mb_substr($text, 0, $mid, self::$encoding) . $postfix . 
-					mb_substr($text, $len - $mid, $len, self::$encoding);
+					mb_substr($text, $len - $mid, $len, self::$encoding)
+				);
 			}else{
 				return $text;
 			}
@@ -188,7 +189,7 @@
 
 		public static function highlight($string, $word, $class = '')
 		{
-			$words = array_filter(explode(' ', preg_quote($word)));
+			$words = array_filter(explode(' ', $word));
 			$words = array_map('preg_quote', $words); 
 			$rx    = '/(' . implode('|',$words) . ')/i';
 
@@ -238,33 +239,5 @@
 
 			return self::limitWords($s, $limit);
 		}
-
-		/*public static function slug($text)
-		{
-			$text = preg_replace('~[^\\pL\d]+~u', '-', $text);
-			$text = trim($text, '-');
-			$text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-			$text = strtolower($text);
-			$text = preg_replace('~[^-\w]+~', '', $text);
-
-			return $text;
-		}*/
-
-		/*public static function autoUrl($text,$call = null)
-		{
-			if(null == $call)
-				$call = function($s){
-
-				}
-
-			$regex = "((https?|ftp)\:\/\/)?"; // SCHEME
-			$regex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?"; // User and Pass
-			$regex .= "([a-z0-9-.]*)\.([a-z]{2,4})"; // Host or IP
-			$regex .= "(\:[0-9]{2,5})?"; // Port
-			$regex .= "(\/([a-z0-9+\$_-]\.?)+)*\/?"; // Path
-			$regex .= "(\?[a-z+&\$_.-][a-z0-9;:@&%=+\/\$_.-]*)?"; // GET Query
-			$regex .= "(#[a-z_.-][a-z0-9+\$_.-]*)?"; // Anchor
-
-		}*/
 	}
 ?>

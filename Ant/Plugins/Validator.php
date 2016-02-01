@@ -3,7 +3,7 @@
 
 	use Ant\Exception;
 
-	class Validator extends PluginBase
+	class Validator extends Base
 	{
 		public function validate($content)
 		{

@@ -1,7 +1,7 @@
 <?php
 	namespace Ant\Plugins;
 
-	class Compressor extends PluginBase
+	class Compressor extends Base
 	{
 		public function compress($buffer)
 		{

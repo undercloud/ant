@@ -5,7 +5,7 @@
 
 	namespace Ant\Plugins;
 
-	class Leaf extends PluginBase
+	class Leaf extends Base
 	{
 		private $options = array();
 

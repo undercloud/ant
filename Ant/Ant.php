@@ -13,7 +13,7 @@
 	require_once __DIR__ . '/Exception.php';
 	require_once __DIR__ . '/Inherit.php';
 	require_once __DIR__ . '/Plugin.php';
-	require_once __DIR__ . '/Plugins/PluginBase.php';
+	require_once __DIR__ . '/Plugins/Base.php';
 
 	class Ant
 	{
@@ -241,6 +241,10 @@
 
 		public function get($path)
 		{
+			if (Fn::isBlank($path)) {
+				throw new Exception('Empty template name');
+			}
+
 			$this->mode = self::MODE_FILE;
 
 			$this->tmpl_path  = self::$settings['view']  . '/' . Helper::realPath($path) . '.' . self::$settings['extension'];
@@ -260,12 +264,21 @@
 
 		public function fromFile($path)
 		{
+			if (Fn::isBlank($path)) {
+				throw new Exception('Empty template name');
+			}
+			
 			$full_path        = self::$settings['view']  . '/' . Helper::realPath($path) . '.' . self::$settings['extension'];
 			$this->logic_path = self::$settings['logic'] . '/' . Helper::realPath($path) . '.php';
 			
 			$content = IO::init()->in($full_path)->get();
 
 			return $this->fromString($content);
+		}
+
+		public function getString()
+		{
+			return $this->string;
 		}
 
 		public function assign(array $data = array())
@@ -279,16 +292,6 @@
 		{
 			switch ($this->mode) {
 				case self::MODE_STRING:
-					$s = $this->fire(
-						'build',
-						Parser::parse(
-							$this->fire(
-								'prepare',
-								$this->string
-							)
-						)
-					);
-
 					ob_start();
 					extract($this->assign);
 
@@ -296,7 +299,20 @@
 						require $this->logic_path;
 					}
 
-					eval(' ?>' . $s . '<?php ');
+					eval(
+						' ?>' . 
+						 $this->fire(
+							'build',
+							Parser::parse(
+								$this->fire(
+									'prepare',
+									$this->string
+								)
+							)
+						) .
+						'<?php '
+					);
+
 					$echo = ob_get_contents();
 					ob_end_clean();
 
@@ -324,6 +340,8 @@
 							   ->out();
 						}
 					}
+
+					unset($io, $s);
 
 					ob_start();
 					extract($this->assign);

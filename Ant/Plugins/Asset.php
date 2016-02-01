@@ -1,7 +1,7 @@
 <?php
 	namespace Ant\Plugins;
 
-	class Asset extends PluginBase
+	class Asset extends Base
 	{
 		private function isLocalPath($path)
 		{
