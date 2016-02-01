@@ -137,7 +137,7 @@
 			}
 		}
 
-		public static function limitMiddle($text, $limit = 128, $postfix = '...')
+		public static function limitMiddle($text, $limit = 250, $postfix = '...')
 		{
 			$len = mb_strlen($text, self::$encoding);
 
