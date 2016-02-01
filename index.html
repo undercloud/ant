@@ -1,127 +1,215 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
-		<title>ANT - Awesome New Templates</title>
-		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.2/normalize.min.css">
-		<link rel="stylesheet" type="text/css" href="css/style.css">
-		<link rel="stylesheet" type="text/css" href="css/prism.css">
+<head>
+	<title></title>
+	<link href='//fonts.googleapis.com/css?family=Fira+Sans:300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic|Open+Sans:400normal|Roboto:400normal|Lato:400normal|Oswald:400normal|Source+Sans+Pro:400normal|Montserrat:400normal|Raleway:400normal|Open+Sans+Condensed:300normal|PT+Sans:400normal|Roboto+Condensed:400normal&subset=all' rel='stylesheet' type='text/css'>
 
-		<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
-		<script type="text/javascript" src="js/prism.js"></script>
-	</head>
-	<body>
-		<div class="container">
-			<div class="head">
-				<div class="titles-wrap">
-					<div class="ant-title">ANT</div>
-					<div class="ant-subtitle">Awesome New Templates</div>
-					<a class="github-button" href="https://github.com/undercloud/ant" target="_blank">view on github</a>
-				</div>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css">
+	<link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+	<link rel="stylesheet" type="text/css" href="/css/style.css?1">
+</head>
+<body>
+	<div class="page-root">
+		<div class="page-header">
+			<div class="vendor-logo">ANT</div>
+			<!--div class="vendor-abbr">awesome new templates</div-->
+		</div>
+		<div class="page-container">
+			<div class="page-menu">
+				<ul class="main-menu">
+					<li>
+						<a href="#install">Installation</a>
+					</li>
+					<li>
+						<a href="#variables">Variables</a>
+					</li>
+					<li>
+						<a href="#control">Control</a>
+						<ul class="sub-menu">
+							<li>
+								<a href="#control-if">@if</a>
+							</li>
+							<li>
+								<a href="#control-unless">@unless</a>
+							</li>
+							<li>
+								<a href="#control-switch">@switch</a>
+							</li>
+							<li>
+								<a href="#control-for">@for</a>
+							</li>
+							<li>
+								<a href="#control-while">@while</a>
+							</li>
+							<li>
+								<a href="#control-foreach">@foreach</a>
+							</li>
+							<li>
+								<a href="#control-forelse">@forelse</a>
+							</li>
+							<li>
+								<a href="#control-include">@include</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="#">Inheritance</a>
+						<ul class="sub-menu">
+							<li>
+								<a href="#">First</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="#fn">Functions</a>
+						<ul class="sub-menu">
+							<li>
+								<a href="#fn-01">iterable</a>
+							</li>
+							<li>
+								<a href="#fn-02">unicode</a>
+							</li>
+							<li>
+								<a href="#fn-03">js</a>
+							</li>
+							<li>
+								<a href="#fn-04">css</a>
+							</li>
+							<li>
+								<a href="#fn-05">doctype</a>
+							</li>
+							<li>
+								<a href="#fn-06">number</a>
+							</li>
+							<li>
+								<a href="#fn-07">escape</a>
+							</li>
+							<li>
+								<a href="#fn-08">decode</a>
+							</li>
+							<li>
+								<a href="#fn-09">capitalize</a>
+							</li>
+							<li>
+								<a href="#fn-10">capitalizeAll</a>
+							</li>
+							<li>
+								<a href="#fn-11">upper</a>
+							</li>
+							<li>
+								<a href="#fn-12">lower</a>
+							</li>
+							<li>
+								<a href="#fn-13">url</a>
+							</li>
+							<li>
+								<a href="#fn-14">whitespace</a>
+							</li>
+							<li>
+								<a href="#fn-15">limit</a>
+							</li>
+							<li>
+								<a href="#fn-16">limitWords</a>
+							</li>
+							<li>
+								<a href="#fn-17">limitMiddle</a>
+							</li>
+							<li>
+								<a href="#fn-18">bytes2human</a>
+							</li>
+							<li>
+								<a href="#fn-19">roundHuman</a>
+							</li>
+							<li>
+								<a href="#fn-20">highlight</a>
+							</li>
+							<li>
+								<a href="#fn-22">lorem</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="#plugins">Plugins</a>
+						<ul class="sub-menu">
+							<li>
+								<a href="#plugins-asset">Asset</a>
+							</li>
+							<li>
+								<a href="#plugins-compressor">Compressor</a>
+							</li>
+							<li>
+								<a href="#plugins-faker">Faker</a>
+							</li>
+							<li>
+								<a href="#plugins-ga">GoogleAnalytics</a>
+							</li>
+							<li>
+								<a href="#plugins-haml">Haml</a>
+							</li>
+							<li>
+								<a href="#plugins-leaf">Leaf</a>
+							</li>
+							<li>
+								<a href="#plugins-validator">Validator</a>
+							</li>
+							<li>
+								<a href="#plugins-youtube">YouTube</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
 			</div>
-			<div class="content">
-				<h1>Getting Started</h1>
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_01.txt"></code>
-				</div>
+			<div class="page-content">
+				<h1 id="install">Installation</h1>
+				<h1 id="variables">Variables</h1>
+				<h1 id="control">Control</h1>
+				<h2 id="control-if">@if</h2>
+				<h2 id="control-unless">@unless</h2>
+				<h2 id="control-switch">@switch</h2>
+				<h2 id="control-for">@for</h2>
+				<h2 id="control-while">@while</h2>
+				<h2 id="control-foreach">@foreach</h2>
+				<h2 id="control-forelse">@forelse</h2>
+				<h2 id="control-include">@include</h2>
 
-				<div class="code-wrap">
-					<code class="language-markup" src="source/example_02.txt"></code>
-				</div>
+				<h1 id="fn">Functions</h1>
+				<h2 id="fn-01">iterable</h2>
+				<h2 id="fn-02">unicode</h2>
+				<h2 id="fn-03">js</h2>
+				<h2 id="fn-04">css</h2>
+				<h2 id="fn-05">doctype
+				<h2 id="fn-06">number</h2>
+				<h2 id="fn-07">escape</h2>
+				<h2 id="fn-08">decode</h2>
+				<h2 id="fn-09">capitalize</h2>
+				<h2 id="fn-10">capitalizeAll</h2>
+				<h2 id="fn-11">upper</h2>
+				<h2 id="fn-12">lower</h2>
+				<h2 id="fn-13">url</h2>
+				<h2 id="fn-14">whitespace</h2>
+				<h2 id="fn-15">limit</h2>
+				<h2 id="fn-16">limitWords</h2>
+				<h2 id="fn-17">limitMiddle</h2>
+				<h2 id="fn-18">bytes2human</h2>
+				<h2 id="fn-19">roundHuman</h2>
+				<h2 id="fn-20">highlight</h2>
+				<h2 id="fn-22">lorem</h2>
 
-				<h1>Variables</h1>
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_03.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_04.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_13.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_05.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_06.txt"></code>
-				</div>
-
-				<h1>Array Access</h1>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_07.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_08.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_09.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_10.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_11.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_12.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_14.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_15.txt"></code>
-				</div>
-
-				<h1>Control Structures</h1>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_16.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_20.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_17.txt"></code>
-				</div>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_18.txt"></code>
-				</div>
-
-				<h1>@import</h1>
-
-				<div class="code-wrap">
-					<code class="language-php" src="source/example_19.txt"></code>
-				</div>
+				<h1 id="plugins">Plugins</h1>
+				<h2 id="plugins-asset">Asset</h2>
+				<h2 id="plugins-compressor">Compressor</h2>
+				<h2 id="plugins-faker">Faker</h2>
+				<h2 id="plugins-ga">GoogleAnalytics</h2>
+				<h2 id="plugins-haml">Haml</h2>
+				<h2 id="plugins-leaf">Leaf</h2>
+				<h2 id="plugins-validator">Validator</h2>
+				<h2 id="plugins-youtube">YouTube</h2>
 			</div>
 		</div>
-		<script type="text/javascript">
-			$(document).ready(function(){
-				$('code').each(function(i,d){
-					$.get(
-						$(d).attr('src'),
-						function(data){
-							$(d).text(data).removeAttr('src')
-							Prism.highlightElement($(d).get(0))
-						}
-					)
-				})
-			})
-		</script>
-	</body>
+		<div class="page-footer">
+
+		</div>
+	</div>
+</body>
 </html>
