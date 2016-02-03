@@ -35,7 +35,6 @@
 		private $logic_path = '';
 		private $string     = '';
 
-		private static $fn = array();
 		private static $plugin;
 		
 		public static function init()
