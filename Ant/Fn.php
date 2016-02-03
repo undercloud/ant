@@ -175,7 +175,7 @@
 			}
 		}
 
-		public static function limitMiddle($text, $limit = 128, $postfix = '...')
+		public static function limitMiddle($text, $limit = 250, $postfix = '...')
 		{
 			$len = mb_strlen($text, self::$encoding);
 
@@ -190,7 +190,7 @@
 			}
 		}
 
-		public static function bytesHuman($size,$precision = 2) 
+		public static function bytesHuman($size, $precision = 2)
 		{
 			$units = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
 			foreach ($units as $unit) {

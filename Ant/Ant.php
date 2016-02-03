@@ -37,7 +37,6 @@
 
 		private static $fn = array();
 		private static $plugin;
-		private static $rules = array();
 		
 		public static function init()
 		{
@@ -106,7 +105,7 @@
 			return $this;
 		}
 
-		public function preventParentEvent($prevent)
+		public function preventParentEvent($prevent = true)
 		{
 			$this->prevent_parent = $prevent;
 
@@ -136,13 +135,7 @@
 
 		public function share($name, $call)
 		{
-			if (array_key_exists($name, self::$fn)) {
-				throw new Exception(
-					sprintf('Cannot register %s', $name)
-				);
-			}
-
-			self::$fn[$name] = $call;
+			Fn::share($name, $call);
 
 			return $this;
 		}
@@ -167,14 +160,9 @@
 			return $this;
 		}
 
-		public static function getRule()
-		{
-			return self::$rules;
-		}
-
 		public function rule($rx, $call)
 		{
-			self::$rules[$rx] = $call;
+			Parser::rule($rx, $call);
 
 			return $this;
 		}
@@ -209,10 +197,8 @@
 
 		private static function call($name, $arguments)
 		{
-			if (method_exists('\Ant\Fn',$name)) {
+			if (method_exists('\Ant\Fn',$name) or Fn::isShared($name)) {
 				return call_user_func_array('\Ant\Fn::' . $name, $arguments);
-			} else if (array_key_exists($name, self::$fn) and is_callable(self::$fn[$name])) {
-				return call_user_func_array(self::$fn[$name], $arguments);
 			} else {
 				throw new Exception(
 					sprintf('Undeclared method \\Ant\\Ant::%s', $name)

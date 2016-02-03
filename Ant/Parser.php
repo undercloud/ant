@@ -3,12 +3,17 @@
 	
 	class Parser
 	{
+		private static $rules = array();
 		private static $skips = array();
+
+		public static function rule($rx, $call)
+		{
+			self::$rules[$rx] = $call;
+		}
 
 		public static function parse($view, $path = null)
 		{
-			$rules = Ant::getRule();
-			foreach ($rules as $rx => $call) {
+			foreach (self::$rules as $rx => $call) {
 				$view = preg_replace_callback($rx, $call, $view);
 			}
 

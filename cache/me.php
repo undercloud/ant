@@ -1,19 +1,11 @@
-<?php if(!(false)):?>
-	<?php echo $this->js('/script.js');?>
 
-	<h1>Ebal ebal</h1>
-
-	<h1><?php echo \Ant\Fn::escape($GLOBALS['sasaika']);?></h1>
-
-	<?php switch('kitty'):?><?php case('kitty'):?>
-			<?php echo \Ant\Fn::escape($_SERVER['HTTP_HOST']);?>
-		<?php break; ?>
-	<?php endswitch; ?>
-
-	<img width="100%" src="" />
- 
-	<?php echo $this->plugin->youtube->embed('hchTjwPZPn8');?>
-
-	<h1><?php echo \Ant\Fn::escape($this->capitalize('sasai'));?></h1>
-
-<?php endif; ?>
+<?php 
+	$sasai = 'lalka';
+	$dp = array(
+		'linda' => 'header'
+	);
+?>
+<?php echo \Ant\Ant::init()->get($dp['linda'])->assign( get_defined_vars())->draw(); ?>
+<h1>Comments</h1>
+<?php Ant\Parser::each('comments',$comments,'com') ?>
+<hr />
