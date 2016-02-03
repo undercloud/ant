@@ -152,7 +152,7 @@
 			}
 		}
 
-		public static function bytesHuman($size, $precision = 2) 
+		public static function bytesHuman($size, $precision = 2)
 		{
 			$units = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
 			foreach ($units as $unit) {
