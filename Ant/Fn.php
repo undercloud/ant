@@ -3,7 +3,45 @@
 
 	class Fn
 	{
+		private static $shared   = array();
 		private static $encoding = 'UTF-8';
+
+		public static function share($name, $call)
+		{
+			if (array_key_exists($name, self::$shared)) {
+				throw new Exception(
+					sprintf('Cannot register %s', $name)
+				);
+			}
+
+			self::$shared[$name] = $call;
+		}
+
+		public static function isShared($what)
+		{
+			return isset(self::$shared);
+		}
+
+		public static function call($fn, $args)
+		{
+			if (array_key_exists($fn, self::$shared) and is_callable(self::$shared[$fn])) {
+				return call_user_func_array(self::$shared, $fn);
+			} else {
+				throw new Exception(
+					sprintf('Cannot call \\Ant\\Fn::%s as function', $name)
+				);
+			}
+		}
+
+		public function __call($fn, $args)
+		{
+			return self::call($fn, $call);
+		}
+
+		public static function __callStatic($fn, $call)
+		{
+			return self::call($fn, $call);
+		}
 
 		private static function setEncoding($encoding)
 		{
@@ -71,9 +109,9 @@
 			return '<link type="text/css" rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . '/>';
 		}
 
-		public static function escape($s)
+		public static function escape($s, $double = true)
 		{
-			return htmlentities($s, ENT_QUOTES, self::$encoding, false);
+			return htmlentities($s, ENT_QUOTES, self::$encoding, $double);
 		}
 
 		public static function decode($s)
@@ -152,7 +190,7 @@
 			}
 		}
 
-		public static function bytes2human($size,$precision = 2) 
+		public static function bytesHuman($size,$precision = 2) 
 		{
 			$units = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
 			foreach ($units as $unit) {
@@ -185,15 +223,6 @@
 					return round($size, $precision) . ($unit ? (" " . $unit) : '');
 				}
 			}
-		}
-
-		public static function highlight($string, $word, $class = '')
-		{
-			$words = array_filter(explode(' ', $word));
-			$words = array_map('preg_quote', $words); 
-			$rx    = '/(' . implode('|',$words) . ')/i';
-
-			return preg_replace($rx, '<span class="' . $class . '">$0</span>', $string);
 		}
 
 		public static function doctype($d = 'HTML5')
