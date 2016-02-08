@@ -68,6 +68,9 @@
 			return (1 + $this->index === $this->count);
 		}
 
+		public function isOdd();
+		public function isEven();
+
 		public function restore()
 		{
 			if (null !== $this->hold or $this->iterator instanceof EmptyIterator) {
