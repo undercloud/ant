@@ -44,3 +44,11 @@ Awesome New Templates
 </html>
 
 ```
+
+#ToDo
+
+http://twig.sensiolabs.org/doc/filters/format.html
+http://twig.sensiolabs.org/doc/functions/attribute.html
+http://twig.sensiolabs.org/doc/functions/dump.html
+http://twig.sensiolabs.org/doc/functions/random.html
+http://php.net/manual/ru/ref.spl.php#83295
