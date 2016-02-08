@@ -1,4 +1,6 @@
 # ant
+
+[![Join the chat at https://gitter.im/undercloud/ant](https://badges.gitter.im/undercloud/ant.svg)](https://gitter.im/undercloud/ant?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Awesome New Templates
 
 ```PHP
