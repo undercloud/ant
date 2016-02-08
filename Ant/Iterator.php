@@ -70,6 +70,7 @@
 
 		public function isOdd();
 		public function isEven();
+		public function isDivisible($num);
 
 		public function restore()
 		{
