@@ -3,8 +3,9 @@
 	
 	class Parser
 	{
-		private static $rules = array();
-		private static $skips = array();
+		private static $rules    = array();
+		private static $skips    = array();
+		private static $forstack = array();
 
 		public static function rule($rx, $call)
 		{
@@ -23,10 +24,11 @@
 			$view = preg_replace_callback('/{{--.*?--}}/ms', '\Ant\Parser::comment', $view);
 			$view = preg_replace_callback('/{{{.+?}}}/ms', '\Ant\Parser::variable', $view);
 			$view = preg_replace_callback('/{{.+?}}/ms', '\Ant\Parser::escape', $view);
-			$view = preg_replace_callback('/@import.+/', '\Ant\Parser::import', $view);
+			$view = preg_replace_callback('/\B@(import|widget).+/', '\Ant\Parser::import', $view);
 			$view = preg_replace_callback('/[\s\t]+@(case|default)/', '\Ant\Parser::caseSpace', $view);
 			$view = preg_replace_callback('/\B@(forelse|foreach|for|while|switch|case|default|if|elseif|else|unless|each)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', '\Ant\Parser::control', $view);
 			$view = preg_replace_callback('/\B@(empty|break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif|endunless)/', '\Ant\Parser::endControl', $view);
+			$view = preg_replace('/\B::/', '$this->', $view);
 
 			if (self::$skips) {
 				$view = str_replace(
@@ -76,19 +78,10 @@
 		public static function import($e)
 		{
 			$view = trim(str_replace('@import', '', $e[0]));
-			$view = substr($view, 1, -1);
-			
-			$args = explode(',', $view);
-			if (1 == count($args)) {
-				$args[] = null;
-			}
+			$view = Helper::findVariable($view);
+			$view = Helper::findVariable($view); 
 
-			list($tmpl, $assign) = $args;
-
-			$tmpl   = Helper::findVariable($tmpl);
-			$assign = Helper::findVariable($assign); 
-
-			return '<?php echo \Ant\Ant::init()->get(' . $tmpl .')->assign(' . $assign . ')->draw(); ?>';
+			return '<?php echo \Ant\Ant::view' . $view. '?>';
 		}
 
 		public static function variable($e)
@@ -124,12 +117,22 @@
 				$view = 'Ant\Parser::each' . Helper::findVariable($e[3]);
 			} else if ($op == 'unless') {
 				$view = 'if(!' . Helper::findVariable($e[3]) . ')'; 
-			} else if ($op == 'forelse') {
+			} else if ($op == 'forelse' or $op == 'foreach') {
 				$m = array();
 				preg_match('/(\$|->)[A-Za-z0-9_\.]+/', $e[4], $m);
 				$parsed = Helper::parseVariable($m[0]);
 
-				$view = 'if(\Ant\Fn::iterable(' . $parsed . ') and count(' . $parsed .  ')): foreach' . Helper::findVariable($e[3]);
+				if ($op == 'forelse') {
+					$view = (
+						'if(\Ant\Fn::iterable(' . $parsed . ') and \Ant\Fn::count(' . $parsed .  ')):' . 
+						' ' . $parsed . ' = new \Ant\XIterator(' . $parsed . ');' . 
+						' foreach' . Helper::findVariable($e[3])
+					);
+				} else if ($op == 'foreach') {
+
+				}
+
+				self::$forstack[] = $parsed;
 			} else {
 				$view = $op . Helper::findVariable($e[3]);
 			}
@@ -148,7 +151,9 @@
 			if ($view == 'endforelse' or $view == 'endunless') {
 				$view = 'endif';
 			} else if($view == 'empty') {
-				$view = 'endforeach; else:';
+				$restore = array_pop(self::$forstack);
+				$restore = $restore . ' = ' . $restore . '->restore()';
+				$view = 'endforeach; ' . $restore . '; else:';
 			}
 
 			return '<?php ' . $view . '; ?>';

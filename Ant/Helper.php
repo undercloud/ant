@@ -10,14 +10,16 @@
 		
 		public static function parseVariable($e)
 		{
-
 			$exp = explode('.', $e);
 
 			foreach ($exp as $key => $value) {
 				if (0 == $key) {
 					$exp[$key] = $value;
 				} else if ((int)$key == 1 and $exp[0] === '$') {
-					if ('scope' == $value) {
+					if ('plugins' == $value) {
+						$exp[0] = '$this->';
+						$exp[1] = 'plugins->';
+					} else if ('scope' == $value) {
 						$exp[$key] = 'get_defined_vars()';
 						unset($exp[0]);
 					} else {
@@ -40,7 +42,7 @@
 
 		public static function findOr($e)
 		{
-			return preg_replace('/^(?=\$)(.+?)(?:\s+or\s+)(.+?)$/s', '(isset($1) and $1) ? $1 : $2', $e);
+			return preg_replace('/^(?=\$)(.+?)(?:\s+or\s+)(.+?)$/s', '(isset($1) and trim((string)$1)) ? $1 : $2', $e);
 		}
 	}
 ?>

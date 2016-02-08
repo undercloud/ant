@@ -50,7 +50,20 @@
 
 		public static function iterable($o)
 		{
-			return (is_array($o) or $o instanceof Traversable or $o instanceof \stdClass);
+			return (is_array($o) or $o instanceof \Traversable or $o instanceof \stdClass);
+		}
+
+		public static function count($o)
+		{
+			if ($o instanceof Traversable) {
+				return iterator_count($o);
+			} else if (is_array($o) or $o instanceof  \Countable) {
+				return @count($o);
+			} else if (is_object($o)) {
+				return count((array)$o);
+			}
+
+			return 0;
 		}
 
 		public static function isBlank($what)
@@ -93,8 +106,8 @@
 
 		public static function js($src, $defer = "")
 		{
-			if (isset(Ant::getPlugin()->asset)) {
-				$src = Ant::getPlugin()->asset($src);
+			if (isset(Ant::$plugin->asset)) {
+				$src = Ant::$plugin->asset($src);
 			}
 
 			return '<script type="text/javascript" src="' . $src . '"' . ($defer ? " " . $defer : '') . '></script>';
@@ -102,8 +115,8 @@
 
 		public static function css($href, $media = "")
 		{
-			if (isset(Ant::getPlugin()->asset)) {
-				$href = Ant::getPlugin()->asset($href);
+			if (isset(Ant::$plugin->asset)) {
+				$href = Ant::$plugin->asset($href);
 			}
 
 			return '<link type="text/css" rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . '/>';
@@ -188,6 +201,11 @@
 			}else{
 				return $text;
 			}
+		}
+
+		public static function number($n)
+		{
+			return rtrim(rtrim(number_format((float)$n, 2, '.', ' '), '0'), '.');
 		}
 
 		public static function bytesHuman($size, $precision = 2)

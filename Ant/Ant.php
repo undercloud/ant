@@ -12,6 +12,7 @@
 	require_once __DIR__ . '/Cache.php';
 	require_once __DIR__ . '/Exception.php';
 	require_once __DIR__ . '/Inherit.php';
+	require_once __DIR__ . '/Iterator.php';
 	require_once __DIR__ . '/Plugin.php';
 	require_once __DIR__ . '/Plugins/Base.php';
 
@@ -164,11 +165,6 @@
 			Parser::rule($rx, $call);
 
 			return $this;
-		}
-
-		public static function getPlugin()
-		{
-			return self::$plugin;
 		}
 
 		public function __get($key)
@@ -340,6 +336,43 @@
 					ob_end_clean();
 
 					return $this->fire('exec', $echo);
+			}
+		}
+
+		public static function view()
+		{
+			$args = func_get_args();
+
+			switch(count($args)){
+				default:
+					return;
+
+				case 1:
+					list($view) = $args;
+
+					return static::init()->get($view)->draw();
+
+				case 2:
+					$inst = static::init(); 
+ 
+					if (is_array($args[1])) {
+						list($view, $assign) = $args;
+						$inst = $inst->get($view)->assign($assign);
+					} else {
+						list($view, $logic) = $args;
+						$inst = $inst->get($view)->logic($logic);
+					}
+
+					return $inst->draw();
+
+				case 3:
+					list($view, $assign, $logic) = $args;
+
+					return static::init()
+						->get($view)
+						->assign($assign)
+						->logic($logic)
+						->draw();
 			}
 		}
 	}
