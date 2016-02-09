@@ -68,9 +68,24 @@
 			return (1 + $this->index === $this->count);
 		}
 
-		public function isOdd();
-		public function isEven();
-		public function isDivisible($num);
+		public function isOdd()
+		{
+			return ($this->index % 2 != 0);
+		}
+
+		public function isEven()
+		{
+			return ($this->index % 2 == 0);
+		}
+
+		public function isDivisible($num = 2)
+		{
+			if ($num <= 0 or !is_numeric($num)) {
+				return false;
+			}
+
+			return ($this->index % $num == 0);
+		}
 
 		public function restore()
 		{

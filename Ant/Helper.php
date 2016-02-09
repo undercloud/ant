@@ -3,6 +3,8 @@
 	
 	class Helper
 	{
+		const VARIABLE_REGEXP = '/(\$|->)[A-Za-z0-9_\.]+/';
+
 		public static function realPath($fakepath)
 		{
 			return str_replace('.', DIRECTORY_SEPARATOR, $fakepath);
@@ -35,7 +37,7 @@
 
 		public static function findVariable($v)
 		{
-			return preg_replace_callback('/(\$|->)[A-Za-z0-9_\.]+/', function($l){
+			return preg_replace_callback(self::VARIABLE_REGEXP, function($l){
 				return Helper::parseVariable($l[0]);
 			}, $v);
 		}

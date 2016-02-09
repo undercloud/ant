@@ -119,22 +119,20 @@
 				$view = 'if(!' . Helper::findVariable($e[3]) . ')'; 
 			} else if ($op == 'forelse' or $op == 'foreach') {
 				$m = array();
-				preg_match('/(\$|->)[A-Za-z0-9_\.]+/', $e[4], $m);
+				preg_match(Helper::VARIABLE_REGEXP, $e[4], $m);
 				$parsed = Helper::parseVariable($m[0]);
 
+				$view = '';
 				if ($op == 'forelse') {
-					$view = (
-						'if(\Ant\Fn::iterable(' . $parsed . ') and \Ant\Fn::count(' . $parsed .  ')):' . 
-						' ' . $parsed . ' = new \Ant\XIterator(' . $parsed . ');' . 
-						' foreach' . Helper::findVariable($e[3])
-					);
-				} else if ($op == 'foreach') {
-
+					$view = 'if(\Ant\Fn::iterable(' . $parsed . ') and \Ant\Fn::count(' . $parsed .  ')): ';
 				}
+
+				$view .= $parsed . ' = new \Ant\XIterator(' . $parsed . '); ';
+				$view .= 'foreach' . Helper::findVariable($e[3]);
 
 				self::$forstack[] = $parsed;
 			} else {
-				$view = $op . Helper::findVariable($e[3]);
+				$view = $op . (isset($e[3]) ? Helper::findVariable($e[3]) : '');
 			}
 
 			if ('each' != $op and ':' != substr($view,-1)) {
@@ -146,14 +144,21 @@
 
 		public static function endControl($e)
 		{
-			$view = trim($e[1]);
+			$op = trim($e[1]);
 
-			if ($view == 'endforelse' or $view == 'endunless') {
+			if ($op == 'endforelse' or $op == 'endunless') {
 				$view = 'endif';
-			} else if($view == 'empty') {
+			} else if($op == 'empty' or $op == 'endforeach') {
 				$restore = array_pop(self::$forstack);
 				$restore = $restore . ' = ' . $restore . '->restore()';
-				$view = 'endforeach; ' . $restore . '; else:';
+
+				$view = 'endforeach; ' . $restore . '; ';
+
+				if ($op == 'empty') {
+					$view .= ' else:';
+				}
+			} else {
+				$view = $op;
 			}
 
 			return '<?php ' . $view . '; ?>';
