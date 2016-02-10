@@ -104,6 +104,11 @@
 			);
 		}
 
+		public static function format()
+		{
+			
+		}
+
 		public static function js($src, $defer = "")
 		{
 			if (isset(Ant::$plugin->asset)) {
