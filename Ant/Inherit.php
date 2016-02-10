@@ -12,7 +12,7 @@
 				return false;
 			}
 
-			$name = trim(str_replace(array('@extends', '(', ')', '"', '\''), '', $name[0]));
+			$name = Helper::clean(array('@extends', '(', ')', '"', '\''), $name[0]);
 
 			$path = Ant::settings('view') . DIRECTORY_SEPARATOR  . Helper::realPath($name) . '.' . Ant::settings('extension');
 			
@@ -91,7 +91,7 @@
 					foreach ($injects[0] as $k => $s) {
 						$m = array();
 						preg_match('/@inject.+?\)/', $s, $m);
-						$name = trim(str_replace(array('@inject', '(', ')', '"', '\''), '', $m[0]));
+						$name = Helper::clean(array('@inject', '(', ')', '"', '\''), $m[0]);
 
 						$map[] = array(
 							$name,
