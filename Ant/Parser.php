@@ -77,16 +77,15 @@
 
 		public static function import($e)
 		{
-			$view = trim(str_replace('@import', '', $e[0]));
+			$view = Helper::clean(array('@import', '@widget'), $e[0]);
 			$view = Helper::findVariable($view);
-			$view = Helper::findVariable($view); 
 
-			return '<?php echo \Ant\Ant::view' . $view. '?>';
+			return '<?php echo \Ant\Ant::view' . $view. '; ?>';
 		}
 
 		public static function variable($e)
 		{
-			$view = trim(str_replace(array('{{{','}}}'), '', $e[0]));
+			$view = Helper::clean(array('{{{','}}}'), $e[0]);
 			
 			$view = Helper::findVariable($view);
 			$view = Helper::findOr($view);
@@ -96,7 +95,7 @@
 
 		public static function escape($e)
 		{
-			$view = trim(str_replace(array('{{', '}}'), '', $e[0]));
+			$view = Helper::clean(array('{{', '}}'), $e[0]);
 
 			$view = Helper::findVariable($view);
 			$view = Helper::findOr($view);
@@ -161,7 +160,11 @@
 				$view = $op;
 			}
 
-			return '<?php ' . $view . '; ?>';
+			if ($op != 'empty') {
+				$view .= ';';
+			}
+
+			return '<?php ' . $view . ' ?>';
 		}
 	}
 ?>
