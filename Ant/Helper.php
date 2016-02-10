@@ -5,6 +5,11 @@
 	{
 		const VARIABLE_REGEXP = '/(\$|->)[A-Za-z0-9_\.]+/';
 
+		public static function clean($what, $where)
+		{
+			return trim(str_replace($what, '', $where));
+		}
+
 		public static function realPath($fakepath)
 		{
 			return str_replace('.', DIRECTORY_SEPARATOR, $fakepath);
