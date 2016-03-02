@@ -104,9 +104,41 @@
 			);
 		}
 
-		public static function format()
+		public static function template()
 		{
-			
+			$args = func_get_args();
+			$tmpl = array_shift($args);
+
+			$args = array_map(function ($item) {
+				if (is_array($item)) {
+					return implode(', ', array_filter($item, function($el) {
+						return (is_scalar($el) and !self::isBlank($el));
+					}));
+				}
+
+				return $item;
+			}, $args);
+
+			$tmpl = preg_replace_callback('~\{[0-9]{1,2}\}~', function($e) {
+				return '%' . trim($e[0],'{}') . '$s';
+			}, $tmpl);
+
+			return vsprintf($tmpl, $args);
+		}
+
+		public static function date($date, $format = 'Y-m-d H:i:s', $tz = null)
+		{
+			if ($tz) {
+				if (is_numeric($tz)) {
+					$tz = timezone_name_from_abbr('', $tz, 0);
+				}
+
+				$tz = new \DateTimeZone($tz);
+			}
+
+			$datetime = new \DateTime($date, $tz);
+
+			return $datetime->format($format);
 		}
 
 		public static function js($src, $defer = "")
@@ -142,7 +174,7 @@
 			$s = mb_strtolower($s, self::$encoding);
 
 			return mb_strtoupper(mb_substr($s, 0, 1, self::$encoding), self::$encoding) .
-				   mb_substr($s, 1, mb_strlen($s, self::$encoding), self::$encoding); 
+				   mb_substr($s, 1, mb_strlen($s, self::$encoding), self::$encoding);
 		}
 
 		public static function capitalizeAll($s)
@@ -200,17 +232,12 @@
 			if($len > $limit){
 				$mid = (int)(($limit - 3) / 2);
 				return (
-					mb_substr($text, 0, $mid, self::$encoding) . $postfix . 
+					mb_substr($text, 0, $mid, self::$encoding) . $postfix .
 					mb_substr($text, $len - $mid, $len, self::$encoding)
 				);
 			}else{
 				return $text;
 			}
-		}
-
-		public static function random()
-		{
-
 		}
 
 		public static function number($n)
@@ -290,7 +317,7 @@
 		{
 			$n = 544;
 			$s = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. ";
-		
+
 			if($limit > $n)
 				$s = str_repeat($s, (int)($limit / $n) + 1);
 
