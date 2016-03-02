@@ -1,6 +1,6 @@
 <?php
 	namespace Ant;
-	
+
 	class Parser
 	{
 		private static $rules    = array();
@@ -39,7 +39,7 @@
 
 				self::$skips = array();
 			}
-			
+
 			$view = str_replace(
 				array('@php', '@endphp', '@skip', '@endskip'),
 				array('<?php', '?>', '', ''),
@@ -86,10 +86,10 @@
 		public static function variable($e)
 		{
 			$view = Helper::clean(array('{{{','}}}'), $e[0]);
-			
+
 			$view = Helper::findVariable($view);
 			$view = Helper::findOr($view);
-			
+
 			return '<?php echo ' . $view . '; ?>';
 		}
 
@@ -115,7 +115,7 @@
 			if ($op == 'each') {
 				$view = 'Ant\Parser::each' . Helper::findVariable($e[3]);
 			} else if ($op == 'unless') {
-				$view = 'if(!' . Helper::findVariable($e[3]) . ')'; 
+				$view = 'if(!' . Helper::findVariable($e[3]) . ')';
 			} else if ($op == 'forelse' or $op == 'foreach') {
 				$m = array();
 				preg_match(Helper::VARIABLE_REGEXP, $e[4], $m);
