@@ -1,7 +1,7 @@
 <?php
 	namespace Ant;
-	
-	class Inherit 
+
+	class Inherit
 	{
 		public static function checkNext($view)
 		{
@@ -15,7 +15,7 @@
 			$name = Helper::clean(array('@extends', '(', ')', '"', '\''), $name[0]);
 
 			$path = Ant::settings('view') . DIRECTORY_SEPARATOR  . Helper::realPath($name) . '.' . Ant::settings('extension');
-			
+
 			if (false == file_exists($path)) {
 				throw new Exception(
 					sprintf('Template file not found at %s', $path)
@@ -45,7 +45,7 @@
 			$chain = array($next['view']);
 			$checks = array();
 
-			while (true) {	
+			while (true) {
 				$next = self::checkNext($next['view']);
 
 				if (false === $next) {
