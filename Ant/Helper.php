@@ -1,6 +1,6 @@
 <?php
 	namespace Ant;
-	
+
 	class Helper
 	{
 		const VARIABLE_REGEXP = '/(\$|->)[A-Za-z0-9_\.]+/';
@@ -14,7 +14,7 @@
 		{
 			return str_replace('.', DIRECTORY_SEPARATOR, $fakepath);
 		}
-		
+
 		public static function parseVariable($e)
 		{
 			$exp = explode('.', $e);
@@ -42,7 +42,7 @@
 
 		public static function findVariable($v)
 		{
-			return preg_replace_callback(self::VARIABLE_REGEXP, function($l){
+			return preg_replace_callback(self::VARIABLE_REGEXP, function ($l) {
 				return Helper::parseVariable($l[0]);
 			}, $v);
 		}
