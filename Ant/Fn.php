@@ -111,7 +111,7 @@
 
 			$args = array_map(function ($item) {
 				if (is_array($item)) {
-					return implode(', ', array_filter($item, function($el) {
+					return implode(', ', array_filter($item, function ($el) {
 						return (is_scalar($el) and !self::isBlank($el));
 					}));
 				}
@@ -119,8 +119,8 @@
 				return $item;
 			}, $args);
 
-			$tmpl = preg_replace_callback('~\{[0-9]{1,2}\}~', function($e) {
-				return '%' . trim($e[0],'{}') . '$s';
+			$tmpl = preg_replace_callback('~\{[0-9]{1,2}\}~', function ($e) {
+				return '%' . trim($e[0], '{}') . '$s';
 			}, $tmpl);
 
 			return vsprintf($tmpl, $args);
@@ -141,22 +141,22 @@
 			return $datetime->format($format);
 		}
 
-		public static function js($src, $defer = "")
+		public static function js($src, $defer = '')
 		{
-			if (isset(Ant::$plugin->asset)) {
-				$src = Ant::$plugin->asset($src);
+			if (isset(Ant::init()->plugin->asset)) {
+				$src = Ant::init()->plugin->asset($src);
 			}
 
 			return '<script type="text/javascript" src="' . $src . '"' . ($defer ? " " . $defer : '') . '></script>';
 		}
 
-		public static function css($href, $media = "")
+		public static function css($href, $media = '')
 		{
-			if (isset(Ant::$plugin->asset)) {
-				$href = Ant::$plugin->asset($href);
+			if (isset(Ant::init()->plugin->asset)) {
+				$href = Ant::init()->plugin->asset($href);
 			}
 
-			return '<link type="text/css" rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . '/>';
+			return '<link type="text/css" rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . ' />';
 		}
 
 		public static function escape($s, $double = true)
@@ -229,13 +229,13 @@
 		{
 			$len = mb_strlen($text, self::$encoding);
 
-			if($len > $limit){
+			if ($len > $limit) {
 				$mid = (int)(($limit - 3) / 2);
 				return (
 					mb_substr($text, 0, $mid, self::$encoding) . $postfix .
 					mb_substr($text, $len - $mid, $len, self::$encoding)
 				);
-			}else{
+			} else {
 				return $text;
 			}
 		}
@@ -318,8 +318,9 @@
 			$n = 544;
 			$s = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. ";
 
-			if($limit > $n)
+			if ($limit > $n) {
 				$s = str_repeat($s, (int)($limit / $n) + 1);
+			}
 
 			return self::limitWords($s, $limit);
 		}
