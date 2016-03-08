@@ -38,7 +38,7 @@
 
 		public function get()
 		{
-			if(false === rewind($this->handle)) {
+			if (false === rewind($this->handle)) {
 				throw new Exception(
 					sprintf('Can\'t rewind file %s', $this->path)
 				);
@@ -65,13 +65,13 @@
 					sprintf('Can\'t truncate file %s', $this->path)
 				);
 			}
-			
+
 			if (false === @fwrite($this->handle, $data)) {
 				throw new Exception(
 					sprintf('Can\'t write file %s', $this->path)
 				);
-			} 
-			
+			}
+
 			if (false === @fflush($this->handle)) {
 				throw new Exception(
 					sprintf('Can\'t flush file %s', $this->path)
@@ -88,7 +88,7 @@
 					sprintf('Can\'t unlock file %s', $this->path)
 				);
 			}
-			
+
 			if (false === @fclose($this->handle)) {
 				throw new Exception(
 					sprintf('Can\'t close file %s', $this->path)
