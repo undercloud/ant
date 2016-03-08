@@ -46,7 +46,7 @@
 					foreach ($v as $subk => $subv) {
 						if (false == file_exists($subv)) {
 							unset(self::$map['chain'][$k][$subk]);
-							
+
 							$this->is_changed = true;
 						}
 					}
@@ -74,7 +74,7 @@
 					}
 
 					if (
-						false == array_key_exists($item, self::$map['view']) 
+						false == array_key_exists($item, self::$map['view'])
 						or self::$map['view'][$item] != $mtime
 					) {
 						self::$map['view'][$item] = $mtime;
@@ -90,7 +90,7 @@
 
 						foreach (self::$map['chain'] as $k => $v) {
 							$chain_path = $this->cache_path . DIRECTORY_SEPARATOR . basename($k);
-							
+
 							if (in_array($item, $v) and file_exists($chain_path)) {
 								if (false === @unlink($chain_path)) {
 									throw new Exception(
@@ -101,7 +101,7 @@
 						}
 
 						$this->is_changed = $chain_changed = true;
-						
+
 						break;
 					}
 				}
@@ -151,9 +151,9 @@
 				->set(
 					json_encode(
 						self::$map,
-						JSON_HEX_TAG  | 
-						JSON_HEX_AMP  | 
-						JSON_HEX_APOS | 
+						JSON_HEX_TAG  |
+						JSON_HEX_AMP  |
+						JSON_HEX_APOS |
 						JSON_HEX_QUOT
 					)
 				)
