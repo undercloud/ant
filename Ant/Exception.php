@@ -1,6 +1,6 @@
 <?php
 	namespace Ant;
-	
+
 	class Exception extends \Exception
 	{
 		public function __construct($message)
