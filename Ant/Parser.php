@@ -22,9 +22,10 @@
 			$view = preg_replace_callback('/@skip.+?@endskip/ms', '\Ant\Parser::skip', $view);
 			$view = preg_replace_callback('/@php.+?@endphp/ms', '\Ant\Parser::skip', $view);
 			$view = preg_replace_callback('/{{--.*?--}}/ms', '\Ant\Parser::comment', $view);
-			$view = preg_replace_callback('/{{{.+?}}}/ms', '\Ant\Parser::variable', $view);
-			$view = preg_replace_callback('/{{.+?}}/ms', '\Ant\Parser::escape', $view);
+			$view = preg_replace_callback('/(\x5c)?{{{.+?}}}/ms', '\Ant\Parser::variable', $view);
+			$view = preg_replace_callback('/(\x5c)?{{.+?}}/ms', '\Ant\Parser::escape', $view);
 			$view = preg_replace_callback('/\B@(import|widget).+/', '\Ant\Parser::import', $view);
+			$view = preg_replace_callback('/\B@(css|js).+/', '\Ant\Parser::shortcut', $view);
 			$view = preg_replace_callback('/[\s\t]+@(case|default)/', '\Ant\Parser::caseSpace', $view);
 			$view = preg_replace_callback('/\B@(forelse|foreach|for|while|switch|case|default|if|elseif|else|unless|each)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', '\Ant\Parser::control', $view);
 			$view = preg_replace_callback('/\B@(empty|break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif|endunless)/', '\Ant\Parser::endControl', $view);
@@ -51,7 +52,7 @@
 
 		public static function skip($e)
 		{
-			$uniqid = '~SKIP_' . strtoupper(str_replace('.', '', uniqid('',true))) . '_CONTENT~';
+			$uniqid = '~SKIP_' . strtoupper(str_replace('.', '', uniqid('', true))) . '_CONTENT~';
 			self::$skips[$uniqid] = $e[0];
 
 			return $uniqid;
@@ -64,7 +65,7 @@
 
 		public static function each($view, $collection, $item = 'item', array $scope = array())
 		{
-			if(Fn::iterable($collection)) {
+			if (Fn::iterable($collection)) {
 				$tmpl = $tmpl = Ant::init()->fromFile($view);
 
 				foreach ($collection as $single) {
@@ -83,8 +84,17 @@
 			return '<?php echo \Ant\Ant::view' . $view. '; ?>';
 		}
 
+		public static function shortcut($e)
+		{
+			return '<?php echo \Ant\Fn::' . ltrim($e[0], '@') . '; ?>';
+		}
+
 		public static function variable($e)
 		{
+			if (isset($e[1]) and $e[1] === '\\') {
+				return ltrim($e[0], '\\');
+			}
+
 			$view = Helper::clean(array('{{{','}}}'), $e[0]);
 
 			$view = Helper::findVariable($view);
@@ -95,6 +105,10 @@
 
 		public static function escape($e)
 		{
+			if (isset($e[1]) and $e[1] === '\\') {
+				return ltrim($e[0], '\\');
+			}
+
 			$view = Helper::clean(array('{{', '}}'), $e[0]);
 
 			$view = Helper::findVariable($view);
@@ -126,7 +140,7 @@
 					$view = 'if(\Ant\Fn::iterable(' . $parsed . ') and \Ant\Fn::count(' . $parsed .  ')): ';
 				}
 
-				$view .= $parsed . ' = new \Ant\XIterator(' . $parsed . '); ';
+				$view .= $parsed . ' = new \Ant\StateIterator(' . $parsed . '); ';
 				$view .= 'foreach' . Helper::findVariable($e[3]);
 
 				self::$forstack[] = $parsed;
@@ -134,7 +148,7 @@
 				$view = $op . (isset($e[3]) ? Helper::findVariable($e[3]) : '');
 			}
 
-			if ('each' != $op and ':' != substr($view,-1)) {
+			if ('each' != $op and ':' != substr($view, -1)) {
 				$view .= ':';
 			}
 
@@ -147,7 +161,7 @@
 
 			if ($op == 'endforelse' or $op == 'endunless') {
 				$view = 'endif';
-			} else if($op == 'empty' or $op == 'endforeach') {
+			} else if ($op == 'empty' or $op == 'endforeach') {
 				$restore = array_pop(self::$forstack);
 				$restore = $restore . ' = ' . $restore . '->restore()';
 
