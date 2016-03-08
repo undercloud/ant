@@ -12,7 +12,7 @@
 	require_once __DIR__ . '/Cache.php';
 	require_once __DIR__ . '/Exception.php';
 	require_once __DIR__ . '/Inherit.php';
-	require_once __DIR__ . '/XIterator.php';
+	require_once __DIR__ . '/StateIterator.php';
 	require_once __DIR__ . '/Plugin.php';
 	require_once __DIR__ . '/Plugins/Base.php';
 
@@ -37,7 +37,7 @@
 		private $string     = '';
 
 		private static $plugin;
-		
+
 		public static function init()
 		{
 			return new static();
@@ -48,13 +48,13 @@
 			if (false == isset($s['view'])) {
 				throw new Exception('View path is not defined');
 			}
-			
+
 			if (false == @is_readable($s['view'])) {
 				throw new Exception(
 					sprintf('View path %s is not available', $s['view'])
 				);
 			}
-				
+
 			if (false == isset($s['cache'])) {
 				throw new Exception('Cache path is not defined');
 			}
@@ -65,9 +65,9 @@
 				);
 			}
 
-			if (false == isset($s['extension'])) $s['extension'] = 'php';
-			if (false == isset($s['debug']))     $s['debug']     = false;
-			if (false == isset($s['freeze']))    $s['freeze']    = false;
+			if (false == isset($s['extension'])) { $s['extension'] = 'php'; }
+			if (false == isset($s['debug']))     { $s['debug']     = false; }
+			if (false == isset($s['freeze']))    { $s['freeze']    = false; }
 
 			$s['cache'] = rtrim($s['cache'], ' 	\\/');
 			$s['view']  = rtrim($s['view'], ' 	\\/');
@@ -87,7 +87,7 @@
 		}
 
 		public static function settings($name = false)
-		{	
+		{
 			return (($name != false) ? self::$settings[$name] : self::$settings);
 		}
 
@@ -192,7 +192,7 @@
 
 		private static function call($name, $arguments)
 		{
-			if (method_exists('\Ant\Fn',$name) or Fn::isShared($name)) {
+			if (method_exists('\Ant\Fn', $name) or Fn::isShared($name)) {
 				return call_user_func_array('\Ant\Fn::' . $name, $arguments);
 			} else {
 				throw new Exception(
@@ -209,14 +209,14 @@
 		public function logic($path)
 		{
 			$this->logic_path = self::$settings['logic'] . '/' . Helper::realPath($path) . '.php';
-			
+
 			return $this;
 		}
 
 		public function has($path)
 		{
 			$path = self::$settings['view'] . '/' . Helper::realPath($path) . '.' . self::$settings['extension'];
-			
+
 			return file_exists($path);
 		}
 
@@ -248,10 +248,10 @@
 			if (Fn::isBlank($path)) {
 				throw new Exception('Empty template name');
 			}
-			
+
 			$full_path        = self::$settings['view']  . '/' . Helper::realPath($path) . '.' . self::$settings['extension'];
 			$this->logic_path = self::$settings['logic'] . '/' . Helper::realPath($path) . '.php';
-			
+
 			$content = IO::init()->in($full_path)->get();
 
 			return $this->fromString($content);
@@ -281,7 +281,7 @@
 					}
 
 					eval(
-						' ?>' . 
+						' ?>' .
 						 $this->fire(
 							'build',
 							Parser::parse(
@@ -353,8 +353,8 @@
 					return static::init()->get($view)->draw();
 
 				case 2:
-					$inst = static::init(); 
- 
+					$inst = static::init();
+
 					if (is_array($args[1])) {
 						list($view, $assign) = $args;
 						$inst = $inst->get($view)->assign($assign);
