@@ -55,7 +55,7 @@
 			$attrs['src'] = static::$service_url . $video_id . ($params ? ('?' . http_build_query($params)) : '');
 
 			$attrs = array_map(
-				function($key, $value){
+				function ($key, $value) {
 					if (is_integer($key)) {
 						return $value;
 					} else {
@@ -66,7 +66,7 @@
 				array_values($attrs)
 			);
 
-			return '<iframe ' . implode(' ', $attrs) . '></iframe>'; 
+			return '<iframe ' . implode(' ', $attrs) . '></iframe>';
 		}
 
 		public function register($ant)

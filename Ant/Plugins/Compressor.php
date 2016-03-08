@@ -20,8 +20,6 @@
 			);
 
 			return preg_replace($search, $replace, $buffer);
-
-			return $content;
 		}
 
 		public function register($ant)

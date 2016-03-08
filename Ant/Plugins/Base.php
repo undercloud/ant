@@ -3,6 +3,6 @@
 
 	abstract class Base
 	{
-		abstract public function register($ant); 
+		abstract public function register($ant);
 	}
 ?>

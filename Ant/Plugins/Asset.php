@@ -18,7 +18,7 @@
 			if ($this->isLocalPath($path) and file_exists($realpath)) {
 				$mtime = filemtime($realpath);
 
-				return $path . '?' . $mtime; 
+				return $path . '?' . $mtime;
 			}
 
 			return $path;
@@ -28,7 +28,7 @@
 		{
 			$asset = new self();
 
-			$ant->register('asset', function($path)use($asset){
+			$ant->register('asset', function ($path) use ($asset) {
 				return $asset->check($path);
 			});
 		}

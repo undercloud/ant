@@ -5,11 +5,13 @@
 
 	namespace Ant\Plugins;
 
+	use HamlPHP;
+
 	class Haml extends Base
 	{
 		public function register($ant)
 		{
-			$ant->bind('build', function($content){
+			$ant->bind('build', function($content) {
 				$haml = new HamlPHP();
 
 				return $haml->parseString($content);

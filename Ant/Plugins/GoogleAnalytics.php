@@ -12,7 +12,7 @@
 			if (!empty($domain)) {
 				$domain = "_gaq.push(['_setDomainName', '".$domain."']);";
 			}
-		
+
 			return "
 			<script>
 					var _gaq = _gaq || [];
@@ -33,7 +33,7 @@
 
 		public function register($ant)
 		{
-			$ant->register('ga', function($code, $domain = ''){
+			$ant->register('ga', function($code, $domain = '') {
 				$ga = new self();
 
 				retrn $ga->embed($code, $domain);
