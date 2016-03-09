@@ -23,9 +23,9 @@
 				if (0 == $key) {
 					$exp[$key] = $value;
 				} else if ((int)$key == 1 and $exp[0] === '$') {
-					if ('plugins' == $value) {
+					if ('plugin' == $value) {
 						$exp[0] = '$this->';
-						$exp[1] = 'plugins->';
+						$exp[1] = 'plugin';
 					} else if ('scope' == $value) {
 						$exp[$key] = 'get_defined_vars()';
 						unset($exp[0]);

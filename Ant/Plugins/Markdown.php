@@ -5,6 +5,8 @@
 
 	namespace Ant\Plugins;
 
+	use Parsedown;
+
 	class Markdown extends Base
 	{
 		public function register($ant)
