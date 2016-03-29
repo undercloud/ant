@@ -143,8 +143,10 @@
 
 		public static function js($src, $defer = '')
 		{
-			if (isset(Ant::init()->plugin->asset)) {
-				$src = Ant::init()->plugin->asset($src);
+			$ant = Ant::init();
+
+			if (isset($ant->plugin->asset)) {
+				$src = $ant->plugin->asset($src);
 			}
 
 			return '<script type="text/javascript" src="' . $src . '"' . ($defer ? " " . $defer : '') . '></script>';
@@ -152,8 +154,10 @@
 
 		public static function css($href, $media = '')
 		{
-			if (isset(Ant::init()->plugin->asset)) {
-				$href = Ant::init()->plugin->asset($href);
+			$ant = Ant::init();
+
+			if (isset($ant->plugin->asset)) {
+				$href = $ant->plugin->asset($href);
 			}
 
 			return '<link type="text/css" rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . ' />';

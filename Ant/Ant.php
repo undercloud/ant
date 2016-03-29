@@ -65,7 +65,7 @@
 				);
 			}
 
-			if (false == isset($s['extension'])) { $s['extension'] = 'php'; }
+			if (false == isset($s['extension'])) { $s['extension'] = 'ant'; }
 			if (false == isset($s['debug']))     { $s['debug']     = false; }
 			if (false == isset($s['freeze']))    { $s['freeze']    = false; }
 

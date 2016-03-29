@@ -2,16 +2,16 @@
 
 	namespace Ant\Plugins;
 
-	use PicoJade;
+	use Undercloud\PicoJade;
 
 	class Jade extends Base
 	{
 		public function register($ant)
 		{
 			$ant->bind('build', function($content) {
-				$jade = new Undercloud\PicoJade;
+				$jade = new PicoJade;
 
-				return $jade->compile($content, true);
+				return $jade->compile($content);
 			});
 		}
 	}

@@ -29,7 +29,6 @@
 }
 </style>
 lal
-
 <div>
 	<i>{{ ::template('Hello {1} from {2}','Username',['Gandaras','Ras','Mas']) }}</i>
 </div>
@@ -37,6 +36,7 @@ lal
 <label class="label label--require">
 
 </label>
+
 
 <h1>DateTime {{ ::date('-1 day','Y-m-d H:i:s') }}</h1>
 
