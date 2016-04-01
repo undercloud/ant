@@ -23,18 +23,18 @@
 
 		private $mode;
 
-		private static $cache_obj;
+		private static $cacheObj;
 		private static $settings = array();
 
-		private $prevent_parent = false;
-		private static $global_events = array();
-		private $local_events = array();
+		private $preventParent = array();
+		private static $globalEvents = array();
+		private $localEvents = array();
 
-		private $assign     = array();
-		private $tmpl_path  = '';
-		private $cache_path = '';
-		private $logic_path = '';
-		private $string     = '';
+		private $assign    = array();
+		private $tmplPath  = '';
+		private $cachePath = '';
+		private $logicPath = '';
+		private $string    = '';
 
 		private static $plugin;
 
@@ -43,7 +43,7 @@
 			return new static();
 		}
 
-		public function setup($s)
+		public function setup(array $s)
 		{
 			if (false == isset($s['view'])) {
 				throw new Exception('View path is not defined');
@@ -78,8 +78,8 @@
 				$s['logic'] = '';
 			}
 
-			self::$settings  = $s;
-			self::$cache_obj = new Cache($s['cache']);
+			self::$settings = $s;
+			self::$cacheObj = new Cache($s['cache']);
 
 			self::$plugin = new Plugin;
 
@@ -93,21 +93,21 @@
 
 		public function bind($event, $call)
 		{
-			self::$global_events[$event][] = $call;
+			self::$globalEvents[$event][] = $call;
 
 			return $this;
 		}
 
 		public function on($event, $call)
 		{
-			$this->local_events[$event][] = $call;
+			$this->localEvents[$event][] = $call;
 
 			return $this;
 		}
 
-		public function preventParentEvent($prevent = true)
+		public function preventParentEvent($prevent)
 		{
-			$this->prevent_parent = $prevent;
+			$this->preventParent[] = $prevent;
 
 			return $this;
 		}
@@ -116,18 +116,18 @@
 		{
 			$queue = array();
 
-			if (isset($this->local_events[$event])) {
-				$queue = array_merge($queue, $this->local_events[$event]);
+			if (isset($this->localEvents[$event])) {
+				$queue = array_merge($queue, $this->localEvents[$event]);
 			}
 
-			if (false === $this->prevent_parent) {
-				if (isset(self::$global_events[$event])) {
-					$queue = array_merge($queue, self::$global_events[$event]);
+			if (false == in_array($event, $this->preventParent)) {
+				if (isset(self::$globalEvents[$event])) {
+					$queue = array_merge($queue, self::$globalEvents[$event]);
 				}
 			}
 
 			foreach ($queue as $call) {
-				$string = call_user_func_array($call, array($string));
+				$string = call_user_func($call, $string);
 			}
 
 			return $string;
@@ -203,12 +203,12 @@
 
 		public static function getCache()
 		{
-			return self::$cache_obj;
+			return self::$cacheObj;
 		}
 
 		public function logic($path)
 		{
-			$this->logic_path = self::$settings['logic'] . '/' . Helper::realPath($path) . '.php';
+			$this->logicPath = self::$settings['logic'] . '/' . Helper::realPath($path) . '.php';
 
 			return $this;
 		}
@@ -228,9 +228,9 @@
 
 			$this->mode = self::MODE_FILE;
 
-			$this->tmpl_path  = self::$settings['view']  . '/' . Helper::realPath($path) . '.' . self::$settings['extension'];
-			$this->cache_path = self::$settings['cache'] . '/' . str_replace('/', '.', $path) . '.php';
-			$this->logic_path = self::$settings['logic'] . '/' . Helper::realPath($path) . '.php';
+			$this->tmplPath  = self::$settings['view']  . '/' . Helper::realPath($path) . '.' . self::$settings['extension'];
+			$this->cachePath = self::$settings['cache'] . '/' . str_replace('/', '.', $path) . '.php';
+			$this->logicPath = self::$settings['logic'] . '/' . Helper::realPath($path) . '.php';
 
 			return $this;
 		}
@@ -249,10 +249,10 @@
 				throw new Exception('Empty template name');
 			}
 
-			$full_path        = self::$settings['view']  . '/' . Helper::realPath($path) . '.' . self::$settings['extension'];
-			$this->logic_path = self::$settings['logic'] . '/' . Helper::realPath($path) . '.php';
+			$fullPath        = self::$settings['view']  . '/' . Helper::realPath($path) . '.' . self::$settings['extension'];
+			$this->logicPath = self::$settings['logic'] . '/' . Helper::realPath($path) . '.php';
 
-			$content = IO::init()->in($full_path)->get();
+			$content = IO::init()->in($fullPath)->get();
 
 			return $this->fromString($content);
 		}
@@ -276,8 +276,8 @@
 					ob_start();
 					extract($this->assign);
 
-					if ($this->logic_path and file_exists($this->logic_path)) {
-						require $this->logic_path;
+					if ($this->logicPath and file_exists($this->logicPath)) {
+						require $this->logicPath;
 					}
 
 					eval(
@@ -301,8 +301,8 @@
 
 				case self::MODE_FILE:
 					if (false === self::$settings['freeze']) {
-						if (true === self::$settings['debug'] or false == self::$cache_obj->check($this->tmpl_path)) {
-							$io = IO::init()->in($this->tmpl_path);
+						if (true === self::$settings['debug'] or false == self::$cacheObj->check($this->tmplPath)) {
+							$io = IO::init()->in($this->tmplPath);
 
 							$s = $this->fire(
 								'build',
@@ -311,12 +311,12 @@
 										'prepare',
 										$io->get()
 									),
-									$this->tmpl_path
+									$this->tmplPath
 								)
 							);
 
 							$io->out()
-							   ->in($this->cache_path)
+							   ->in($this->cachePath)
 							   ->set($s)
 							   ->out();
 						}
@@ -327,11 +327,11 @@
 					ob_start();
 					extract($this->assign);
 
-					if (file_exists($this->logic_path)) {
-						require $this->logic_path;
+					if (file_exists($this->logicPath)) {
+						require $this->logicPath;
 					}
 
-					require $this->cache_path;
+					require $this->cachePath;
 					$echo = ob_get_contents();
 					ob_end_clean();
 

@@ -4,19 +4,19 @@
 	class Cache
 	{
 		private static $map;
-		private $is_changed = false;
-		private $cache_path;
-		private $cache_file;
+		private $isChanged = false;
+		private $cachePath;
+		private $cacheFile;
 
-		public function __construct($cache_path = '')
+		public function __construct($cachePath = '')
 		{
-			$this->cache_path = $cache_path;
-			$this->cache_file = $cache_path . DIRECTORY_SEPARATOR . 'cache.json';
+			$this->cachePath = $cachePath;
+			$this->cacheFile = $cachePath . DIRECTORY_SEPARATOR . 'cache.json';
 		}
 
 		public function getMap()
 		{
-			$io = IO::init()->in($this->cache_file);
+			$io = IO::init()->in($this->cacheFile);
 			self::$map = json_decode($io->get(), true);
 
 			if (false == is_array(self::$map)) {
@@ -38,7 +38,7 @@
 						unset(self::$map['view'][$k]);
 						unset(self::$map['chain'][$k]);
 
-						$this->is_changed = true;
+						$this->isChanged = true;
 					}
 				}
 
@@ -47,7 +47,7 @@
 						if (false == file_exists($subv)) {
 							unset(self::$map['chain'][$k][$subk]);
 
-							$this->is_changed = true;
+							$this->isChanged = true;
 						}
 					}
 				}
@@ -62,7 +62,7 @@
 				$this->getMap();
 			}
 
-			$chain_changed = false;
+			$chainChanged = false;
 			if (array_key_exists($path, self::$map['chain'])) {
 				foreach (self::$map['chain'][$path] as $item) {
 					$mtime = @filemtime($item);
@@ -79,53 +79,53 @@
 					) {
 						self::$map['view'][$item] = $mtime;
 
-						$chain_path = $this->cache_path . DIRECTORY_SEPARATOR . basename($item);
-						if (file_exists($chain_path)) {
-							if (false === @unlink($chain_path)) {
+						$chainPath = $this->cachePath . DIRECTORY_SEPARATOR . basename($item);
+						if (file_exists($chainPath)) {
+							if (false === @unlink($chainPath)) {
 								throw new Exception(
-									sprintf('Cannot delete file %s', $chain_path)
+									sprintf('Cannot delete file %s', $chainPath)
 								);
 							}
 						}
 
 						foreach (self::$map['chain'] as $k => $v) {
-							$chain_path = $this->cache_path . DIRECTORY_SEPARATOR . basename($k);
+							$chainPath = $this->cachePath . DIRECTORY_SEPARATOR . basename($k);
 
-							if (in_array($item, $v) and file_exists($chain_path)) {
-								if (false === @unlink($chain_path)) {
+							if (in_array($item, $v) and file_exists($chainPath)) {
+								if (false === @unlink($chainPath)) {
 									throw new Exception(
-										sprintf('Cannot delete file %s', $chain_path)
+										sprintf('Cannot delete file %s', $chainPath)
 									);
 								}
 							}
 						}
 
-						$this->is_changed = $chain_changed = true;
+						$this->isChanged = $chainChanged = true;
 
 						break;
 					}
 				}
 			}
 
-			$view_changed = true;
+			$viewChanged = true;
 			$mtime = filemtime($path);
 
 			if (array_key_exists($path, self::$map['view'])) {
 				if (false !== $mtime and self::$map['view'][$path] == $mtime) {
-					$view_changed = false;
+					$viewChanged = false;
 				}
 			}
 
-			if ($view_changed == true) {
+			if ($viewChanged == true) {
 				self::$map['view'][$path] = $mtime;
-				$this->is_changed = true;
+				$this->isChanged = true;
 			}
 
-			if (false == file_exists($this->cache_path)) {
+			if (false == file_exists($this->cachePath)) {
 				return false;
 			}
 
-			return ($view_changed == false and $chain_changed == false);
+			return ($viewChanged == false and $chainChanged == false);
 		}
 
 		public function chain($path, $chain)
@@ -140,14 +140,14 @@
 				unset(self::$map['chain'][$path]);
 			}
 
-			$this->is_changed = true;
+			$this->isChanged = true;
 		}
 
 		public function __destruct()
 		{
-			if (true == $this->is_changed) {
+			if (true == $this->isChanged) {
 				IO::init()
-				->in($this->cache_file)
+				->in($this->cacheFile)
 				->set(
 					json_encode(
 						self::$map,

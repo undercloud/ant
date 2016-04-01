@@ -5,11 +5,11 @@
 	{
 		private $options = array();
 
-		protected static $service_url = '//www.youtube.com/embed/';
+		protected static $serviceUrl = '//www.youtube.com/embed/';
 
-		protected static $default_params = array();
+		protected static $defaultParams = array();
 
-		protected static $default_attrs = array(
+		protected static $defaultAttrs = array(
 			'type'        => 'text/html',
 			'width'       => '640',
 			'height'      => '390',
@@ -23,36 +23,36 @@
 
 		public static function setup(array $params, array $attrs)
 		{
-			static::$default_params = array_merge(
-				static::$default_params,
+			static::$defaultParams = array_merge(
+				static::$defaultParams,
 				$params
 			);
 
-			static::$default_attrs = array_merge(
-				static::$default_attrs,
+			static::$defaultAttrs = array_merge(
+				static::$defaultAttrs,
 				$attrs
 			);
 		}
 
 		//hq, mq, sd, maxres
-		public static function preview($video_id, $mode = '')
+		public static function preview($videoId, $mode = '')
 		{
-			return '//img.youtube.com/vi/' . $video_id . '/' . $mode . 'default.jpg';
+			return '//img.youtube.com/vi/' . $videoId . '/' . $mode . 'default.jpg';
 		}
 
-		public static function embed($video_id, array $params = array(), array $attrs = array())
+		public static function embed($videoId, array $params = array(), array $attrs = array())
 		{
 			$params = array_merge(
-				static::$default_params,
+				static::$defaultParams,
 				$params
 			);
 
 			$attrs = array_merge(
-				static::$default_attrs,
+				static::$defaultAttrs,
 				$attrs
 			);
 
-			$attrs['src'] = static::$service_url . $video_id . ($params ? ('?' . http_build_query($params)) : '');
+			$attrs['src'] = static::$serviceUrl . $videoId . ($params ? ('?' . http_build_query($params)) : '');
 
 			$attrs = array_map(
 				function ($key, $value) {
