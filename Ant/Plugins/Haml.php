@@ -1,21 +1,31 @@
 <?php
-	/*
-		require https://github.com/xedp3x/HamlPHP
-	*/
+/*
+	require https://github.com/xedp3x/HamlPHP
+*/
 
-	namespace Ant\Plugins;
+namespace Ant\Plugins;
 
-	use HamlPHP;
+use HamlPHP;
 
-	class Haml extends Base
+/**
+ * Haml parser
+ */
+class Haml extends Base
+{
+	/**
+	 * Register plugin
+	 *
+	 * @param Ant\Ant $ant instance
+	 *
+	 * @return void
+	 */
+	public function register($ant)
 	{
-		public function register($ant)
-		{
-			$ant->bind('build', function($content) {
-				$haml = new HamlPHP();
+		$ant->bind('build', function($content) {
+			$haml = new HamlPHP();
 
-				return $haml->parseString($content);
-			});
-		}
+			return $haml->parseString($content);
+		});
 	}
+}
 ?>

@@ -1,26 +1,41 @@
 <?php
-	/*
-		require https://github.com/fzaninotto/Faker
-	*/
+/*
+	require https://github.com/fzaninotto/Faker
+*/
 
-	namespace Ant\Plugins;
+namespace Ant\Plugins;
 
-	class Faker extends Base
+/**
+ * Fake data provider
+ */
+class Faker extends Base
+{
+	private $_locale;
+
+	/**
+	 * Initialize
+	 *
+	 * @param mixed $options options
+	 */
+	public function __construct($options = array())
 	{
-		private $locale;
-
-		public function __construct($options = array())
-		{
-			if (false == isset($options['locale'])) {
-				$options['locale'] = 'en_US';
-			}
-
-			$this->locale = $options['locale'];
+		if (false == isset($options['locale'])) {
+			$options['locale'] = 'en_US';
 		}
 
-		public function register($ant)
-		{
-			$ant->register('faker', \Faker\Factory::create($this->locale));
-		}
+		$this->_locale = $options['locale'];
 	}
+
+	/**
+	 * Register plugin
+	 *
+	 * @param Ant\Ant $ant instance
+	 *
+	 * @return void
+	 */
+	public function register($ant)
+	{
+		$ant->register('faker', \Faker\Factory::create($this->_locale));
+	}
+}
 ?>

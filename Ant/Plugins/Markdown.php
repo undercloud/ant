@@ -1,21 +1,31 @@
 <?php
-  	/*
-  		require https://github.com/erusev/parsedown
-	*/
+/*
+	require https://github.com/erusev/parsedown
+*/
 
-	namespace Ant\Plugins;
+namespace Ant\Plugins;
 
-	use Parsedown;
+use Parsedown;
 
-	class Markdown extends Base
+/**
+ * Markdown parser
+ */
+class Markdown extends Base
+{
+	/**
+	 * Register plugin
+	 *
+	 * @param Ant\Ant $ant instance
+	 *
+	 * @return void
+	 */
+	public function register($ant)
 	{
-		public function register($ant)
-		{
-			$ant->bind('build', function($content){
-				$md = new Parsedown();
+		$ant->bind('build', function($content){
+			$md = new Parsedown();
 
-				return $md->text($content);
-			});
-		}
+			return $md->text($content);
+		});
 	}
+}
 ?>
