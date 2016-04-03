@@ -1,7 +1,7 @@
 <?php
 namespace Ant;
 
-require_once __DIR__ . '/Parser.php';
+/*require_once __DIR__ . '/Parser.php';
 require_once __DIR__ . '/Helper.php';
 require_once __DIR__ . '/IO.php';
 require_once __DIR__ . '/Fn.php';
@@ -10,7 +10,7 @@ require_once __DIR__ . '/Exception.php';
 require_once __DIR__ . '/Inherit.php';
 require_once __DIR__ . '/StateIterator.php';
 require_once __DIR__ . '/Plugin.php';
-require_once __DIR__ . '/Plugins/Base.php';
+require_once __DIR__ . '/Plugins/Base.php';*/
 
 /**
  * Main class
