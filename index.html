@@ -1,25 +1,70 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title></title>
-	<link href='//fonts.googleapis.com/css?family=Fira+Sans:300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic|Open+Sans:400normal|Roboto:400normal|Lato:400normal|Oswald:400normal|Source+Sans+Pro:400normal|Montserrat:400normal|Raleway:400normal|Open+Sans+Condensed:300normal|PT+Sans:400normal|Roboto+Condensed:400normal&subset=all' rel='stylesheet' type='text/css'>
+  <title>Awesome New Templates</title>
+  <link href="/favicon.png?1" rel="icon" type="image/x-icon" />  
+  <link href='//fonts.googleapis.com/css?family=Fira+Sans:300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic|Open+Sans:400normal|Roboto:400normal|Lato:400normal|Oswald:400normal|Source+Sans+Pro:400normal|Montserrat:400normal|Raleway:400normal|Open+Sans+Condensed:300normal|PT+Sans:400normal|Roboto+Condensed:400normal&subset=all' rel='stylesheet' type='text/css'>
 
-	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css">
-	<link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css">
+  <link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="css/prism.css?2">
+  <link rel="stylesheet" type="text/css" href="css/style.css?2">
 
-	<link rel="stylesheet" type="text/css" href="css/style.css?1">
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+  <script type="text/javascript" src="js/prism.js?1"></script>
+  <script type="text/javascript" src="js/app.js?1"></script>
 </head>
 <body>
-	<div class="page-root">
+  <div class="page-root">
 		<div class="page-header">
-			<div class="vendor-logo">ANT</div>
-			<!--div class="vendor-abbr">awesome new templates</div-->
+			<div class="page-header-bound">
+				<div class="vendor-logo">
+					} ANT {
+					<div class="vendor-abbr">awesome new templates</div>
+				</div>
+
+				<ul class="top-menu">
+					<li>
+						<a class="gitter" href="//gitter.im/undercloud/ant" target="_blank">gitter</a>
+					</li>
+					<li>
+						<a class="github" href="//github.com/undercloud/ant" target="_blank">github</a>
+					</li>
+				</ul>
+			</div>
 		</div>
 		<div class="page-container">
 			<div class="page-menu">
 				<ul class="main-menu">
 					<li>
 						<a href="#install">Installation</a>
+					</li>
+					<li>
+						<a href="#usage">Usage</a>
+						<ul class="sub-menu">
+							<li>
+								<a href="#usage-setup">Setup</a>
+							</li>
+							<li>
+								<a href="#usage-basic">Basic</a>
+							</li>
+							<li>
+								<a href="#usage-project-structure">Project Structure</a>
+							</li>
+							<li>
+								<a href="#usage-events">Events</a>
+							</li>
+							<li>
+								<a href="#usage-logic">Logic</a>
+							</li>
+							<li>
+								<a href="#usage-extends">Extends</a>
+							</li>
+							<li>
+								<a href="#usage-api">API</a>
+							</li>
+						</ul>
 					</li>
 					<li>
 						<a href="#variables">Variables</a>
@@ -49,83 +94,90 @@
 								<a href="#control-forelse">@forelse</a>
 							</li>
 							<li>
-								<a href="#control-include">@include</a>
+								<a href="#control-each">@each</a>
+							</li>
+							<li>
+								<a href="#control-import">@import</a>
+							</li>
+							<li>
+								<a href="#control-widget">@widget</a>
 							</li>
 						</ul>
 					</li>
 					<li>
 						<a href="#">Inheritance</a>
-						<ul class="sub-menu">
-							<li>
-								<a href="#">First</a>
-							</li>
-						</ul>
 					</li>
 					<li>
 						<a href="#fn">Functions</a>
 						<ul class="sub-menu">
 							<li>
-								<a href="#fn-01">iterable</a>
+								<a href="#fn-doctype">doctype</a>
 							</li>
 							<li>
-								<a href="#fn-02">unicode</a>
+								<a href="#fn-js">js</a>
 							</li>
 							<li>
-								<a href="#fn-03">js</a>
+								<a href="#fn-css">css</a>
 							</li>
 							<li>
-								<a href="#fn-04">css</a>
+								<a href="#fn-escape">escape</a>
 							</li>
 							<li>
-								<a href="#fn-05">doctype</a>
+								<a href="#fn-decode">decode</a>
 							</li>
 							<li>
-								<a href="#fn-06">number</a>
+								<a href="#fn-upper">upper</a>
 							</li>
 							<li>
-								<a href="#fn-07">escape</a>
+								<a href="#fn-lower">lower</a>
 							</li>
 							<li>
-								<a href="#fn-08">decode</a>
+								<a href="#fn-isEmpty">isEmpty</a>
 							</li>
 							<li>
-								<a href="#fn-09">capitalize</a>
+								<a href="#fn-isBlank">isBlank</a>
 							</li>
 							<li>
-								<a href="#fn-10">capitalizeAll</a>
+								<a href="#fn-capitalize">capitalize</a>
 							</li>
 							<li>
-								<a href="#fn-11">upper</a>
+								<a href="#fn-capitalizeAll">capitalizeAll</a>
 							</li>
 							<li>
-								<a href="#fn-12">lower</a>
+								<a href="#fn-whitespace">whitespace</a>
 							</li>
 							<li>
-								<a href="#fn-13">url</a>
+								<a href="#fn-limit">limit</a>
 							</li>
 							<li>
-								<a href="#fn-14">whitespace</a>
+								<a href="#fn-limitWords">limitWords</a>
 							</li>
 							<li>
-								<a href="#fn-15">limit</a>
+								<a href="#fn-limitMiddle">limitMiddle</a>
 							</li>
 							<li>
-								<a href="#fn-16">limitWords</a>
+								<a href="#fn-lorem">lorem</a>
 							</li>
 							<li>
-								<a href="#fn-17">limitMiddle</a>
+								<a href="#fn-number">number</a>
 							</li>
 							<li>
-								<a href="#fn-18">bytes2human</a>
+								<a href="#fn-bytesHuman">bytesHuman</a>
 							</li>
 							<li>
-								<a href="#fn-19">roundHuman</a>
+								<a href="#fn-roundHuman">roundHuman</a>
 							</li>
 							<li>
-								<a href="#fn-20">highlight</a>
+								<a href="#fn-ordinal">ordinal</a>
 							</li>
 							<li>
-								<a href="#fn-22">lorem</a>
+								<a href="#fn-unicode">unicode</a>
+							</li>
+							<li>
+								<a href="#fn-url">url</a>
+							</li>
+							<li>
+								<a href="#fn-iterable">iterable</a>
 							</li>
 						</ul>
 					</li>
@@ -162,7 +214,18 @@
 			</div>
 			<div class="page-content">
 				<h1 id="install">Installation</h1>
+				
+				<h1 id="usage">Usage</h1>
+				<h2 id="usage-setup">Setup</h2>
+				<h2 id="usage-basic">Basic</h2>
+				<h2 id="usage-project-structure">Project Structure</h2>
+				<h2 id="usage-events">Events</h2>
+				<h2 id="usage-logic">Logic</h2>
+				<h2 id="usage-extends">Extends</h2>
+				<h2 id="usage-api">API</h2>
+				
 				<h1 id="variables">Variables</h1>
+				
 				<h1 id="control">Control</h1>
 				<h2 id="control-if">@if</h2>
 				<h2 id="control-unless">@unless</h2>
@@ -171,30 +234,34 @@
 				<h2 id="control-while">@while</h2>
 				<h2 id="control-foreach">@foreach</h2>
 				<h2 id="control-forelse">@forelse</h2>
-				<h2 id="control-include">@include</h2>
+				<h2 id="control-each">@each</h2>
+				<h2 id="control-import">@import</h2>
+				<h2 id="control-widget">@widget</h2>					
 
 				<h1 id="fn">Functions</h1>
-				<h2 id="fn-01">iterable</h2>
-				<h2 id="fn-02">unicode</h2>
-				<h2 id="fn-03">js</h2>
-				<h2 id="fn-04">css</h2>
-				<h2 id="fn-05">doctype
-				<h2 id="fn-06">number</h2>
-				<h2 id="fn-07">escape</h2>
-				<h2 id="fn-08">decode</h2>
-				<h2 id="fn-09">capitalize</h2>
-				<h2 id="fn-10">capitalizeAll</h2>
-				<h2 id="fn-11">upper</h2>
-				<h2 id="fn-12">lower</h2>
-				<h2 id="fn-13">url</h2>
-				<h2 id="fn-14">whitespace</h2>
-				<h2 id="fn-15">limit</h2>
-				<h2 id="fn-16">limitWords</h2>
-				<h2 id="fn-17">limitMiddle</h2>
-				<h2 id="fn-18">bytes2human</h2>
-				<h2 id="fn-19">roundHuman</h2>
-				<h2 id="fn-20">highlight</h2>
-				<h2 id="fn-22">lorem</h2>
+				<h2 id="fn-doctype">doctype</h2>
+				<h2 id="fn-js">js</h2>
+				<h2 id="fn-css">css</h2>
+				<h2 id="fn-escape">escape</h2>
+				<h2 id="fn-decode">decode</h2>
+				<h2 id="fn-upper">upper</h2>
+				<h2 id="fn-lower">lower</h2>
+				<h2 id="fn-isBlank">isBlank</h2>
+				<h2 id="fn-isEmpty">isEmpty</h2>
+				<h2 id="fn-capitalize">capitalize</h2>
+				<h2 id="fn-capitalizeAll">capitalizeAll</h2>
+				<h2 id="fn-whitespace">whitespace</h2>
+				<h2 id="fn-limit">limit</h2>
+				<h2 id="fn-limitWords">limitWords</h2>
+				<h2 id="fn-limitMiddle">limitMiddle</h2>
+				<h2 id="fn-lorem">lorem</h2>
+				<h2 id="fn-number">number</h2>
+				<h2 id="fn-bytesHuman">bytesHuman</h2>
+				<h2 id="fn-roundHuman">roundHuman</h2>
+				<h2 id="fn-ordinal">ordinal</h2>
+				<h2 id="fn-unicode">unicode</h2>
+				<h2 id="fn-url">url</h2>
+				<h2 id="fn-iterable">iterable</h2>
 
 				<h1 id="plugins">Plugins</h1>
 				<h2 id="plugins-asset">Asset</h2>
@@ -208,6 +275,28 @@
 			</div>
 		</div>
 		<div class="page-footer">
+			<ul class="page-footer-menu clearfix">
+				<li>
+					<a href="//github.com/undercloud/ant" target="_blank">Github</a>
+				</li>
+				<li>
+					<a href="//github.com/undercloud/ant/issues" target="_blank">Issues</a>
+				</li>
+				<li>
+					<a href="//gitter.im/undercloud/ant" target="_blank">Gitter</a>
+				</li>
+				<li>
+					<a href="//packagist.org/packages/undercloud/ant" target="_blank">Packagist</a>
+				</li>
+			</ul>
+				by <a href="//github.com/undercloud" target="_blank">@undercloud</a> 
+
+			<!--div class="page-header-vendor clearfix">
+				<div class="vendor-container">
+					<img class="avatar" src="https://avatars2.githubusercontent.com/u/9054259?v=3&s=460">
+					<span class="stars">12 345</span>
+				</div>
+			</div-->
 
 		</div>
 	</div>
