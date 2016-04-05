@@ -15,7 +15,6 @@ class Validator extends Base
 	 *
 	 * @return string
 	 */
-
 	public function validate($content)
 	{
 		$xml = @simplexml_load_string(

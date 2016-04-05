@@ -7,8 +7,8 @@ namespace Ant;
  */
 class IO
 {
-	private $_path;
-	private $_handle;
+	private $path;
+	private $handle;
 
 	/**
 	 * Initialize instance
@@ -25,27 +25,27 @@ class IO
 	 *
 	 * @param string $path file path
 	 *
-	 * @return $this
+	 * @return Ant\IO
 	 */
 	public function in($path)
 	{
-		$this->_path = $path;
+		$this->path = $path;
 
-		if (!$this->_path) {
+		if (!$this->path) {
 			throw new Exception('Path is empty');
 		}
 
-		$this->_handle = @fopen($this->_path, 'a+');
+		$this->handle = @fopen($this->path, 'a+');
 
-		if (false === $this->_handle) {
+		if (false === $this->handle) {
 			throw new Exception(
-				sprintf('Can\'t open file %s', $this->_path)
+				sprintf('Can\'t open file %s', $this->path)
 			);
 		}
 
-		if (false === @flock($this->_handle, LOCK_EX)) {
+		if (false === @flock($this->handle, LOCK_EX)) {
 			throw new Exception(
-				sprintf('Can\'t lock file %s', $this->_path)
+				sprintf('Can\'t lock file %s', $this->path)
 			);
 		}
 
@@ -59,15 +59,15 @@ class IO
 	 */
 	public function get()
 	{
-		if (false === rewind($this->_handle)) {
+		if (false === rewind($this->handle)) {
 			throw new Exception(
-				sprintf('Can\'t rewind file %s', $this->_path)
+				sprintf('Can\'t rewind file %s', $this->path)
 			);
 		}
 
 		$data = '';
-		while (!feof($this->_handle)) {
-			$data .= fgets($this->_handle);
+		while (!feof($this->handle)) {
+			$data .= fgets($this->handle);
 		}
 
 		return $data;
@@ -82,27 +82,27 @@ class IO
 	 */
 	public function set($data)
 	{
-		if (false === rewind($this->_handle)) {
+		if (false === rewind($this->handle)) {
 			throw new Exception(
-				sprintf('Can\'t rewind file %s', $this->_path)
+				sprintf('Can\'t rewind file %s', $this->path)
 			);
 		}
 
-		if (false === @ftruncate($this->_handle, 0)) {
+		if (false === @ftruncate($this->handle, 0)) {
 			throw new Exception(
-				sprintf('Can\'t truncate file %s', $this->_path)
+				sprintf('Can\'t truncate file %s', $this->path)
 			);
 		}
 
-		if (false === @fwrite($this->_handle, $data)) {
+		if (false === @fwrite($this->handle, $data)) {
 			throw new Exception(
-				sprintf('Can\'t write file %s', $this->_path)
+				sprintf('Can\'t write file %s', $this->path)
 			);
 		}
 
-		if (false === @fflush($this->_handle)) {
+		if (false === @fflush($this->handle)) {
 			throw new Exception(
-				sprintf('Can\'t flush file %s', $this->_path)
+				sprintf('Can\'t flush file %s', $this->path)
 			);
 		}
 
@@ -116,19 +116,19 @@ class IO
 	 */
 	public function out()
 	{
-		if (false === @flock($this->_handle, LOCK_UN)) {
+		if (false === @flock($this->handle, LOCK_UN)) {
 			throw new Exception(
-				sprintf('Can\'t unlock file %s', $this->_path)
+				sprintf('Can\'t unlock file %s', $this->path)
 			);
 		}
 
-		if (false === @fclose($this->_handle)) {
+		if (false === @fclose($this->handle)) {
 			throw new Exception(
-				sprintf('Can\'t close file %s', $this->_path)
+				sprintf('Can\'t close file %s', $this->path)
 			);
 		}
 
-		$this->_handle = null;
+		$this->handle = null;
 
 		return $this;
 	}

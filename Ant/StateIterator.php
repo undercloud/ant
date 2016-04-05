@@ -11,10 +11,10 @@ use EmptyIterator;
  */
 class StateIterator implements \Iterator
 {
-	private $_iterator;
-	private $_hold;
-	private $_index = 0;
-	private $_count = 0;
+	private $iterator;
+	private $hold;
+	private $index = 0;
+	private $count = 0;
 
 	/**
 	 * Create iterator from given value
@@ -24,28 +24,28 @@ class StateIterator implements \Iterator
 	public function __construct($iterable = array())
 	{
 		if ($iterable instanceof Iterator) {
-			$this->_iterator = $iterable;
+			$this->iterator = $iterable;
 		} else if (is_array($iterable)) {
-			$this->_iterator = new ArrayIterator($iterable);
+			$this->iterator = new ArrayIterator($iterable);
 		} else if (is_object($iterable)) {
-			$this->_iterator = new ArrayIterator($iterable);
-			$this->_hold = $iterable;
+			$this->iterator = new ArrayIterator($iterable);
+			$this->hold = $iterable;
 		} else {
-			$this->_iterator = new EmptyIterator();
-			$this->_hold = $iterable;
+			$this->iterator = new EmptyIterator();
+			$this->hold = $iterable;
 		}
 
-		$this->_count = iterator_count($this->_iterator);
+		$this->count = iterator_count($this->iterator);
 	}
 
 	/**
 	 * Get current iterator index
 	 *
-	 * @return integer current index
+	 * @return integer
 	 */
 	public function index()
 	{
-		return $this->_index;
+		return $this->index;
 	}
 
 	/**
@@ -55,9 +55,9 @@ class StateIterator implements \Iterator
 	 */
 	public function rewind()
 	{
-		$this->_index = 0;
+		$this->index = 0;
 
-		return $this->_iterator->rewind();
+		return $this->iterator->rewind();
 	}
 
 	/**
@@ -67,7 +67,7 @@ class StateIterator implements \Iterator
 	 */
 	public function current()
 	{
-		return $this->_iterator->current();
+		return $this->iterator->current();
 	}
 
 	/**
@@ -77,7 +77,7 @@ class StateIterator implements \Iterator
 	 */
 	public function key()
 	{
-		return $this->_iterator->key();
+		return $this->iterator->key();
 	}
 
 	/**
@@ -87,9 +87,9 @@ class StateIterator implements \Iterator
 	 */
 	public function next()
 	{
-		$this->_index++;
+		$this->index++;
 
-		return $this->_iterator->next();
+		return $this->iterator->next();
 	}
 
 	/**
@@ -99,7 +99,7 @@ class StateIterator implements \Iterator
 	 */
 	public function valid()
 	{
-		return $this->_iterator->valid();
+		return $this->iterator->valid();
 	}
 
 	/**
@@ -109,7 +109,7 @@ class StateIterator implements \Iterator
 	 */
 	public function isFirst()
 	{
-		return (0 === $this->_index);
+		return (0 === $this->index);
 	}
 
 	/**
@@ -119,7 +119,7 @@ class StateIterator implements \Iterator
 	 */
 	public function isLast()
 	{
-		return (1 + $this->_index === $this->_count);
+		return (1 + $this->index === $this->count);
 	}
 
 	/**
@@ -139,7 +139,7 @@ class StateIterator implements \Iterator
 	 */
 	public function isOdd()
 	{
-		return ($this->_index % 2 != 0);
+		return ($this->index % 2 != 0);
 	}
 
 	/**
@@ -149,11 +149,11 @@ class StateIterator implements \Iterator
 	 */
 	public function isEven()
 	{
-		return ($this->_index % 2 == 0);
+		return ($this->index % 2 == 0);
 	}
 
 	/**
-	 * Check if index is divisible by $num
+	 * Check if index is divisible by
 	 *
 	 * @param integer $num parts
 	 *
@@ -165,22 +165,22 @@ class StateIterator implements \Iterator
 			return false;
 		}
 
-		return ($this->_index % $num == 0);
+		return ($this->index % (integer)$num == 0);
 	}
 
 	/**
-	 * Return value given in __constructor
+	 * Restorevalue given in __constructor
 	 *
-	 * @return mixed restored value
+	 * @return mixed
 	 */
 	public function restore()
 	{
-		if (null !== $this->_hold or $this->_iterator instanceof EmptyIterator) {
-			return $this->_hold;
-		} else if ($this->_iterator instanceof ArrayIterator) {
-			return $this->_iterator->getArrayCopy();
+		if (null !== $this->hold or $this->iterator instanceof EmptyIterator) {
+			return $this->hold;
+		} else if ($this->iterator instanceof ArrayIterator) {
+			return $this->iterator->getArrayCopy();
 		} else {
-			return $this->_iterator;
+			return $this->iterator;
 		}
 	}
 }

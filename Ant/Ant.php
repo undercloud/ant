@@ -1,7 +1,7 @@
 <?php
 namespace Ant;
 
-/*require_once __DIR__ . '/Parser.php';
+require_once __DIR__ . '/Parser.php';
 require_once __DIR__ . '/Helper.php';
 require_once __DIR__ . '/IO.php';
 require_once __DIR__ . '/Fn.php';
@@ -10,7 +10,7 @@ require_once __DIR__ . '/Exception.php';
 require_once __DIR__ . '/Inherit.php';
 require_once __DIR__ . '/StateIterator.php';
 require_once __DIR__ . '/Plugin.php';
-require_once __DIR__ . '/Plugins/Base.php';*/
+require_once __DIR__ . '/Plugins/Base.php';
 
 /**
  * Main class
@@ -20,22 +20,22 @@ class Ant
 	const MODE_FILE   = 0xFF;
 	const MODE_STRING = 0x00;
 
-	private $_mode;
+	private $mode;
 
-	private static $_cacheObj;
-	private static $_settings = array();
+	private static $cacheObj;
+	private static $settings = array();
 
-	private $_preventParent = array();
-	private static $_globalEvents = array();
-	private $_localEvents = array();
+	private $preventParent = array();
+	private static $globalEvents = array();
+	private $localEvents = array();
 
-	private $_assign    = array();
-	private $_tmplPath  = '';
-	private $_cachePath = '';
-	private $_logicPath = '';
-	private $_string    = '';
+	private $assign    = array();
+	private $tmplPath  = '';
+	private $cachePath = '';
+	private $logicPath = '';
+	private $string    = '';
 
-	private static $_plugin;
+	private static $plugin;
 
 	/**
 	 * Return new instance
@@ -97,10 +97,12 @@ class Ant
 			$s['logic'] = '';
 		}
 
-		self::$_settings = $s;
-		self::$_cacheObj = new Cache($s['cache']);
+		self::$settings = $s;
+		self::$cacheObj = new Cache($s['cache']);
 
-		self::$_plugin = new Plugin;
+		self::$plugin = new Plugin;
+
+		Fn::apply($this);
 
 		return $this;
 	}
@@ -114,7 +116,7 @@ class Ant
 	 */
 	public static function settings($name = false)
 	{
-		return (($name != false) ? self::$_settings[$name] : self::$_settings);
+		return (($name != false) ? self::$settings[$name] : self::$settings);
 	}
 
 	/**
@@ -127,7 +129,7 @@ class Ant
 	 */
 	public function bind($event, $call)
 	{
-		self::$_globalEvents[$event][] = $call;
+		self::$globalEvents[$event][] = $call;
 
 		return $this;
 	}
@@ -142,7 +144,7 @@ class Ant
 	 */
 	public function on($event, $call)
 	{
-		$this->_localEvents[$event][] = $call;
+		$this->localEvents[$event][] = $call;
 
 		return $this;
 	}
@@ -156,7 +158,7 @@ class Ant
 	 */
 	public function preventParentEvent($prevent)
 	{
-		$this->_preventParent[] = $prevent;
+		$this->preventParent[] = $prevent;
 
 		return $this;
 	}
@@ -173,13 +175,13 @@ class Ant
 	{
 		$queue = array();
 
-		if (isset($this->_localEvents[$event])) {
-			$queue = array_merge($queue, $this->_localEvents[$event]);
+		if (isset($this->localEvents[$event])) {
+			$queue = array_merge($queue, $this->localEvents[$event]);
 		}
 
-		if (false == in_array($event, $this->_preventParent)) {
-			if (isset(self::$_globalEvents[$event])) {
-				$queue = array_merge($queue, self::$_globalEvents[$event]);
+		if (false == in_array($event, $this->preventParent)) {
+			if (isset(self::$globalEvents[$event])) {
+				$queue = array_merge($queue, self::$globalEvents[$event]);
 			}
 		}
 
@@ -215,13 +217,13 @@ class Ant
 	 */
 	public function register($plugin, $call)
 	{
-		if (isset(self::$_plugin->{$plugin})) {
+		if (isset(self::$plugin->{$plugin})) {
 			throw new Exception(
 				sprintf('Cannot register %s, plugin already exists', $plugin)
 			);
 		}
 
-		self::$_plugin->{$plugin} = $call;
+		self::$plugin->{$plugin} = $call;
 
 		return $this;
 	}
@@ -236,7 +238,7 @@ class Ant
 	 */
 	public function activate($plugin, array $options = array())
 	{
-		self::$_plugin->activate($this, $plugin, $options);
+		self::$plugin->activate($this, $plugin, $options);
 
 		return $this;
 	}
@@ -267,7 +269,7 @@ class Ant
 	{
 		switch ($key) {
 			case 'plugin':
-				return self::$_plugin;
+				return self::$plugin;
 
 			default:
 				throw new \Exception(
@@ -328,7 +330,7 @@ class Ant
 	 */
 	public static function getCache()
 	{
-		return self::$_cacheObj;
+		return self::$cacheObj;
 	}
 
 	/**
@@ -340,7 +342,7 @@ class Ant
 	 */
 	public function logic($name)
 	{
-		$this->_logicPath = self::$_settings['logic'] . '/' . Helper::realPath($name) . '.php';
+		$this->logicPath = self::$settings['logic'] . '/' . Helper::realPath($name) . '.php';
 
 		return $this;
 	}
@@ -354,7 +356,7 @@ class Ant
 	 */
 	public function has($name)
 	{
-		$path = self::$_settings['view'] . '/' . Helper::realPath($name) . '.' . self::$_settings['extension'];
+		$path = self::$settings['view'] . '/' . Helper::realPath($name) . '.' . self::$settings['extension'];
 
 		return file_exists($path);
 	}
@@ -372,11 +374,11 @@ class Ant
 			throw new Exception('Empty template name');
 		}
 
-		$this->_mode = self::MODE_FILE;
+		$this->mode = self::MODE_FILE;
 
-		$this->_tmplPath  = self::$_settings['view']  . '/' . Helper::realPath($name) . '.' . self::$_settings['extension'];
-		$this->_cachePath = self::$_settings['cache'] . '/' . str_replace('/', '.', $name) . '.php';
-		$this->_logicPath = self::$_settings['logic'] . '/' . Helper::realPath($name) . '.php';
+		$this->tmplPath  = self::$settings['view']  . '/' . Helper::realPath($name) . '.' . self::$settings['extension'];
+		$this->cachePath = self::$settings['cache'] . '/' . str_replace('/', '.', $name) . '.php';
+		$this->logicPath = self::$settings['logic'] . '/' . Helper::realPath($name) . '.php';
 
 		return $this;
 	}
@@ -390,8 +392,8 @@ class Ant
 	 */
 	public function fromString($s)
 	{
-		$this->_mode   = self::MODE_STRING;
-		$this->_string = $s;
+		$this->mode   = self::MODE_STRING;
+		$this->string = $s;
 
 		return $this;
 	}
@@ -409,8 +411,8 @@ class Ant
 			throw new Exception('Empty template name');
 		}
 
-		$fullPath         = self::$_settings['view']  . '/' . Helper::realPath($path) . '.' . self::$_settings['extension'];
-		$this->_logicPath = self::$_settings['logic'] . '/' . Helper::realPath($path) . '.php';
+		$fullPath         = self::$settings['view']  . '/' . Helper::realPath($path) . '.' . self::$settings['extension'];
+		$this->logicPath = self::$settings['logic'] . '/' . Helper::realPath($path) . '.php';
 
 		$content = IO::init()->in($fullPath)->get();
 
@@ -424,7 +426,7 @@ class Ant
 	 */
 	public function getString()
 	{
-		return $this->_string;
+		return $this->string;
 	}
 
 	/**
@@ -448,13 +450,13 @@ class Ant
 	 */
 	public function draw()
 	{
-		switch ($this->_mode) {
+		switch ($this->mode) {
 			case self::MODE_STRING:
 				ob_start();
 				extract($this->assign);
 
-				if ($this->_logicPath and file_exists($this->_logicPath)) {
-					require $this->_logicPath;
+				if ($this->logicPath and file_exists($this->logicPath)) {
+					require $this->logicPath;
 				}
 
 				eval(
@@ -464,7 +466,7 @@ class Ant
 						Parser::parse(
 							$this->fire(
 								'prepare',
-								$this->_string
+								$this->string
 							)
 						)
 					) .
@@ -477,9 +479,9 @@ class Ant
 				return $this->fire('exec', $echo);
 
 			case self::MODE_FILE:
-				if (false === self::$_settings['freeze']) {
-					if (true === self::$_settings['debug'] or false == self::$_cacheObj->check($this->_tmplPath)) {
-						$io = IO::init()->in($this->_tmplPath);
+				if (false === self::$settings['freeze']) {
+					if (true === self::$settings['debug'] or false == self::$cacheObj->check($this->tmplPath)) {
+						$io = IO::init()->in($this->tmplPath);
 
 						$s = $this->fire(
 							'build',
@@ -488,12 +490,12 @@ class Ant
 									'prepare',
 									$io->get()
 								),
-								$this->_tmplPath
+								$this->tmplPath
 							)
 						);
 
 						$io->out()
-						   ->in($this->_cachePath)
+						   ->in($this->cachePath)
 						   ->set($s)
 						   ->out();
 					}
@@ -504,11 +506,11 @@ class Ant
 				ob_start();
 				extract($this->assign);
 
-				if (file_exists($this->_logicPath)) {
-					require $this->_logicPath;
+				if (file_exists($this->logicPath)) {
+					require $this->logicPath;
 				}
 
-				require $this->_cachePath;
+				require $this->cachePath;
 				$echo = ob_get_contents();
 				ob_end_clean();
 

@@ -4,8 +4,6 @@ namespace Ant;
 
 /**
  * Plugin manager
- *
- * @package Ant
  */
 class Plugin
 {
@@ -44,8 +42,10 @@ class Plugin
 	/**
 	 * Magic __call
 	 *
-	 * @param string $method    method name
-	 * @param array  $arguments call arguments
+	 * @param string $method    name
+	 * @param array  $arguments arguments
+	 *
+	 * @throws Ant\Exception
 	 *
 	 * @return mixed
 	 */

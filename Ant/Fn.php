@@ -7,8 +7,14 @@ namespace Ant;
  */
 class Fn
 {
-	private static $_shared   = array();
-	private static $_encoding = 'UTF-8';
+	private static $ant;
+	private static $shared   = array();
+	private static $encoding = 'UTF-8';
+
+	public static function apply(Ant $ant)
+	{
+		self::$ant = $ant;
+	}
 
 	/**
 	 * Share function
@@ -26,7 +32,7 @@ class Fn
 			);
 		}
 
-		self::$_shared[$name] = $call;
+		self::$shared[$name] = $call;
 	}
 
 	/**
@@ -38,7 +44,7 @@ class Fn
 	 */
 	public static function isShared($what)
 	{
-		return array_key_exists($what, self::$_shared);
+		return array_key_exists($what, self::$shared);
 	}
 
 	/**
@@ -52,12 +58,12 @@ class Fn
 	public static function call($fn, $args)
 	{
 		$check = (
-			array_key_exists($fn, self::$_shared)
-			and is_callable(self::$_shared[$fn])
+			array_key_exists($fn, self::$shared)
+			and is_callable(self::$shared[$fn])
 		);
 
 		if ($check) {
-			return call_user_func_array(self::$_shared, $fn);
+			return call_user_func_array(self::$shared, $fn);
 		} else {
 			throw new Exception(
 				sprintf('Cannot call \\Ant\\Fn::%s as function', $name)
@@ -100,7 +106,7 @@ class Fn
 	 */
 	public static function setEncoding($encoding)
 	{
-		self::$_encoding = $encoding;
+		self::$encoding = $encoding;
 	}
 
 	/**
@@ -272,9 +278,7 @@ class Fn
 	 */
 	public static function js($src, $defer = '')
 	{
-		$ant = Ant::init();
-
-		if (isset($ant->plugin->asset)) {
+		if (self::$ant instanceof Ant and isset($ant->plugin->asset)) {
 			$src = $ant->plugin->asset($src);
 		}
 
@@ -291,9 +295,7 @@ class Fn
 	 */
 	public static function css($href, $media = '')
 	{
-		$ant = Ant::init();
-
-		if (isset($ant->plugin->asset)) {
+		if (self::$ant instanceof Ant and isset($ant->plugin->asset)) {
 			$href = $ant->plugin->asset($href);
 		}
 
@@ -310,7 +312,7 @@ class Fn
 	 */
 	public static function escape($s, $double = true)
 	{
-		return htmlentities($s, ENT_QUOTES, self::$_encoding, $double);
+		return htmlentities($s, ENT_QUOTES, self::$encoding, $double);
 	}
 
 	/**
@@ -322,7 +324,7 @@ class Fn
 	 */
 	public static function decode($s)
 	{
-		return html_entity_decode($s, ENT_QUOTES, self::$_encoding);
+		return html_entity_decode($s, ENT_QUOTES, self::$encoding);
 	}
 
 	/**
@@ -334,10 +336,10 @@ class Fn
 	*/
 	public static function capitalize($s)
 	{
-		$s = mb_strtolower($s, self::$_encoding);
+		$s = mb_strtolower($s, self::$encoding);
 
-		return mb_strtoupper(mb_substr($s, 0, 1, self::$_encoding), self::$_encoding) .
-			   mb_substr($s, 1, mb_strlen($s, self::$_encoding), self::$_encoding);
+		return mb_strtoupper(mb_substr($s, 0, 1, self::$encoding), self::$encoding) .
+			   mb_substr($s, 1, mb_strlen($s, self::$encoding), self::$encoding);
 	}
 
 	/**
@@ -349,7 +351,7 @@ class Fn
 	 */
 	public static function capitalizeAll($s)
 	{
-		return mb_convert_case($s, MB_CASE_TITLE, self::$_encoding);
+		return mb_convert_case($s, MB_CASE_TITLE, self::$encoding);
 	}
 
 	/**
@@ -361,7 +363,7 @@ class Fn
 	 */
 	public static function upper($s)
 	{
-		return mb_strtoupper($s, self::$_encoding);
+		return mb_strtoupper($s, self::$encoding);
 	}
 
 	/**
@@ -373,7 +375,7 @@ class Fn
 	 */
 	public static function lower($s)
 	{
-		return mb_strtolower($s, self::$_encoding);
+		return mb_strtolower($s, self::$encoding);
 	}
 
 	/**
@@ -411,8 +413,8 @@ class Fn
 	 */
 	public static function limit($s, $limit = 250, $postfix = '...')
 	{
-		if (mb_strlen($s, self::$_encoding) > $limit) {
-			return mb_substr($s, 0, $limit, self::$_encoding) . $postfix;
+		if (mb_strlen($s, self::$encoding) > $limit) {
+			return mb_substr($s, 0, $limit, self::$encoding) . $postfix;
 		} else {
 			return $s;
 		}
@@ -429,10 +431,10 @@ class Fn
 	 */
 	public static function limitWords($s, $limit = 250, $postfix = '...')
 	{
-		if (mb_strlen($s, self::$_encoding) > $limit) {
-			$pos = mb_strpos($s, ' ', $limit, self::$_encoding);
+		if (mb_strlen($s, self::$encoding) > $limit) {
+			$pos = mb_strpos($s, ' ', $limit, self::$encoding);
 			if (false !== $pos) {
-				return mb_substr($s, 0, $pos, self::$_encoding) . $postfix;
+				return mb_substr($s, 0, $pos, self::$encoding) . $postfix;
 			} else {
 				return $s;
 			}
@@ -452,13 +454,13 @@ class Fn
 	 */
 	public static function limitMiddle($s, $limit = 250, $postfix = '...')
 	{
-		$len = mb_strlen($s, self::$_encoding);
+		$len = mb_strlen($s, self::$encoding);
 
 		if ($len > $limit) {
 			$mid = (int)(($limit - 3) / 2);
 			return (
-				mb_substr($s, 0, $mid, self::$_encoding) . $postfix .
-				mb_substr($s, $len - $mid, $len, self::$_encoding)
+				mb_substr($s, 0, $mid, self::$encoding) . $postfix .
+				mb_substr($s, $len - $mid, $len, self::$encoding)
 			);
 		} else {
 			return $s;

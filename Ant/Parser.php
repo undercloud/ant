@@ -7,9 +7,9 @@ namespace Ant;
  */
 class Parser
 {
-	private static $_rules    = array();
-	private static $_skips    = array();
-	private static $_forstack = array();
+	private static $rules    = array();
+	private static $skips    = array();
+	private static $forstack = array();
 
 	/**
 	 * Add custom rule
@@ -21,7 +21,7 @@ class Parser
 	 */
 	public static function rule($rx, $call)
 	{
-		self::$_rules[$rx] = $call;
+		self::$rules[$rx] = $call;
 	}
 
 	/**
@@ -30,11 +30,11 @@ class Parser
 	 * @param string $view raw template
 	 * @param mixed  $path path for inheritance
 	 *
-	 * @return string parsed string
+	 * @return string
 	 */
 	public static function parse($view, $path = null)
 	{
-		foreach (self::$_rules as $rx => $call) {
+		foreach (self::$rules as $rx => $call) {
 			$view = preg_replace_callback($rx, $call, $view);
 		}
 
@@ -51,14 +51,14 @@ class Parser
 		$view = preg_replace_callback('/\B@(empty|break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif|endunless)/', '\Ant\Parser::endControl', $view);
 		$view = preg_replace('/\B::/', '$this->', $view);
 
-		if (self::$_skips) {
+		if (self::$skips) {
 			$view = str_replace(
-				array_keys(self::$_skips),
-				array_values(self::$_skips),
+				array_keys(self::$skips),
+				array_values(self::$skips),
 				$view
 			);
 
-			self::$_skips = array();
+			self::$skips = array();
 		}
 
 		$view = str_replace(
@@ -75,12 +75,12 @@ class Parser
 	 *
 	 * @param array $e stack
 	 *
-	 * @return string unique id
+	 * @return string
 	 */
 	public static function skip($e)
 	{
 		$uniqid = '~SKIP_' . strtoupper(str_replace('.', '', uniqid('', true))) . '_CONTENT~';
-		self::$_skips[$uniqid] = $e[0];
+		self::$skips[$uniqid] = $e[0];
 
 		return $uniqid;
 	}
@@ -190,7 +190,7 @@ class Parser
 	}
 
 	/**
-	 * Fix extra spaces
+	 * Fix extra spaces in switch
 	 *
 	 * @param array $e stack
 	 *
@@ -229,7 +229,7 @@ class Parser
 			$view .= $parsed . ' = new \Ant\StateIterator(' . $parsed . '); ';
 			$view .= 'foreach' . Helper::findVariable($e[3]);
 
-			self::$_forstack[] = $parsed;
+			self::$forstack[] = $parsed;
 		} else {
 			$view = $op . (isset($e[3]) ? Helper::findVariable($e[3]) : '');
 		}
@@ -255,7 +255,7 @@ class Parser
 		if ($op == 'endforelse' or $op == 'endunless') {
 			$view = 'endif';
 		} else if ($op == 'empty' or $op == 'endforeach') {
-			$restore = array_pop(self::$_forstack);
+			$restore = array_pop(self::$forstack);
 			$restore = $restore . ' = ' . $restore . '->restore()';
 
 			$view = 'endforeach; ' . $restore . '; ';

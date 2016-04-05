@@ -7,10 +7,10 @@ namespace Ant;
  */
 class Cache
 {
-	private static $_map;
-	private $_isChanged = false;
-	private $_cachePath;
-	private $_cacheFile;
+	private static $map;
+	private $isChanged = false;
+	private $cachePath;
+	private $cacheFile;
 
 	/**
 	 * Setup cache folder
@@ -19,49 +19,49 @@ class Cache
 	 */
 	public function __construct($cachePath = '')
 	{
-		$this->_cachePath = $cachePath;
-		$this->_cacheFile = $cachePath . '/cache.json';
+		$this->cachePath = $cachePath;
+		$this->cacheFile = $cachePath . '/cache.json';
 	}
 
 	/**
-	 * Return cache map
+	 * Load cache map
 	 *
-	 * @return array
+	 * @return void
 	 */
 	public function getMap()
 	{
-		$io = IO::init()->in($this->_cacheFile);
-		self::$_map = json_decode($io->get(), true);
+		$io = IO::init()->in($this->cacheFile);
+		self::$map = json_decode($io->get(), true);
 
-		if (false == is_array(self::$_map)) {
-			self::$_map = array();
+		if (false == is_array(self::$map)) {
+			self::$map = array();
 		}
 
-		if (false == isset(self::$_map['view']) or false == is_array(self::$_map['view'])) {
-			self::$_map['view'] = array();
+		if (false == isset(self::$map['view']) or false == is_array(self::$map['view'])) {
+			self::$map['view'] = array();
 		}
 
-		if (false == isset(self::$_map['chain']) or false === is_array(self::$_map['chain'])) {
-			self::$_map['chain'] = array();
+		if (false == isset(self::$map['chain']) or false === is_array(self::$map['chain'])) {
+			self::$map['chain'] = array();
 		}
 
 		//garbage collector
 		if (mt_rand(0, 100) < 3) {
-			foreach (self::$_map['view'] as $k => $v) {
+			foreach (self::$map['view'] as $k => $v) {
 				if (false == file_exists($k)) {
-					unset(self::$_map['view'][$k]);
-					unset(self::$_map['chain'][$k]);
+					unset(self::$map['view'][$k]);
+					unset(self::$map['chain'][$k]);
 
-					$this->_isChanged = true;
+					$this->isChanged = true;
 				}
 			}
 
-			foreach (self::$_map['chain'] as $k => $v) {
+			foreach (self::$map['chain'] as $k => $v) {
 				foreach ($v as $subk => $subv) {
 					if (false == file_exists($subv)) {
-						unset(self::$_map['chain'][$k][$subk]);
+						unset(self::$map['chain'][$k][$subk]);
 
-						$this->_isChanged = true;
+						$this->isChanged = true;
 					}
 				}
 			}
@@ -79,13 +79,13 @@ class Cache
 	 */
 	public function check($path)
 	{
-		if (null === self::$_map) {
+		if (null === self::$map) {
 			$this->getMap();
 		}
 
 		$chainChanged = false;
-		if (array_key_exists($path, self::$_map['chain'])) {
-			foreach (self::$_map['chain'][$path] as $item) {
+		if (array_key_exists($path, self::$map['chain'])) {
+			foreach (self::$map['chain'][$path] as $item) {
 				$mtime = @filemtime($item);
 
 				if (false === $mtime) {
@@ -94,10 +94,10 @@ class Cache
 					);
 				}
 
-				if (false == array_key_exists($item, self::$_map['view']) or self::$_map['view'][$item] != $mtime) {
-					self::$_map['view'][$item] = $mtime;
+				if (false == array_key_exists($item, self::$map['view']) or self::$map['view'][$item] != $mtime) {
+					self::$map['view'][$item] = $mtime;
 
-					$chainPath = $this->_cachePath . '/' . basename($item);
+					$chainPath = $this->cachePath . '/' . basename($item);
 					if (file_exists($chainPath)) {
 						if (false === @unlink($chainPath)) {
 							throw new Exception(
@@ -106,8 +106,8 @@ class Cache
 						}
 					}
 
-					foreach (self::$_map['chain'] as $k => $v) {
-						$chainPath = $this->_cachePath . '/' . basename($k);
+					foreach (self::$map['chain'] as $k => $v) {
+						$chainPath = $this->cachePath . '/' . basename($k);
 
 						if (in_array($item, $v) and file_exists($chainPath)) {
 							if (false === @unlink($chainPath)) {
@@ -118,7 +118,7 @@ class Cache
 						}
 					}
 
-					$this->_isChanged = $chainChanged = true;
+					$this->isChanged = $chainChanged = true;
 
 					break;
 				}
@@ -128,18 +128,18 @@ class Cache
 		$viewChanged = true;
 		$mtime = filemtime($path);
 
-		if (array_key_exists($path, self::$_map['view'])) {
-			if (false !== $mtime and self::$_map['view'][$path] == $mtime) {
+		if (array_key_exists($path, self::$map['view'])) {
+			if (false !== $mtime and self::$map['view'][$path] == $mtime) {
 				$viewChanged = false;
 			}
 		}
 
 		if ($viewChanged == true) {
-			self::$_map['view'][$path] = $mtime;
-			$this->_isChanged = true;
+			self::$map['view'][$path] = $mtime;
+			$this->isChanged = true;
 		}
 
-		if (false == file_exists($this->_cachePath)) {
+		if (false == file_exists($this->cachePath)) {
 			return false;
 		}
 
@@ -156,17 +156,17 @@ class Cache
 	 */
 	public function chain($path, $chain)
 	{
-		if (null === self::$_map) {
+		if (null === self::$map) {
 			$this->getMap();
 		}
 
 		if ($chain) {
-			self::$_map['chain'][$path] = $chain;
+			self::$map['chain'][$path] = $chain;
 		} else {
-			unset(self::$_map['chain'][$path]);
+			unset(self::$map['chain'][$path]);
 		}
 
-		$this->_isChanged = true;
+		$this->isChanged = true;
 	}
 
 	/**
@@ -176,12 +176,12 @@ class Cache
 	 */
 	public function __destruct()
 	{
-		if (true == $this->_isChanged) {
+		if (true == $this->isChanged) {
 			IO::init()
-			->in($this->_cacheFile)
+			->in($this->cacheFile)
 			->set(
 				json_encode(
-					self::$_map,
+					self::$map,
 					JSON_HEX_TAG  |
 					JSON_HEX_AMP  |
 					JSON_HEX_APOS |

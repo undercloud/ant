@@ -1,6 +1,4 @@
 <?php
-
-
 namespace Ant\Plugins;
 
 /**
@@ -15,7 +13,7 @@ class Asset extends Base
 	 *
 	 * @return bool
 	 */
-	private function _isLocalPath($path)
+	private function isLocalPath($path)
 	{
 		if (strpos($path, '//') >= max(strpos($path, '.'), strpos($path, '/'))) {
 			return false;
@@ -34,7 +32,7 @@ class Asset extends Base
 	public function check($path)
 	{
 		$realpath = $_SERVER['DOCUMENT_ROOT'] . $path;
-		if ($this->_isLocalPath($path) and file_exists($realpath)) {
+		if ($this->isLocalPath($path) and file_exists($realpath)) {
 			$mtime = filemtime($realpath);
 
 			return $path . '?' . $mtime;
@@ -54,12 +52,9 @@ class Asset extends Base
 	{
 		$asset = new self();
 
-		$ant->register(
-			'asset',
-			function ($path) use ($asset) {
+		$ant->register('asset', function ($path) use ($asset) {
 				return $asset->check($path);
-			}
-		);
+		});
 	}
 }
 ?>

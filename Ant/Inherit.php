@@ -1,9 +1,18 @@
 <?php
 
 namespace Ant;
-
+/**
+ * Extends templates
+ */
 class Inherit
 {
+	/**
+	 * Get parent template
+	 *
+	 * @param string $view template string
+	 *
+	 * @return array
+	 */
 	public static function checkNext($view)
 	{
 		$name = array();
@@ -13,9 +22,9 @@ class Inherit
 			return false;
 		}
 
-		$name = Helper::clean(array('@extends', '(', ')', '"', '\''), $name[0]);
+		$name = Helper::clean(array('@extends', '(', ')', '"', "'"), $name[0]);
 
-		$path = Ant::settings('view') . DIRECTORY_SEPARATOR  . Helper::realPath($name) . '.' . Ant::settings('extension');
+		$path = Ant::settings('view') . '/'  . Helper::realPath($name) . '.' . Ant::settings('extension');
 
 		if (false == file_exists($path)) {
 			throw new Exception(
@@ -33,6 +42,14 @@ class Inherit
 		);
 	}
 
+	/**
+	 * Get templates chain
+	 *
+	 * @param string $view
+	 * @param string $path
+	 *
+	 * @return array
+	 */
 	public static function resolveChain($view, $path)
 	{
 		$view = preg_replace_callback('/@skip.+?@endskip/ms', '\Ant\Parser::skip', $view);
@@ -68,6 +85,13 @@ class Inherit
 		return array_reverse($chain);
 	}
 
+	/**
+	 * Clear tags
+	 *
+	 * @param string $view teplate string
+	 *
+	 * @return string
+	 */
 	public static function clear($view)
 	{
 		return preg_replace(
@@ -77,6 +101,14 @@ class Inherit
 		);
 	}
 
+	/**
+	 * Extends logic function
+	 *
+	 * @param string $view
+	 * @param string $path
+	 *
+	 * @return string
+	 */
 	public static function extend($view, $path)
 	{
 		$chain = self::resolveChain($view, $path);
