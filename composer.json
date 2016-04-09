@@ -1,5 +1,6 @@
 {
-	"minimum-stability": "stable",
+	"minimum-stability": "dev",
+	"prefer-stable": true,
 	"name": "undercloud/ant",
 	"description": "Awesome New Templates - PHP template engine",
 	"keywords": ["template","engine"],
