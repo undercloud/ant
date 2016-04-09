@@ -1,5 +1,5 @@
 {
-	"preferred-install": "dev",
+	"preferred-install": "dev-master",
 	"name": "undercloud/ant",
 	"description": "Awesome New Templates - PHP template engine",
 	"keywords": ["template","engine"],
