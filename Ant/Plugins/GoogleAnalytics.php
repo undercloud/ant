@@ -2,6 +2,7 @@
 
 namespace Ant\Plugins;
 
+use Ant\Exception;
 /**
  * Google Analytics service
  */

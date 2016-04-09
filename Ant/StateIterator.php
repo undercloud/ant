@@ -169,7 +169,7 @@ class StateIterator implements \Iterator
 	}
 
 	/**
-	 * Restorevalue given in __constructor
+	 * Restore value
 	 *
 	 * @return mixed
 	 */

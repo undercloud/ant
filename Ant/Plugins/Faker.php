@@ -10,7 +10,7 @@ namespace Ant\Plugins;
  */
 class Faker extends Base
 {
-	private $_locale;
+	private $locale;
 
 	/**
 	 * Initialize
@@ -23,7 +23,7 @@ class Faker extends Base
 			$options['locale'] = 'en_US';
 		}
 
-		$this->_locale = $options['locale'];
+		$this->locale = $options['locale'];
 	}
 
 	/**
@@ -35,7 +35,7 @@ class Faker extends Base
 	 */
 	public function register($ant)
 	{
-		$ant->register('faker', \Faker\Factory::create($this->_locale));
+		$ant->register('faker', \Faker\Factory::create($this->locale));
 	}
 }
 ?>

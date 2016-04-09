@@ -1,8 +1,8 @@
 <?php
+
 namespace Ant\Plugins;
 
 use Ant\Exception;
-
 /**
  * DOM string validation
  */
@@ -20,7 +20,7 @@ class Validator extends Base
 		$xml = @simplexml_load_string(
 			'<?xml version="1.0"?>' .
 			'<container>' .
-				$content .
+				preg_replace('/<!DOCTYPE.*?>\s*/s', '', $content) .
 			'</container>'
 		);
 

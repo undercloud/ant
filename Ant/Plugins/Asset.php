@@ -32,6 +32,7 @@ class Asset extends Base
 	public function check($path)
 	{
 		$realpath = $_SERVER['DOCUMENT_ROOT'] . $path;
+
 		if ($this->isLocalPath($path) and file_exists($realpath)) {
 			$mtime = filemtime($realpath);
 
@@ -53,7 +54,7 @@ class Asset extends Base
 		$asset = new self();
 
 		$ant->register('asset', function ($path) use ($asset) {
-				return $asset->check($path);
+			return $asset->check($path);
 		});
 	}
 }

@@ -21,8 +21,8 @@ class Markdown extends Base
 	 */
 	public function register($ant)
 	{
-		$ant->bind('build', function($content){
-			$md = new Parsedown();
+		$ant->bind('build', function($content) {
+			$md = new Parsedown;
 
 			return $md->text($content);
 		});

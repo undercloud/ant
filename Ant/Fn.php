@@ -11,6 +11,13 @@ class Fn
 	private static $shared   = array();
 	private static $encoding = 'UTF-8';
 
+	/**
+	 * Set handle
+	 *
+	 * @param Ant $ant handle
+	 *
+	 * @return void
+	 */
 	public static function apply(Ant $ant)
 	{
 		self::$ant = $ant;
@@ -63,7 +70,7 @@ class Fn
 		);
 
 		if ($check) {
-			return call_user_func_array(self::$shared, $fn);
+			return call_user_func_array(self::$shared[$fn], $args);
 		} else {
 			throw new Exception(
 				sprintf('Cannot call \\Ant\\Fn::%s as function', $name)
@@ -278,8 +285,8 @@ class Fn
 	 */
 	public static function js($src, $defer = '')
 	{
-		if (self::$ant instanceof Ant and isset($ant->plugin->asset)) {
-			$src = $ant->plugin->asset($src);
+		if (self::$ant instanceof Ant and isset(self::$ant->plugin->asset)) {
+			$src = self::$ant->plugin->asset($src);
 		}
 
 		return '<script type="text/javascript" src="' . $src . '"' . ($defer ? " " . $defer : '') . '></script>';
@@ -295,8 +302,8 @@ class Fn
 	 */
 	public static function css($href, $media = '')
 	{
-		if (self::$ant instanceof Ant and isset($ant->plugin->asset)) {
-			$href = $ant->plugin->asset($href);
+		if (self::$ant instanceof Ant and isset(self::$ant->plugin->asset)) {
+			$href = self::$ant->plugin->asset($href);
 		}
 
 		return '<link type="text/css" rel="stylesheet" href="' . $href . '"' . ($media ? ' media="' . $media . '"' : '') . ' />';
@@ -387,7 +394,7 @@ class Fn
 	*/
 	public static function url(array $a)
 	{
-		return http_build_query($a, '', '&amp;');
+		return http_build_query($a);
 	}
 
 	/**
@@ -467,23 +474,24 @@ class Fn
 		}
 	}
 
-	/*
+	/**
+	 * Ordinal number
+	 *
+	 * @param integer $cdnl number
+	 *
+	 * @return string
+	 */
 	public static function ordinal($cdnl)
 	{
-		$c   = abs($cdnl) % 10;
-		$ext = ((abs($cdnl) %100 < 21 && abs($cdnl) %100 > 4) ? 'th'
+		$cdnl = (integer)$cdnl;
+		$c    = abs($cdnl) % 10;
+		$ext  = ((abs($cdnl) %100 < 21 && abs($cdnl) %100 > 4) ? 'th'
 			: (($c < 4) ? ($c < 3) ? ($c < 2) ? ($c < 1)
 			? 'th' : 'st' : 'nd' : 'rd' : 'th')
 		);
 
 		return $cdnl.$ext;
 	}
-
-	public static function number($n)
-	{
-		return rtrim(rtrim(number_format((float)$n, 2, '.', ' '), '0'), '.');
-	}
-	*/
 
 	/**
 	 * Bytes to human readable

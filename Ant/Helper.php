@@ -54,6 +54,9 @@ class Helper
 				if ('plugin' == $value) {
 					$exp[0] = '$this->';
 					$exp[1] = 'plugin';
+				} else if (0 === strpos($value, 'lang')) {
+					$exp[0] = '$this->plugin->';
+					//$exp[1] = substr($value, 4);
 				} else if ('scope' == $value) {
 					$exp[$key] = 'get_defined_vars()';
 					unset($exp[0]);

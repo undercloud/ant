@@ -33,9 +33,9 @@ class Leaf extends Base
 	{
 		$thisis = $this;
 
-		$ant->register('leaf', function(array $options = array())use($thisis){
-			return new self($options ? $options : $thisis->options);
-		})
+		$ant->register('leaf', function(array $options = array()) use ($thisis) {
+			return \Undercloud\Leaf::init($options ? $options : $thisis->options);
+		});
 	}
 }
 ?>

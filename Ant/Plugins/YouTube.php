@@ -21,6 +21,14 @@ class YouTube extends Base
 		$this->options = $options;
 	}
 
+	public function __invoke()
+	{
+		return call_user_func_array(
+			array($this,'embed'),
+			func_get_args()
+		);
+	}
+
 	public static function setup(array $params, array $attrs)
 	{
 		static::$defaultParams = array_merge(
