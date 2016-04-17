@@ -16,7 +16,7 @@ class InlineCSS extends Base
 	 */
 	public function register($ant)
 	{
-		$ant->register('css', function($storage) {
+		$ant->register('css', function ($storage) {
 			return new \Undercloud\InlineCSS($storage);
 		});
 	}

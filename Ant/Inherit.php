@@ -1,5 +1,4 @@
 <?php
-
 namespace Ant;
 /**
  * Extends templates

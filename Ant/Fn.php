@@ -1,5 +1,4 @@
 <?php
-
 namespace Ant;
 
 /**
@@ -491,6 +490,15 @@ class Fn
 		);
 
 		return $cdnl.$ext;
+	}
+
+	/**
+	 *
+	 *
+	 */
+	public static function number($n)
+	{
+		return rtrim(rtrim(number_format((float)$n, 2, '.', ' '), '0'), '.');
 	}
 
 	/**

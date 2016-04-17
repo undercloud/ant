@@ -1,5 +1,4 @@
 <?php
-
 namespace Ant;
 
 /**
@@ -7,18 +6,29 @@ namespace Ant;
  */
 class Plugin
 {
+	private $ant;
+
+	/**
+	 * Init instance
+	 *
+	 * @param Ant\Ant $ant instance
+	 */
+	public function __construct(Ant $ant)
+	{
+		$this->ant = $ant;
+	}
+
 	/**
 	 * Activate selected plugin
 	 *
-	 * @param Ant\Ant $ant     instance
-	 * @param string  $plugin  plugin name
-	 * @param array   $options plugin params
+	 * @param string $plugin  plugin name
+	 * @param array  $options plugin params
 	 *
 	 * @throws Ant\Exception
 	 *
 	 * @return mixed
 	 */
-	public function activate(Ant $ant, $plugin, array $options = array())
+	public function activate($plugin, array $options = array())
 	{
 		$path = __DIR__ . '/Plugins/' . $plugin . '.php';
 
@@ -30,13 +40,36 @@ class Plugin
 
 			return call_user_func_array(
 				array(new $classname($options), 'register'),
-				array($ant)
+				array($this->ant)
 			);
 		} else {
 			throw new Exception(
 				sprintf('Plugin not exists %s', $plugin)
 			);
 		}
+
+		return $this;
+	}
+
+	/**
+	 * Activate plugin
+	 *
+	 * @param string $plugin plugin name
+	 * @param call   $call   callback
+	 *
+	 * @return Ant\Plugin
+	 */
+	public function register($plugin, $call)
+	{
+		if (isset($this->{$plugin})) {
+			throw new Exception(
+				sprintf('Cannot register %s, plugin already exists', $plugin)
+			);
+		}
+
+		$this->{$plugin} = $call;
+
+		return $this;
 	}
 
 	/**

@@ -53,7 +53,7 @@ class GoogleAnalytics extends Base
 	 */
 	public function register($ant)
 	{
-		$ant->register('ga', function($code, $domain = '') {
+		$ant->register('ga', function ($code, $domain = '') {
 			$ga = new self();
 
 			return $ga->embed($code, $domain);

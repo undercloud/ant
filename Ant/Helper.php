@@ -1,5 +1,4 @@
 <?php
-
 namespace Ant;
 
 /**
@@ -52,11 +51,10 @@ class Helper
 				$exp[$key] = $value;
 			} else if ((int)$key == 1 and $exp[0] === '$') {
 				if ('plugin' == $value) {
-					$exp[0] = '$this->';
+					$exp[0] = '$this->ant->';
 					$exp[1] = 'plugin';
 				} else if (0 === strpos($value, 'lang')) {
-					$exp[0] = '$this->plugin->';
-					//$exp[1] = substr($value, 4);
+					$exp[0] = '$this->ant->plugin->';
 				} else if ('scope' == $value) {
 					$exp[$key] = 'get_defined_vars()';
 					unset($exp[0]);

@@ -1,5 +1,4 @@
 <?php
-
 namespace Ant;
 
 /**
@@ -49,7 +48,7 @@ class Parser
 		$view = preg_replace_callback('/[\s\t]+@(case|default)/', '\Ant\Parser::caseSpace', $view);
 		$view = preg_replace_callback('/\B@(forelse|foreach|for|while|switch|case|default|if|elseif|else|unless|each)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x', '\Ant\Parser::control', $view);
 		$view = preg_replace_callback('/\B@(empty|break|continue|endforeach|endforelse|endfor|endwhile|endswitch|endif|endunless)/', '\Ant\Parser::endControl', $view);
-		$view = preg_replace('/\B::/', '$this->', $view);
+		$view = preg_replace('/\B::/', '$this->ant->', $view);
 
 		if (self::$skips) {
 			$view = str_replace(
