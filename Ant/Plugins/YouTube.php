@@ -1,6 +1,8 @@
 <?php
 namespace Ant\Plugins;
 
+use Ant\Ant;
+
 class YouTube extends Base
 {
 	private $options = array();
@@ -84,7 +86,7 @@ class YouTube extends Base
 	 *
 	 * @return void
 	 */
-	public function register($ant)
+	public function register(Ant $ant)
 	{
 		$params = (isset($this->options['params']) ? $this->options['params'] : array());
 		$attrs  = (isset($this->options['attrs'])  ? $this->options['attrs']  : array());
@@ -92,6 +94,18 @@ class YouTube extends Base
 		self::setup($params, $attrs);
 
 		$ant->register('youtube', new self());
+	}
+
+	/**
+	 * Unregister plugin
+	 *
+	 * @param Ant\Ant $ant instance
+	 *
+	 * @return void
+	 */
+	public function unregister(Ant $ant)
+	{
+		$ant->unregister('youtube');
 	}
 }
 ?>

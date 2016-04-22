@@ -496,9 +496,9 @@ class Fn
 	 *
 	 *
 	 */
-	public static function number($n)
+	public static function number($num, $precision = 0)
 	{
-		return rtrim(rtrim(number_format((float)$n, 2, '.', ' '), '0'), '.');
+		return number_format($num, $precision, '.', ' ');
 	}
 
 	/**

@@ -10,14 +10,30 @@ class Event
 	/**
 	 * Bind global event
 	 *
-	 * @param string $event event name
-	 * @param mixed  $call  callback
+	 * @param string    $event event name
+	 * @param mixed     $call  callback
+	 * @param reference $index variable
 	 *
-	 * @return Ant\Event
+	 * @return integer event id
 	 */
 	public function bind($event, $call)
 	{
 		self::$globalEvents[$event][] = $call;
+
+		return key(array_slice(self::$globalEvents[$event], -1, 1, TRUE));
+	}
+
+	/**
+	 * Unbind global event
+	 *
+	 * @param string  $event event name
+	 * @param integer $index variable
+	 *
+	 * @return Ant\Event
+	 */
+	public function unbind($event, $index)
+	{
+		unset(self::$globalEvents[$event][$index]);
 
 		return $this;
 	}
@@ -25,14 +41,30 @@ class Event
 	/**
 	 * Bind local event
 	 *
-	 * @param string $event event name
-	 * @param mixed  $call  callback
+	 * @param string    $event event name
+	 * @param mixed     $call  callback
+	 * @param reference $index variable
 	 *
-	 * @return Ant\Event
+	 * @return integer event id
 	 */
 	public function on($event, $call)
 	{
 		$this->localEvents[$event][] = $call;
+
+		return key(array_slice($this->localEvents[$event], -1, 1, TRUE));
+	}
+
+	/**
+	 * Unbind local event
+	 *
+	 * @param string  $event event name
+	 * @param integer $index variable
+	 *
+	 * @return Ant\Event
+	 */
+	public function off($event, $index)
+	{
+		unset($this->localEvents[$event][$index]);
 
 		return $this;
 	}

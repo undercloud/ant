@@ -1,8 +1,8 @@
 <?php
-
 namespace Ant\Plugins;
 
 use Ant\Exception;
+use Ant\Ant;
 /**
  * Google Analytics service
  */
@@ -51,13 +51,25 @@ class GoogleAnalytics extends Base
 	 *
 	 * @return void
 	 */
-	public function register($ant)
+	public function register(Ant $ant)
 	{
 		$ant->register('ga', function ($code, $domain = '') {
 			$ga = new self();
 
 			return $ga->embed($code, $domain);
 		});
+	}
+
+	/**
+	 * Unregister plugin
+	 *
+	 * @param Ant\Ant $ant instance
+	 *
+	 * @return void
+	 */
+	public function unregister(Ant $ant)
+	{
+		$ant->unregister('ga');
 	}
 }
 ?>

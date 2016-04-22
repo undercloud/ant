@@ -1,6 +1,7 @@
 <?php
 namespace Ant\Plugins;
 
+use Ant\Ant;
 /**
  * Cache flush
  */
@@ -49,13 +50,25 @@ class Asset extends Base
 	 *
 	 * @return void
 	 */
-	public function register($ant)
+	public function register(Ant $ant)
 	{
 		$asset = new self();
 
 		$ant->register('asset', function ($path) use ($asset) {
 			return $asset->check($path);
 		});
+	}
+
+	/**
+	 * Unregister plugin
+	 *
+	 * @param Ant\Ant $ant instance
+	 *
+	 * @return void
+	 */
+	public function unregister(Ant $ant)
+	{
+		$ant->unregister('asset');
 	}
 }
 ?>

@@ -98,7 +98,7 @@ class Helper
 	{
 		return preg_replace(
 			'/^(?=\$)(.+?)(?:\s+or\s+)(.+?)$/s',
-			'(isset($1) and trim((string)$1)) ? $1 : $2',
+			'(isset($1) and !\Ant\Fn::isEmpty($1)) ? $1 : $2',
 			$s
 		);
 	}

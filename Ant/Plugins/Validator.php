@@ -1,13 +1,15 @@
 <?php
-
 namespace Ant\Plugins;
 
 use Ant\Exception;
+use Ant\Ant;
 /**
  * DOM string validation
  */
 class Validator extends Base
 {
+	private $event;
+
 	/**
 	 * Validate content
 	 *
@@ -42,9 +44,21 @@ class Validator extends Base
 	 *
 	 * @return void
 	 */
-	public function register($ant)
+	public function register(Ant $ant)
 	{
-		$ant->bind('exec', array($this, 'validate'));
+		$this->event = $ant->bind('exec', array($this, 'validate'));
+	}
+
+	/**
+	 * Unregister plugin
+	 *
+	 * @param Ant\Ant $ant instance
+	 *
+	 * @return void
+	 */
+	public function unregister(Ant $ant)
+	{
+		$ant->unbind('exec', $this->event);
 	}
 }
 ?>

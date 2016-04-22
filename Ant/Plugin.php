@@ -7,6 +7,7 @@ namespace Ant;
 class Plugin
 {
 	private $ant;
+	private $instances = array();
 
 	/**
 	 * Init instance
@@ -26,7 +27,7 @@ class Plugin
 	 *
 	 * @throws Ant\Exception
 	 *
-	 * @return mixed
+	 * @return Anr\Plugin
 	 */
 	public function activate($plugin, array $options = array())
 	{
@@ -38,10 +39,14 @@ class Plugin
 
 			$classname = '\\Ant\\Plugins\\' . $plugin;
 
-			return call_user_func_array(
-				array(new $classname($options), 'register'),
+			$object = new $classname($options);
+
+			call_user_func_array(
+				array($object, 'register'),
 				array($this->ant)
 			);
+
+			$this->instances[$plugin] = $object;
 		} else {
 			throw new Exception(
 				sprintf('Plugin not exists %s', $plugin)
@@ -49,6 +54,23 @@ class Plugin
 		}
 
 		return $this;
+	}
+
+	public function isActivated($plugin)
+	{
+		return isset($this->instances[$plugin]);
+	}
+
+	public function deactivate($plugin)
+	{
+		if (isset($this->instances[$plugin])){
+			call_user_func_array(
+				array($this->instances[$plugin], 'unregister'),
+				array($this->ant)
+			);
+
+			unset($this->instances[$plugin]);
+		}
 	}
 
 	/**
@@ -68,6 +90,13 @@ class Plugin
 		}
 
 		$this->{$plugin} = $call;
+
+		return $this;
+	}
+
+	public function unregister($plugin)
+	{
+		unset($this->$plugin);
 
 		return $this;
 	}
@@ -97,6 +126,13 @@ class Plugin
 					$method
 				)
 			);
+		}
+	}
+
+	public function __destruct()
+	{
+		foreach ($this->instances as $plugin => $instance) {
+			$this->deactivate($plugin);
 		}
 	}
 }

@@ -1,12 +1,14 @@
 <?php
-
 namespace Ant\Plugins;
 
+use Ant\Ant;
 /**
  * Compress HTML
  */
 class Compressor extends Base
 {
+	private $event;
+
 	/**
 	 * Compress given string
 	 *
@@ -40,9 +42,21 @@ class Compressor extends Base
 	 *
 	 * @return void
 	 */
-	public function register($ant)
+	public function register(Ant $ant)
 	{
-		$ant->bind('build', array($this, 'compress'));
+		$this->event = $ant->bind('build', array($this, 'compress'));
+	}
+
+	/**
+	 * Unregister plugin
+	 *
+	 * @param Ant\Ant $ant instance
+	 *
+	 * @return void
+	 */
+	public function unregister(Ant $ant)
+	{
+		$ant->unbind('build', $this->event);
 	}
 }
 ?>
