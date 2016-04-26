@@ -52,6 +52,21 @@ class Ant
 	}
 
 	/**
+	 * Return settings hash
+	 *
+	 * @return string
+	 */
+	public static function snapshot()
+	{
+		$glue = (
+			md5(print_r(self::$settings, true)) .
+			md5(print_r(self::$plugin, true))
+		);
+
+		return md5($glue);
+	}
+
+	/**
 	 * Magic __get
 	 *
 	 * @param string $key property
@@ -69,6 +84,9 @@ class Ant
 
 			case 'cache':
 				return self::$cache;
+
+			case 'settings':
+				return self::$settings;
 
 			default:
 				throw new \Exception(

@@ -8,6 +8,7 @@ class Render
 
 	private $ant;
 	private $mode;
+	private $parser;
 	private $tmplPath  = '';
 	private $cachePath = '';
 	private $logicPath = '';
@@ -22,6 +23,7 @@ class Render
 	public function __construct(Ant $ant)
 	{
 		$this->ant = $ant;
+		$this->parser = new Parser($ant);
 	}
 
 	/**
@@ -150,7 +152,7 @@ class Render
 					' ?>' .
 					$this->ant->event->fire(
 						'build',
-						Parser::parse(
+						$this->parser->parse(
 							$this->ant->event->fire(
 								'prepare',
 								$this->string
@@ -185,7 +187,7 @@ class Render
 
 						$s = $this->ant->event->fire(
 							'build',
-							Parser::parse(
+							$this->parser->parse(
 								$this->ant->event->fire(
 									'prepare',
 									$io->get()

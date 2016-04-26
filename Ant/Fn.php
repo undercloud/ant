@@ -118,34 +118,34 @@ class Fn
 	/**
 	 * Check if instance can be used in loops
 	 *
-	 * @param mixed $o instance for check
+	 * @param mixed $instance instance for check
 	 *
 	 * @return boolean
 	 */
-	public static function iterable($o)
+	public static function iterable($instance)
 	{
 		return (
-			is_array($o)
-			or $o instanceof \Traversable
-			or $o instanceof \stdClass
+			is_array($instance)
+			or $instance instanceof \Traversable
+			or $instance instanceof \stdClass
 		);
 	}
 
 	/**
 	 * Count collection items
 	 *
-	 * @param array|object|Traversable|Countable $o collection
+	 * @param mixed $instance collection
 	 *
 	 * @return integer
 	 */
-	public static function count($o)
+	public static function count($instance)
 	{
-		if ($o instanceof Traversable) {
-			return iterator_count($o);
-		} else if (is_array($o) or $o instanceof  \Countable) {
-			return @count($o);
-		} else if (is_object($o)) {
-			return count((array)$o);
+		if ($instance instanceof Traversable) {
+			return iterator_count($instance);
+		} else if (is_array($instance) or $instance instanceof  \Countable) {
+			return @count($instance);
+		} else if (is_object($instance)) {
+			return count((array)$instance);
 		}
 
 		return 0;
@@ -195,7 +195,7 @@ class Fn
 	 *
 	 * @return string
 	 */
-	public static function unicode($s)
+	public static function unicode($string)
 	{
 		return implode(
 			'',
@@ -204,7 +204,7 @@ class Fn
 					return '&#' . hexdec($v) . ';';
 				},
 				array_filter(
-					explode('\u', $s)
+					explode('\u', $string)
 				)
 			)
 		);
@@ -311,165 +311,165 @@ class Fn
 	/**
 	 * Escape string
 	 *
-	 * @param string $s      unescaped string
+	 * @param string $string unescaped string
 	 * @param bool   $double double escaping
 	 *
 	 * @return string
 	 */
-	public static function escape($s, $double = true)
+	public static function escape($string, $double = true)
 	{
-		return htmlentities($s, ENT_QUOTES, self::$encoding, $double);
+		return htmlentities($string, ENT_QUOTES, self::$encoding, $double);
 	}
 
 	/**
 	 * Unescape string
 	 *
-	 * @param string $s escaped string
+	 * @param string $string escaped string
 	 *
 	 * @return string
 	 */
-	public static function decode($s)
+	public static function decode($string)
 	{
-		return html_entity_decode($s, ENT_QUOTES, self::$encoding);
+		return html_entity_decode($string, ENT_QUOTES, self::$encoding);
 	}
 
 	/**
 	 * Capitalize string
 	 *
-	 * @param string $s string
+	 * @param string $string string
 	 *
 	 * @return string capitalized string
 	*/
-	public static function capitalize($s)
+	public static function capitalize($string)
 	{
-		$s = mb_strtolower($s, self::$encoding);
+		$string = mb_strtolower($string, self::$encoding);
 
-		return mb_strtoupper(mb_substr($s, 0, 1, self::$encoding), self::$encoding) .
-			   mb_substr($s, 1, mb_strlen($s, self::$encoding), self::$encoding);
+		return mb_strtoupper(mb_substr($string, 0, 1, self::$encoding), self::$encoding) .
+			   mb_substr($string, 1, mb_strlen($string, self::$encoding), self::$encoding);
 	}
 
 	/**
 	 * Capitalize all words in string
 	 *
-	 * @param string $s string
+	 * @param string $string string
 	 *
 	 * @return string capitalized words
 	 */
-	public static function capitalizeAll($s)
+	public static function capitalizeAll($string)
 	{
-		return mb_convert_case($s, MB_CASE_TITLE, self::$encoding);
+		return mb_convert_case($string, MB_CASE_TITLE, self::$encoding);
 	}
 
 	/**
 	 * Uppercase string
 	 *
-	 * @param string $s string
+	 * @param string $string string
 	 *
 	 * @return string
 	 */
-	public static function upper($s)
+	public static function upper($string)
 	{
-		return mb_strtoupper($s, self::$encoding);
+		return mb_strtoupper($string, self::$encoding);
 	}
 
 	/**
 	 * Lowercase string
 	 *
-	 * @param string $s string
+	 * @param string $string string
 	 *
 	 * @return string
 	 */
-	public static function lower($s)
+	public static function lower($string)
 	{
-		return mb_strtolower($s, self::$encoding);
+		return mb_strtolower($string, self::$encoding);
 	}
 
 	/**
 	 * Build url
 	 *
-	 * @param array $a url params
+	 * @param array $assoc url params
 	 *
 	 * @return string
 	*/
-	public static function url(array $a)
+	public static function url(array $assoc)
 	{
-		return http_build_query($a);
+		return http_build_query($assoc);
 	}
 
 	/**
 	 * Remove double whitespace
 	 *
-	 * @param string $s string
+	 * @param string $string string
 	 *
 	 * @return string
 	 **/
-	public static function whitespace($s)
+	public static function whitespace($string)
 	{
-		return preg_replace('/\s+/', ' ', $s);
+		return preg_replace('/\s+/', ' ', $string);
 	}
 
 	/**
 	 * Limit string length
 	 *
-	 * @param string  $s       string
+	 * @param string  $string  string
 	 * @param integer $limit   size
 	 * @param string  $postfix decoration
 	 *
 	 * @return string
 	 */
-	public static function limit($s, $limit = 250, $postfix = '...')
+	public static function limit($string, $limit = 250, $postfix = '...')
 	{
-		if (mb_strlen($s, self::$encoding) > $limit) {
-			return mb_substr($s, 0, $limit, self::$encoding) . $postfix;
+		if (mb_strlen($string, self::$encoding) > $limit) {
+			return mb_substr($string, 0, $limit, self::$encoding) . $postfix;
 		} else {
-			return $s;
+			return $string;
 		}
 	}
 
 	/**
 	 * Limit string length soft
 	 *
-	 * @param string  $s       string
+	 * @param string  $string  string
 	 * @param integer $limit   size
 	 * @param string  $postfix decoration
 	 *
 	 * @return string
 	 */
-	public static function limitWords($s, $limit = 250, $postfix = '...')
+	public static function limitWords($string, $limit = 250, $postfix = '...')
 	{
-		if (mb_strlen($s, self::$encoding) > $limit) {
-			$pos = mb_strpos($s, ' ', $limit, self::$encoding);
+		if (mb_strlen($string, self::$encoding) > $limit) {
+			$pos = mb_strpos($string, ' ', $limit, self::$encoding);
 			if (false !== $pos) {
-				return mb_substr($s, 0, $pos, self::$encoding) . $postfix;
+				return mb_substr($string, 0, $pos, self::$encoding) . $postfix;
 			} else {
-				return $s;
+				return $string;
 			}
 		} else {
-			return $s;
+			return $string;
 		}
 	}
 
 	/**
 	 * Limit string length by middle
 	 *
-	 * @param string  $s       string
+	 * @param string  $string  string
 	 * @param integer $limit   size
 	 * @param string  $postfix decoration
 	 *
 	 * @return string
 	 */
-	public static function limitMiddle($s, $limit = 250, $postfix = '...')
+	public static function limitMiddle($string, $limit = 250, $postfix = '...')
 	{
-		$len = mb_strlen($s, self::$encoding);
+		$len = mb_strlen($string, self::$encoding);
 
 		if ($len > $limit) {
 			$mid = (int)(($limit - 3) / 2);
 			return (
-				mb_substr($s, 0, $mid, self::$encoding) . $postfix .
-				mb_substr($s, $len - $mid, $len, self::$encoding)
+				mb_substr($string, 0, $mid, self::$encoding) . $postfix .
+				mb_substr($string, $len - $mid, $len, self::$encoding)
 			);
 		} else {
-			return $s;
+			return $string;
 		}
 	}
 
@@ -489,12 +489,16 @@ class Fn
 			? 'th' : 'st' : 'nd' : 'rd' : 'th')
 		);
 
-		return $cdnl.$ext;
+		return $cdnl . $ext;
 	}
 
 	/**
+	 * Format number
 	 *
+	 * @param $num       number
+	 * @param $precision precisoin, default 0
 	 *
+	 * @return string
 	 */
 	public static function number($num, $precision = 0)
 	{
@@ -544,13 +548,13 @@ class Fn
 	/**
 	 * Doctype shortcut
 	 *
-	 * @param string $d shortcut
+	 * @param string $type shortcut
 	 *
 	 * @return string
 	 */
-	public static function doctype($d = 'HTML5')
+	public static function doctype($type = 'HTML5')
 	{
-		switch($d){
+		switch($type){
 			default:
 			case 'HTML5':               return '<!DOCTYPE html>';
 			case 'XHTML11':             return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';

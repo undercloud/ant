@@ -5,6 +5,13 @@ namespace Ant;
  */
 class Inherit
 {
+	private $ant;
+
+	public function __construct(Ant $ant)
+	{
+		$this->ant = $ant;
+	}
+
 	/**
 	 * Get parent template
 	 *
@@ -12,7 +19,7 @@ class Inherit
 	 *
 	 * @return array
 	 */
-	public static function checkNext($view)
+	public function checkNext($view)
 	{
 		$name = array();
 		preg_match('/@extends.+?\)/', $view, $name);
@@ -23,7 +30,7 @@ class Inherit
 
 		$name = Helper::clean(array('@extends', '(', ')', '"', "'"), $name[0]);
 
-		$path = Ant::settings('view') . '/'  . Helper::realPath($name) . '.' . Ant::settings('extension');
+		$path = $this->ant->settings('view') . '/'  . Helper::realPath($name) . '.' . $this->ant->settings('extension');
 
 		if (false == file_exists($path)) {
 			throw new Exception(
@@ -49,7 +56,7 @@ class Inherit
 	 *
 	 * @return array
 	 */
-	public static function resolveChain($view, $path)
+	public function resolveChain($view, $path)
 	{
 		$view = preg_replace_callback('/@skip.+?@endskip/ms', '\Ant\Parser::skip', $view);
 		$view = preg_replace_callback('/@php.+?@endphp/ms', '\Ant\Parser::skip', $view);
@@ -63,7 +70,7 @@ class Inherit
 		$checks = array();
 
 		while (true) {
-			$next = self::checkNext($next['view']);
+			$next = $this->checkNext($next['view']);
 
 			if (false === $next) {
 				break;
@@ -91,7 +98,7 @@ class Inherit
 	 *
 	 * @return string
 	 */
-	public static function clear($view)
+	public function clear($view)
 	{
 		return preg_replace(
 			'/@(rewrite|append|prepend|endblock)/',
@@ -108,9 +115,9 @@ class Inherit
 	 *
 	 * @return string
 	 */
-	public static function extend($view, $path)
+	public function extend($view, $path)
 	{
-		$chain = self::resolveChain($view, $path);
+		$chain = $this->resolveChain($view, $path);
 
 		$view = array_shift($chain);
 
@@ -127,7 +134,7 @@ class Inherit
 
 					$map[] = array(
 						$name,
-						trim(self::clear($s)),
+						trim($this->clear($s)),
 						$injects[1][$k]
 					);
 				}
@@ -156,7 +163,7 @@ class Inherit
 			}
 		}
 
-		return self::clear($view);
+		return $this->clear($view);
 	}
 }
 ?>

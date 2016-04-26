@@ -6,9 +6,15 @@ namespace Ant;
  */
 class Parser
 {
+	private $ant;
 	private static $rules    = array();
 	private static $skips    = array();
 	private static $forstack = array();
+
+	public function __construct(Ant $ant)
+	{
+		$this->ant = $ant;
+	}
 
 	/**
 	 * Add custom rule
@@ -31,13 +37,15 @@ class Parser
 	 *
 	 * @return string
 	 */
-	public static function parse($view, $path = null)
+	public function parse($view, $path = null)
 	{
 		foreach (self::$rules as $rx => $call) {
 			$view = preg_replace_callback($rx, $call, $view);
 		}
 
-		$view = Inherit::extend($view, $path);
+		$inherit = new Inherit($this->ant);
+
+		$view = $inherit->extend($view, $path);
 		$view = preg_replace_callback('/@skip.+?@endskip/ms', '\Ant\Parser::skip', $view);
 		$view = preg_replace_callback('/@php.+?@endphp/ms', '\Ant\Parser::skip', $view);
 		$view = preg_replace_callback('/{{--.*?--}}/ms', '\Ant\Parser::comment', $view);

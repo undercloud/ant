@@ -58,7 +58,10 @@ class Plugin
 
 	public function isActivated($plugin)
 	{
-		return isset($this->instances[$plugin]);
+		return (
+			isset($this->instances[$plugin])
+			or isset($this->{$plugin})
+		);
 	}
 
 	public function deactivate($plugin)

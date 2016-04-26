@@ -82,6 +82,8 @@ class Cache
 			$this->getMap();
 		}
 
+		$snapshot = Ant::snapshot();
+
 		$chainChanged = false;
 		if (array_key_exists($path, self::$map['chain'])) {
 			foreach (self::$map['chain'][$path] as $item) {
@@ -93,8 +95,19 @@ class Cache
 					);
 				}
 
-				if (false == array_key_exists($item, self::$map['view']) or self::$map['view'][$item] != $mtime) {
-					self::$map['view'][$item] = $mtime;
+				$isDelete = false;
+				if (false == array_key_exists($item, self::$map['view'])) {
+					list($mt, $ss) = explode(':', self::$map['view'][$item]);
+
+					if ($mt != $mtime or $snapshot != $ss) {
+						$isDelete = true;
+					}
+				} else {
+					$isDelete = true;
+				}
+
+				if ($isDelete) {
+					self::$map['view'][$item] = $mtime . ':' . $snapshot;
 
 					$chainPath = $this->cachePath . '/' . basename($item);
 					if (file_exists($chainPath)) {
@@ -128,13 +141,15 @@ class Cache
 		$mtime = filemtime($path);
 
 		if (array_key_exists($path, self::$map['view'])) {
-			if (false !== $mtime and self::$map['view'][$path] == $mtime) {
+			list($mt, $ss) = explode(':', self::$map['view'][$path]);
+			$mt = (int)$mt;
+			if (false !== $mtime and $mt == $mtime and $ss === $snapshot) {
 				$viewChanged = false;
 			}
 		}
 
 		if ($viewChanged == true) {
-			self::$map['view'][$path] = $mtime;
+			self::$map['view'][$path] = $mtime . ':' . $snapshot;
 			$this->isChanged = true;
 		}
 
