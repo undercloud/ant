@@ -34,7 +34,7 @@ class Fn
 	{
 		if (method_exists('\Ant\Fn', $name) or self::isShared($name)) {
 			throw new Exception(
-				sprintf('Cannot register %s', $name)
+				sprintf('Cannot register %s, already exists', $name)
 			);
 		}
 
@@ -197,16 +197,12 @@ class Fn
 	 */
 	public static function unicode($string)
 	{
-		return implode(
-			'',
-			array_map(
-				function ($v) {
-					return '&#' . hexdec($v) . ';';
-				},
-				array_filter(
-					explode('\u', $string)
-				)
-			)
+		return preg_replace_callback(
+			'~\\\u([0-9]{4})~',
+			function($e){
+				return '&#' . hexdec((int)$e[1]) . ';';
+			},
+			$string
 		);
 	}
 
@@ -316,7 +312,7 @@ class Fn
 	 *
 	 * @return string
 	 */
-	public static function escape($string, $double = true)
+	public static function escape($string, $double = false)
 	{
 		return htmlentities($string, ENT_QUOTES, self::$encoding, $double);
 	}

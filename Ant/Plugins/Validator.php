@@ -9,6 +9,19 @@ use Ant\Ant;
 class Validator extends Base
 {
 	private $event;
+	private $options;
+
+	/**
+
+	*/
+	public function __construct(array $options = array())
+	{
+		if (false == isset($options['strict'])) {
+			$options['strict'] = false;
+		}
+
+		$this->options = $options;
+	}
 
 	/**
 	 * Validate content
@@ -27,14 +40,18 @@ class Validator extends Base
 		);
 
 		if ($xml instanceof \SimpleXMLElement) {
-			return $content;
+			if (true === $this->options['strict']) {
+				require_once __DIR__ . '/Validator/Strict.php';
+
+				new \Ant\Plugins\Validator\Strict($xml);
+			}
 		} else {
 			$error = libxml_get_last_error();
 
-			throw new Exception(
-				sprintf('Validation Error %s', $error->message)
-			);
+			trigger_error(sprintf('Validation Error %s', $error->message), E_USER_NOTICE);
 		}
+
+		return $content;
 	}
 
 	/**

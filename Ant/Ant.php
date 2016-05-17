@@ -141,6 +141,8 @@ class Ant
 			'unregister'         => array(true, array(self::$plugin, 'unregister')),
 			'fromFile'           => array(true, array($this->render, 'fromFile')),
 			'fromString'         => array(true, array($this->render, 'fromString')),
+			'has'                => array(false, array($this->render, 'has')),
+			'logic'              => array(true, array($this->render, 'logic')),
 			'get'                => array(true, array($this->render, 'get')),
 			'assign'             => array(true, array($this->render, 'assign')),
 			'draw'               => array(false, array($this->render, 'draw'))
