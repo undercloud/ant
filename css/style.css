@@ -13,7 +13,7 @@ h1, h2 {
 	font-weight: normal;
 }
 
-h1 {
+h1, h2 {
 	line-height: 2em;
 	font-size: 36px;
 	border-bottom: 1px solid #eee;
@@ -39,6 +39,15 @@ ul {
 
 ul li {
 	line-height: 1.5em;
+}
+
+dt {
+	line-height: 1.5em;
+}
+
+dd {
+	line-height: 1.5em;
+ 	margin-left: 20px;
 }
 
 .clearfix:before,
@@ -243,7 +252,7 @@ ul.top-menu li a.gitter {
 	display: inline-block;
 	position: relative;
 	vertical-align: middle;
-	padding: 4px 8px;
+	padding: 4px 6px;
 	font-size: 14px;
 	border-radius: 3px;
 	line-height: 1;
@@ -298,6 +307,20 @@ ul.top-menu li a.gitter {
 }
 */
 
+
+#up {
+	border-color: #39464E;
+	border-left: 2px solid;
+	border-top: 2px solid;
+	width: 20px;
+	height: 20px;
+	position: fixed;
+	bottom: 50px;
+	left: calc((100% - 800px) / 2 + 30px);
+	transform: rotate(45deg);
+	cursor: pointer;
+	display: none;
+}
 
 ::-webkit-scrollbar {
     width: 7px;
