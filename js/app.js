@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$('h1,h2').each(function(i,d){
+	/*$('h1,h2').each(function(i,d){
 		var section = $(d).attr('id')
 
 		$.get(
@@ -26,7 +26,7 @@ $(document).ready(function(){
 
 			}
 		)
-	})
+	})*/
 
 	$(document).scroll(function(){
 		var ln = 1700;
