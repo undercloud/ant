@@ -50,7 +50,9 @@ class Helper
 			if (0 == $key) {
 				$exp[$key] = $value;
 			} else if ((int)$key == 1 and $exp[0] === '$') {
-				if ('plugin' == $value) {
+				if ('ant' == $value) {
+					$exp[0] = '$this->';
+				} else if ('plugin' == $value) {
 					$exp[0] = '$this->ant->';
 					$exp[1] = 'plugin';
 				} else if (0 === strpos($value, 'lang')) {

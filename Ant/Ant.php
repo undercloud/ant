@@ -8,6 +8,7 @@ require_once __DIR__ . '/Bootstrap.php';
  */
 class Ant
 {
+	const VERSION = 1.0;
 	private static $cache;
 	private static $settings;
 	private static $plugin;
@@ -210,6 +211,11 @@ class Ant
 					->logic($logic)
 					->draw();
 		}
+	}
+
+	public function __toString()
+	{
+		return '[ ANT- Awesome New Templates ]';
 	}
 }
 ?>
